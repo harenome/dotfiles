@@ -1,0 +1,98 @@
+/*
+ * HarnoRanaivo's .Xdefaults file
+ * Maintainer: Harenome Ranaivoarivony Razanajato (harno.ranaivo@gmail.com)
+ * Last Change: January 8th 2012
+*/
+
+
+/* Colours */
+! Should maybe create a standalone file for colours
+! Low intensity: 0-7
+! High intensity: 8-15
+
+!! Definition of default colors
+! Useful when not changing all of the colours in a specific programm:
+! One can easily see wich colour are the same as defaults
+
+!#define Colour_background       #000000
+!#define Colour_foreground       #ffffff
+
+!#define Colour_dark_black       #000000 !color0 
+!#define Colour_light_black      #000000 !color8
+!#define Colour_dark_red         #000000 !color1
+!#define Colour_light_red        #000000 !color9
+!#define Colour_dark_green       #000000 !color2
+!#define Colour_light_green      #000000 !color10
+!#define Colour_dark_yellow      #000000 !color3
+!#define Colour_light_yellow     #000000 !color11
+!#define Colour_dark_blue        #000000 !color4
+!#define Colour_light_blue       #000000 !color12
+!#define Colour_dark_magenta     #000000 !color5
+!#define Colour_light_magenta    #000000 !color13
+!#define Colour_dark_cyan        #000000 !color6
+!#define Colour_light_cyan       #000000 !color14
+!#define Colour_dark_white       #ffffff !color7
+!#define Colour_light_white      #ffffff !color15
+
+!! Default Colors
+! Black
+!*color0:        Colour_dark_black
+!*color8:        Colour_light_black 
+
+! Red
+!*color1:        Colour_dark_red
+!*color9:        Colour_light_red
+
+! Green
+!*color2:        Colour_dark_green
+!*color10:       Colour_light_green
+
+! Yellow
+!*color3:        Colour_dark_yellow
+!*color11:       Colour_light_yellow
+
+! Blue
+!*color4:        Colour_dark_blue
+!*color12:       Colour_light_blue
+
+! Magenta
+!*color5:        Colour_dark_magenta
+!*color13:       Colour_light_magenta
+
+! Cyan
+!*color6:        Colour_dark_cyan
+!*color14:       Coulour_light_cyan
+
+! White
+!*color7:        Colour_dark_white
+!*color15:       Colour_light_white
+
+
+/* Fonts */
+
+!xft.dpi:                96
+xft.hinting:            full
+xft.antialias:          true
+!xft.rgba:               rgb
+
+
+/* urxvt */
+
+!! Basics and Misc.
+urxvt.depth:            32
+urxvt.foreground:       white
+!urxvt.background:       black
+urxvt.background:       rgba:2222/2222/2222/dddd
+!urxvt.transparent:      true
+!urxvt.shading:          30
+urxvt.scrollBar:        false
+urxvt.termName:         rxvt-unicode-256color
+urxvt.urlLauncher:      firefox
+
+!! Cursor
+urxvt.cursorBlink:      true
+!urxvt.cursorColor:      #ffffff
+!urxvt.cursorUnderLine:  true
+
+!! Font
+urxvt.font:             xft:Deja Vu Sans Mono:style=Regular:pixelsize=13:antialias=true
