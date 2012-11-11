@@ -1,12 +1,13 @@
 #!/bin/bash
 # Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
 # Noob script to backup all the config files listed in list.
+# Last change: November 11th 2012
 
 function backup_dotfiles()
 {
     mkdir -p dotfiles
-    while read line
-        do cp -r ~/$line dotfiles/
+    while read LINE
+        do cp -r ~/$LINE dotfiles/
     done < dotfiles_list
 
     echo "Backup done."
@@ -14,20 +15,32 @@ function backup_dotfiles()
 
 function import_dotfiles()
 {
-    while read line
-        do cp -r dotfiles/$line ~/
+    while read LINE
+        do cp -r dotfiles/$LINE ~/
     done < dotfiles_list
 
     echo "Dotfiles imported."
 }
 
-function ask_both()
+function clean_dotfiles()
 {
-    echo "Do you want to (B)ackup your dotfiles or (I)mport your saved dotfiles? "
-    read whattodo
-    case "$whattodo" in
+    echo "Are you sure ?"
+    read SURE
+    case "$SURE" in
+        Y | y | yes | Yes | YES ) rm -rf dotfiles ;;
+        N | n | no | No | NO ) echo "..." ;;
+        *) echo "err..." ;;
+    esac
+}
+
+function ask_all()
+{
+    echo "Do you want to (B)ackup your dotfiles, (I)mport your saved dotfiles or (C)lean? "
+    read WHATTODO
+    case "$WHATTODO" in
         B | b | backup | Backup | BACKUP ) backup_dotfiles ;;
         I | i | import | Import | IMPORT ) import_dotfiles ;;
+        C | c | clean | Clean | CLEAN ) clean_dotfiles ;;
         N | n | no | NO ) echo "Why did you run this script then ?!" ;;
         * ) echo "err..." ;;
     esac
@@ -36,20 +49,20 @@ function ask_both()
 function ask_backup_only()
 {
     echo "Do you want to backup your dotfiles? "
-    read yesno
-    case "$yesno" in
+    read YESNO
+    case "$YESNO" in
         Y | y | yes | YES ) backup_dotfiles ;;
         N | n | no | NO ) echo "Why did you run this script then ?!" ;;
         * ) echo "err..." ;;
     esac
 }
 
-# First, we need to be in the directory where this script is located
+# First, we have to make sure we are in the directory where this script is located
 cd "${0%/*}"
 
 # We assume it is the first time if the folder dotfiles does not exist
 # If the folder does not exist, there is nothing to import
 echo "Did you have a look at the 'dotfiles_list' file? You should answer no to the next question if you did not."
-[[ -d dotfiles ]] && ask_both || ask_backup_only
+[[ -d dotfiles ]] && ask_all || ask_backup_only
 
 exit 0

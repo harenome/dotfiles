@@ -1,9 +1,12 @@
-" Name: Rhinestones
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Colorscheme Name: Rhinestones Legacy
 " Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
+" Description: Colorscheme for Vim and GVim, legacy version
+" License: WTFPL, version 2 (see http://sam.zoy.org/wtfpl/COPYING).
 " Version: 1.0
 " Last Change: January 19th 2012
-"
-" Colourscheme for Vim
+" URL: https://github.com/HarnoRanaivo/rhinestones-colors
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 
 set background=dark
@@ -11,7 +14,7 @@ hi clear
 if exists("syntax_on")
     syntax reset
 endif
-let colors_name="rhinestones"
+let colors_name="rhinestones-legacy"
 
 
 "" Colours
