@@ -9,4 +9,10 @@
 let g:SuperTabDefaultCompletionType = "context"
 "let g:SuperTabContextDefaultCompletionType = "<c-p>"
 
+"" Mappings
+" Default is '<tab>' for forward and '<s-tab>' for backward.
+let g:SuperTabMappingForward = '<s-tab>'
+let g:SuperTabMappingBackward = '<tab>'
+" Default is '<c-tab>' for a true tab. However I'm using it in MiniBufExpl.
+"let g:SuperTabMappingTabLiteral = ''
 

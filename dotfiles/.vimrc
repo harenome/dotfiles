@@ -101,4 +101,7 @@ source ~/.vim/config/minibufexpl_rc.vim
 source ~/.vim/config/gundo_rc.vim
 
 "" SuperTab
-"source ~/.vim/config/supertab_rc.vim
+source ~/.vim/config/supertab_rc.vim
+
+"" AutoComplPop (ACP)
+source ~/.vim/config/acp_rc.vim
