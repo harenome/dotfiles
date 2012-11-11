@@ -94,10 +94,17 @@ endif
 set tags+=./tags
 autocmd Filetype c runtime! autoload/ccomplete.vim
 
+
+"""" Plugins """"
+" I use separate files so that I can easily add/remove options for a
+" single plugin. It's very useful as I am sometimes on computers that
+" do not support the features needed for some of them.
+
 "" MiniBufExpl
 source ~/.vim/config/minibufexpl_rc.vim
 
 "" Gundo
+" maps something to <F5> !
 source ~/.vim/config/gundo_rc.vim
 
 "" SuperTab
@@ -105,3 +112,6 @@ source ~/.vim/config/supertab_rc.vim
 
 "" AutoComplPop (ACP)
 source ~/.vim/config/acp_rc.vim
+
+"" TagList
+source ~/.vim/config/taglist_rc.vim
