@@ -45,7 +45,3 @@ let Tlist_Show_Menu = 1
 let Tlist_Use_SingleClick = 1
 " Auto Update
 let Tlist_Auto_Update = 1
-
-
-
-

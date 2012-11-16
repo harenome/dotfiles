@@ -111,7 +111,11 @@ source ~/.vim/config/gundo_rc.vim
 source ~/.vim/config/supertab_rc.vim
 
 "" AutoComplPop (ACP)
+" If non-zero, auto-popup is enabled at startup
+" (the commands are :AcpEnable and :AcpDisable)
+let g:acp_enableAtStartup = 0
 source ~/.vim/config/acp_rc.vim
 
 "" TagList
+" maps something to <F8> !
 source ~/.vim/config/taglist_rc.vim
