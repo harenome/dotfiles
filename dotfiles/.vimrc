@@ -1,8 +1,8 @@
-"============================================================================="
-" HarnoRanaivo's .vimrc file                                                  "
-" Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>    "
-" Last Change: October 7th 2012                                               "
-"============================================================================="
+"==============================================================================
+" HarnoRanaivo's .vimrc file
+" Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
+" Last Change: December 9th 2012
+"==============================================================================
 
 " If something is not commented, try ':h option'.
 
