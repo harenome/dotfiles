@@ -4,6 +4,7 @@
 " Last Change: October 7th 2012                                               "
 "============================================================================="
 
+" If something is not commented, try ':h option'.
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " No compatibility with legacy vi
@@ -13,18 +14,38 @@ set nocompatible
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Pathogen, plugin manager
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" It apparently is better to load pathogen first.
+" And also have the filetype thing done after pathogen's loading.
+filetype off
+call pathogen#infect()
+Helptags
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Basics
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set mouse=a
 set showmode
-" Display incomplete commands.
-set showcmd
-" Hit <C-D> to see a list of available commands.
-set wildmenu
 set ruler
 set scrolloff=999
-" Load file type plugins + indentation
+
+" Display incomplete commands.
+set showcmd
+
+" Hit <C-D> to see a list of available commands.
+set wildmenu
+
+" Load file type plugins + indentation.
 filetype plugin indent on
+
+" New leader key (the default is "\", unconvenient on french azerty
+" keyboards).
+let mapleader="ù"
+
+" Hides buffers instead of closing them.
+set hidden
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -33,6 +54,7 @@ filetype plugin indent on
 syntax on 
 colorscheme rhinestones-dark
 set t_Co=256
+set showmatch
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -55,64 +77,99 @@ map <S-space> :call SwitchLineNumber()<CR>
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Status line
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set laststatus=2                                            " Always show status
+" Always show status.
+set laststatus=2
+" Initialisation.
 set statusline=
-set statusline+=%1*#%-0.3(%n\ %)%*                          " Buffer number
-set statusline+=%2*%f%*                                     " File name
-set statusline+=\ %3*[%{strlen(&ft)?&ft:'plain\ text'}]     " File type
-set statusline+=[%{strlen(&fenc)?&fenc:'no\ encoding'}]     " File encoding
-set statusline+=[%{&ff}]%*                                  " File type, bis
+" Buffer number.
+set statusline+=%1*#%-0.3(%n\ %)%*
+" File name.
+set statusline+=%2*%f%*
+" File type.
+set statusline+=\ %3*[%{strlen(&ft)?&ft:'plain\ text'}]
+" File encoding.
+set statusline+=[%{strlen(&fenc)?&fenc:'no\ encoding'}]
+" File type, bis.
+set statusline+=[%{&ff}]%*
+" Alignment separator
 set statusline+=%=
-set statusline+=%(%4*%h%w%*%5*%m%r%*%)                      " Some flags
-set statusline+=\ %(%l,%c%V\ (%P)%)                         " Current position
+" Some flags.
+set statusline+=%(%4*%h%w%*%5*%m%r%*%)
+" Current position.
+set statusline+=\ %(%l,%c%V\ (%P)%)
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Indenting
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set tabstop=4 shiftwidth=4      " a tab is 4 spaces
-set expandtab                   " use spaces, not tabs
+" A tab is 4 spaces.
+set tabstop=4
+set shiftwidth=4
+set shiftround
+
+" Use spaces, not tabs
+set expandtab
 set smarttab
 set autoindent
 set smartindent
+set copyindent
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Searching
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set hlsearch                    " highlight matches
-set incsearch                   " incremental searching
-set ignorecase                  " searches are case insensitive...
-set smartcase                   " ...unless they contain at least one capital letter
+" Hihglight matches.
+set hlsearch
+" Incremental searching.
+set incsearch
+" Searches are case insensitive...
+set ignorecase
+" ...unless they contain at least one capital letter.
+set smartcase
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Tabs
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-map <S-t> :tabnew<CR>           " <A-t> to open a new tab
+map <S-t> :tabnew<CR>           " <S-t> to open a new tab
 noremap <A-j> gT                " <A-j> to move to left tab
 noremap <A-k> gt                " <A-k> to move to right tab
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Windows
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+map <C-k> <C-w>k
+map <C-l> <C-w>l
+map <C-h> <C-w>h
+map <C-j> <C-w>j
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Line wrapping
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Move inside of the current line when wrapped, instead of moving to the next
+" true line.
+nnoremap j gj
+nnoremap k gk
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " Folding
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-set foldmethod=indent           " enable folding, za to (un)fold
-set foldnestmax=3               " maximum folds for the "indent" and "syntax" methods
-set foldopen=all                " opens a fold when moving into it
-set foldclose=all               " closes a fold when moving out of it
-nnoremap <space> zi             " hit <space> to (un)fold everything
-"" Folding bonus
-" trying to prevent folds from closing when insert mode
-" have been tested for a while, works well...
-" ...apart from the fact folds we move in don't open in insert mode...
-" ...wait, moving in insert mode? you must use arrow keys to move in insert mode...
-" ...you really use arrow keys in Vim?!
+" Enable folding, za to (un)fold.
+set foldmethod=indent
+" Maximum folds for the "indent" and "syntax" methods.
+set foldnestmax=1
+" Opens a fold when moving into it.
+set foldopen=all
+" Closes a fold when moving out of it.
+set foldclose=all
+" Hit <space> to (un)fold everything.
+nnoremap <space> zi
+" Folding bonus.
 autocmd InsertEnter * setlocal foldclose=""
 autocmd InsertLeave * setlocal foldclose=all
-"" Previous way to prevent folds from closing when in insert mode
-" autocmd InsertEnter * if !exists('w:last_fdm') | let w:last_fdm=&foldmethod | setlocal foldmethod=manual | endif
-" autocmd InsertLeave,WinLeave * if exists('w:last_fdm') | let &l:foldmethod=w:last_fdm | unlet w:last_fdm | endif
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -123,13 +180,6 @@ if executable('ctags')
 endif
 set tags+=./tags
 autocmd Filetype c runtime! autoload/ccomplete.vim
-
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Pathogen, plugin manager
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-call pathogen#infect()
-Helptags
 
 
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
@@ -152,7 +202,7 @@ source ~/.vim/config/supertab_rc.vim
 "" AutoComplPop (ACP)
 " If non-zero, auto-popup is enabled at startup
 " (the commands are :AcpEnable and :AcpDisable)
-let g:acp_enableAtStartup = 0
+let g:acp_enableAtStartup = 1
 source ~/.vim/config/acp_rc.vim
 
 "" TagList
