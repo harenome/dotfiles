@@ -1,27 +1,43 @@
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" HarnoRanaivo's .vimrc file
-" Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
-" Last Change: October 7th 2012
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"============================================================================="
+" HarnoRanaivo's .vimrc file                                                  "
+" Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>    "
+" Last Change: October 7th 2012                                               "
+"============================================================================="
 
-"" No compatibility with legacy vi
-set nocompatible                " must be first, changes other options
 
-"" Basics
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" No compatibility with legacy vi
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" This must be first, as it changes other options.
+set nocompatible
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Basics
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set mouse=a
 set showmode
-set showcmd                     " display incomplete commands
-set wildmenu                    " hit <C-D> to see a list of available commands
+" Display incomplete commands.
+set showcmd
+" Hit <C-D> to see a list of available commands.
+set wildmenu
 set ruler
 set scrolloff=999
-filetype plugin indent on       " load file type plugins + indentation
+" Load file type plugins + indentation
+filetype plugin indent on
 
-"" Syntax highlighting
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Syntax highlighting
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 syntax on 
 colorscheme rhinestones-dark
 set t_Co=256
 
-"" Line numbers
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Line numbers
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set number
 let g:switchednumber = 0
 function! SwitchLineNumber()
@@ -35,7 +51,10 @@ function! SwitchLineNumber()
 endfunction
 map <S-space> :call SwitchLineNumber()<CR>
 
-"" Status line
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Status line
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set laststatus=2                                            " Always show status
 set statusline=
 set statusline+=%1*#%-0.3(%n\ %)%*                          " Buffer number
@@ -47,25 +66,37 @@ set statusline+=%=
 set statusline+=%(%4*%h%w%*%5*%m%r%*%)                      " Some flags
 set statusline+=\ %(%l,%c%V\ (%P)%)                         " Current position
 
-"" Indenting
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Indenting
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set tabstop=4 shiftwidth=4      " a tab is 4 spaces
 set expandtab                   " use spaces, not tabs
 set smarttab
 set autoindent
 set smartindent
 
-"" Searching
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Searching
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set hlsearch                    " highlight matches
 set incsearch                   " incremental searching
 set ignorecase                  " searches are case insensitive...
 set smartcase                   " ...unless they contain at least one capital letter
 
-"" Tabs
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Tabs
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 map <S-t> :tabnew<CR>           " <A-t> to open a new tab
 noremap <A-j> gT                " <A-j> to move to left tab
 noremap <A-k> gt                " <A-k> to move to right tab
 
-"" Folding
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Folding
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 set foldmethod=indent           " enable folding, za to (un)fold
 set foldnestmax=3               " maximum folds for the "indent" and "syntax" methods
 set foldopen=all                " opens a fold when moving into it
@@ -83,11 +114,10 @@ autocmd InsertLeave * setlocal foldclose=all
 " autocmd InsertEnter * if !exists('w:last_fdm') | let w:last_fdm=&foldmethod | setlocal foldmethod=manual | endif
 " autocmd InsertLeave,WinLeave * if exists('w:last_fdm') | let &l:foldmethod=w:last_fdm | unlet w:last_fdm | endif
 
-"" Pathogen, plugin manager
-call pathogen#infect()
-Helptags
 
-"" Omni-completion
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Omni-completion
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 if executable('ctags')
     map <F9> :!ctags -R .<CR><CR>
 endif
@@ -95,9 +125,18 @@ set tags+=./tags
 autocmd Filetype c runtime! autoload/ccomplete.vim
 
 
-"""" Plugins """"
-" I use separate files so that I can easily add/remove options for a
-" single plugin. It's very useful as I am sometimes on computers that
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Pathogen, plugin manager
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+call pathogen#infect()
+Helptags
+
+
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" Plugins
+"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+" I use separate files so that I can easily add/remove and enable/disable
+" options and plugin. It's very useful as I am sometimes on computers that
 " do not support the features needed for some of them.
 
 "" MiniBufExpl
