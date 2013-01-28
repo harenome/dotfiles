@@ -2,6 +2,9 @@
 # Little dotfiles manager
 
 # Variables
+# Replacing $HOME with another location for the testing stage
+TESTHOME=$HOME/tmp
+
 DATE="January 28th 2013"
 VERSION="0.1"
 DIRNAME="$(dirname $0)"
@@ -29,13 +32,13 @@ function backup
 
 function restore
 {
-    cp -rf "backup/$1" $HOME/
+    cp -rf "backup/$1" $TESTHOME/
 }
 
 function createlink
 {
     # ln has a backup feature, however it is limited
-    TARGET="$(echo "$HOME/$1")"
+    TARGET="$(echo "$TESTHOME/$1")"
     DESTINATION="$(echo "$DIRNAME/$2")"
 
     if [[ -h "$DESTINATION" ]]; then
