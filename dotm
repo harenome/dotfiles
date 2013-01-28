@@ -1,0 +1,82 @@
+#!/bin/bash
+# Little dotfiles manager
+
+# Variables
+DATE="January 28th 2013"
+VERSION="0.1"
+DIRNAME="$(dirname $0)"
+
+CONFIGFILE="dotfiles-manage.rc"
+DOBACKUPS=true
+OVERWRITELINKS=true
+VERBOSE=false
+
+# Functions
+function version
+{
+    echo "dotfiles-manage, version $VERSION ($DATE)"
+}
+
+function help
+{
+    echo "Usage: ./dotfiles-manage.sh [OPTIONS]"
+}
+
+function backup
+{
+    cp -r "$1" backup/
+}
+
+function restore
+{
+    cp -r "backup/$1" $HOME/
+}
+
+function createlink
+{
+    # ln has a backup feature, however it is limited
+    TARGET="$(echo "$HOME/$1")"
+    DESTINATION="$(echo "$DIRNAME/$2")"
+
+    if [[ -h "$DESTINATION" ]]; then
+        if $VERBOSE; then echo "$DESTINATION is a link to $(readlink $DESTINATION)."; fi
+        if $OVERWRITELINKS; then
+            if $VERBOSE; then echo "Overwriting the link."; fi
+            ln -sf "$TARGET" "$DESTINATION"
+        else
+            if $VERBOSE; then echo "Abandonning."; fi
+        fi
+    elif [[ -e "$DESTINATION" ]]; then
+        if $VERBOSE; then echo "$DESTINATION already exists."; fi
+        if $DOBACKUPS; then
+            if $VERBOSE; then echo "Backuping $DESTINATION."; fi
+            backup $DESTINATION
+            ln -sf "$TARGET" "$DESTINATION"
+        else
+            if $VERBOSE; then echo "Abandonning."; fi
+        fi
+    else
+        ln -s "$TARGET" "$DESTINATION"
+    fi
+}
+
+function readconfig
+{
+    cat dotfiles-manage.rc
+}
+
+function interactive
+{
+    echo ""
+}
+
+# Main
+mkdir -p backups
+
+if [[ $# -eq 0 ]]; then
+
+else
+    echo "$(eval echo \$$i) : unknown argument"
+fi
+
+exit 0
