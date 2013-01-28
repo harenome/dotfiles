@@ -6,7 +6,7 @@ DATE="January 28th 2013"
 VERSION="0.1"
 DIRNAME="$(dirname $0)"
 
-CONFIGFILE="dotfiles-manage.rc"
+CONFIGFILE="dotm.rc"
 DOBACKUPS=true
 OVERWRITELINKS=true
 VERBOSE=false
@@ -14,12 +14,12 @@ VERBOSE=false
 # Functions
 function version
 {
-    echo "dotfiles-manage, version $VERSION ($DATE)"
+    echo "dotm, version $VERSION ($DATE)"
 }
 
 function help
 {
-    echo "Usage: ./dotfiles-manage.sh [OPTIONS]"
+    echo "Usage: ./dotm [OPTIONS]"
 }
 
 function backup
@@ -29,7 +29,7 @@ function backup
 
 function restore
 {
-    cp -r "backup/$1" $HOME/
+    cp -rf "backup/$1" $HOME/
 }
 
 function createlink
@@ -60,14 +60,23 @@ function createlink
     fi
 }
 
-function readconfig
+function singleconfig
 {
-    cat dotfiles-manage.rc
+    BEGINNING=$(grep -n "^$(echo $1):$" $CONFIGFILE | cut -d ':' -f 1)
+    for LINE in "$(awk '{ if (NR > '$BEGINNING') if (length($0) > 0) { print } else { exit } }')"; do
+        createlink $(echo "$LINE")
+    done
+}
+
+function allconfig
+{
+    for LINE in "$(grep -Ev ":|^$" $CONFIGFILE)"; do
+        createlink $(echo "$LINE")
+    done
 }
 
 function interactive
 {
-    echo ""
 }
 
 # Main
@@ -76,7 +85,7 @@ mkdir -p backups
 if [[ $# -eq 0 ]]; then
 
 else
-    echo "$(eval echo \$$i) : unknown argument"
+
 fi
 
 exit 0

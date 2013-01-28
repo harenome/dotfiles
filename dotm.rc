@@ -1,0 +1,6 @@
+vim:
+.vim vim
+.vimrc vim/vimrc
+
+gvim:
+.gvimrc gvim/gvimrc
