@@ -38,13 +38,13 @@ function restore
 function createlink
 {
     # ln has a backup feature, however it is limited
-    TARGET="$(echo "$TESTHOME/$1")"
-    DESTINATION="$(echo "$DIRNAME/$2")"
+    TARGET="$DIRNAME/$2"
+    DESTINATION="$TESTHOME/$1"
 
     if [[ -h "$DESTINATION" ]]; then
         if $VERBOSE; then echo "$DESTINATION is a link to $(readlink $DESTINATION)."; fi
         if $OVERWRITELINKS; then
-            if $VERBOSE; then echo "Overwriting the link."; fi
+            if $VERBOSE; then echo "Overwriting the link (New target: $TARGET)."; fi
             ln -sf "$TARGET" "$DESTINATION"
         else
             if $VERBOSE; then echo "Abandonning."; fi
@@ -53,12 +53,14 @@ function createlink
         if $VERBOSE; then echo "$DESTINATION already exists."; fi
         if $DOBACKUPS; then
             if $VERBOSE; then echo "Backuping $DESTINATION."; fi
-            backup $DESTINATION
+            backup "$DESTINATION"
+            if $VERBOSE; then echo "Creating the symbolic link. $DESTINATION will lead to $TARGET."; fi
             ln -sf "$TARGET" "$DESTINATION"
         else
             if $VERBOSE; then echo "Abandonning."; fi
         fi
     else
+        if $VERBOSE; then echo "Creating the symbolic link. $DESTINATION will lead to $TARGET."; fi
         ln -s "$TARGET" "$DESTINATION"
     fi
 }
@@ -86,7 +88,7 @@ function interactive
 mkdir -p backups
 
 if [[ $# -eq 0 ]]; then
-
+    interactive
 else
 
 fi
