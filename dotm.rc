@@ -1,6 +1,7 @@
+# Vim files
 vim:
 .vim vim
-.vimrc vim/vimrc
+.vimrc vim/config/main.vim
 
 gvim:
 .gvimrc gvim/gvimrc
