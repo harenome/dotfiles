@@ -22,7 +22,7 @@ function version
     echo "dotm, version $VERSION ($DATE)"
 }
 
-function help
+function printhelp
 {
     echo "Usage: ./dotm [OPTIONS]" #You don't say?
 }
@@ -40,7 +40,10 @@ function restore
 
 function createlink
 {
+    # TODO: manage overwriting of regular files and directories
+
     # ln has a backup feature, however it is limited
+    # (the backup is done in the same directory)
     local TARGET="$DIRNAME/$2"
     local DESTINATION="$TESTHOME/$1"
 
@@ -110,10 +113,20 @@ checkconfig
 mkdir -p backups
 
 if [[ $# -eq 0 ]]; then
-#interactive
     allconfig
 else
-    singleconfig $1
+    # getopt and getopts are a bit painful
+    for ARG in $*; do
+        if [[ ${ARG:0:2} = "--" ]]; then
+            case $ARG in
+                "--verbose" ) VERBOSE=true;;
+                "--backup" ) DOBACKUPS=true;;
+                "--overwrite" ) OVERWRITELINKS=true;;
+                "--version" ) version; exit 0;;
+                "--help" ) printhelp; exit 0;;
+            esac
+        fi
+    done
 fi
 
 exit 0
