@@ -13,7 +13,10 @@ DIRNAME="$(pwd)$([[ $(dirname $0) = "." ]] || echo "/$(dirname $0)")"
 
 CONFIGFILE="dotm.rc"
 DOBACKUPS=true
-OVERWRITELINKS=true
+FORCEOVERWRITE=false
+OVERWRITELINK=false
+OVERWRITEFILE=false
+OVERWRITEDIR=false
 VERBOSE=false
 
 ## Functions
@@ -47,30 +50,42 @@ function createlink
     local TARGET="$DIRNAME/$2"
     local DESTINATION="$TESTHOME/$1"
 
-    if [[ -h "$DESTINATION" ]]; then
-        if $VERBOSE; then echo "$DESTINATION is a link to $(readlink $DESTINATION)."; fi
-        if $OVERWRITELINKS; then
-            if $VERBOSE; then echo "Overwriting the link (New target: $TARGET)."; fi
-            ln -sf "$TARGET" "$DESTINATION"
-        else
-            if $VERBOSE; then echo "Abandonning."; fi
-        fi
-    elif [[ -e "$DESTINATION" ]]; then
-        if $VERBOSE; then echo "$DESTINATION already exists."; fi
-        if $DOBACKUPS; then
-            if $VERBOSE; then echo "Backuping $DESTINATION."; fi
-            backup "$DESTINATION"
-            if $VERBOSE; then echo "Creating the symbolic link. $DESTINATION will lead to $TARGET."; fi
-            #ln -sf works on regulars files, does not on directories
-            rm -r "$DESTINATION"
-            ln -s "$TARGET" "$DESTINATION"
-        else
-            if $VERBOSE; then echo "Abandonning."; fi
+    if [[ -e "$DESTINATION" ]]; then
+        if [[ -h "$DESTINATION" ]]; then
+            if $VERBOSE; then echo "$DESTINATION is a link to $(readlink $DESTINATION)."; fi
+            if $OVERWRITELINK || $FORCEOVERWRITE; then
+                if $VERBOSE; then echo "Overwriting the link (New target: $TARGET)."; fi
+                ln -sf "$TARGET" "$DESTINATION"
+            elif $VERBOSE; then
+                echo "Ignoring."
+            fi
+        elif [[ -f "$DESTINATION" ]]; then
+            if $VERBOSE; then echo "There already exists a file at $DESTINATION."; fi
+            if $DOBACKUPS; then
+                if $VERBOSE; then echo "Backuping $DESTINATION."; fi
+                backup "$DESTINATION"
+            fi
+            if $OVERWRITEFILE || $FORCEOVERWRITE; then
+                if $VERBOSE; then echo "Creating the symbolic link. $DESTINATION will lead to $TARGET."; fi
+                ln -sf "$TARGET" "$DESTINATION"
+            elif $VERBOSE; then echo "Ignoring."; fi
+        elif [[ -d "$DESTINATION" ]]; then
+            if $VERBOSE; then echo "$DESTINATION is a directory."; fi
+            if $DOBACKUPS; then
+                if $VERBOSE; then echo "Backuping $DESTINATION."; fi
+                backup "$DESTINATION"
+            fi
+            if $OVERWRITEDIR || $FORCEOVERWRITE; then
+                if $VERBOSE; then echo "Creating the symbolic link. $DESTINATION will lead to $TARGET."; fi
+                rm -r "$DESTINATION"
+                ln -sf "$TARGET" "$DESTINATION"
+            fi
         fi
     else
         if $VERBOSE; then echo "Creating the symbolic link. $DESTINATION will lead to $TARGET."; fi
         ln -s "$TARGET" "$DESTINATION"
     fi
+
 }
 
 function checkconfig
@@ -121,12 +136,18 @@ else
             case $ARG in
                 "--verbose" ) VERBOSE=true;;
                 "--backup" ) DOBACKUPS=true;;
-                "--overwrite" ) OVERWRITELINKS=true;;
+                "--overwrite-link" ) OVERWRITELINK=true;;
+                "--overwrite-file" ) OVERWRITEFILE=true;;
+                "--overwrite-dir" ) OVERWRITEDIR=true;;
+                "--force-overwrite" ) FORCEOVERWRITE=true;;
                 "--version" ) version; exit 0;;
                 "--help" ) printhelp; exit 0;;
+                * ) echo "Wrong argument: $ARG"; WRONGARGUMENT=true;;
             esac
         fi
     done
+    if $WRONGARGUMENT; then exit 3; fi
+    allconfig
 fi
 
 exit 0
