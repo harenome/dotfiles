@@ -27,6 +27,8 @@ function version
 
 function printhelp
 {
+    # TODO: complete the help
+
     echo "Usage: ./dotm [OPTIONS]" #You don't say?
 }
 
