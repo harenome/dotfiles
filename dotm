@@ -29,19 +29,20 @@ function help
 
 function backup
 {
-    cp -r "$1" backup/
+    cp -r "$1" backups/
 }
 
+# Not tested yet
 function restore
 {
-    cp -rf "backup/$1" $TESTHOME/
+    cp -rf "backups/$1" $TESTHOME/
 }
 
 function createlink
 {
     # ln has a backup feature, however it is limited
-    TARGET="$DIRNAME/$2"
-    DESTINATION="$TESTHOME/$1"
+    local TARGET="$DIRNAME/$2"
+    local DESTINATION="$TESTHOME/$1"
 
     if [[ -h "$DESTINATION" ]]; then
         if $VERBOSE; then echo "$DESTINATION is a link to $(readlink $DESTINATION)."; fi
@@ -57,7 +58,9 @@ function createlink
             if $VERBOSE; then echo "Backuping $DESTINATION."; fi
             backup "$DESTINATION"
             if $VERBOSE; then echo "Creating the symbolic link. $DESTINATION will lead to $TARGET."; fi
-            ln -sf "$TARGET" "$DESTINATION"
+            #ln -sf works on regulars files, does not on directories
+            rm -r "$DESTINATION"
+            ln -s "$TARGET" "$DESTINATION"
         else
             if $VERBOSE; then echo "Abandonning."; fi
         fi
@@ -71,9 +74,9 @@ function checkconfig
 {
     local HASERROR=false
 
-    for LINE in $(grep -Env "#|:|^$" $CONFIGFILE | cut -d " " -f 2); do
-        [[ ! -e "$LINE" ]] &&
-        echo "Error: The file $LINE doesn't exist. Please check your dotm.rc file." &&
+    for FILE in $(grep -Env "#|:|^$" $CONFIGFILE | cut -d " " -f 2); do
+        [[ ! -e "$FILE" ]] &&
+        echo "Error: The file $FILE doesn't exist. Please check your dotm.rc file." &&
         HASERROR=true
     done
 
@@ -83,15 +86,15 @@ function checkconfig
 function singleconfig
 {
     BEGINNING=$(grep -n "^$(echo $1):$" $CONFIGFILE | cut -d ':' -f 1)
-    for LINE in "$(awk '{ if (NR > '$BEGINNING') if (length($0) > 0) { print } else { exit } }' $CONFIGFILE)"; do
-        createlink $(echo "$LINE")
+    awk '{ if (NR > '$BEGINNING') if (length($0) > 0) { print } else { exit } }' $CONFIGFILE | while read DEST TARG; do
+        createlink "$DEST" "$TARG"
     done
 }
 
 function allconfig
 {
-    for LINE in "$(grep -Ev "#|:|^$" $CONFIGFILE)"; do
-        createlink $(echo $LINE | cut -d " " -f 1) $(echo $LINE | cut -d " " -f 2)
+    awk '{ if (! match($0,":|#|^$")) { print } }' $CONFIGFILE | while read DEST TARG; do
+        createlink "$DEST" "$TARG"
     done
 }
 
@@ -105,9 +108,8 @@ checkconfig
 mkdir -p backups
 
 if [[ $# -eq 0 ]]; then
-    #interactive
-    echo "TODO"
-    #allconfig
+#interactive
+    allconfig
 else
     singleconfig $1
 fi
