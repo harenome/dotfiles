@@ -14,7 +14,7 @@ DIRNAME="$(pwd)$([[ $(dirname $0) = "." ]] || echo "/$(dirname $0)")"
 CONFIGFILE="dotm.rc"
 DOBACKUPS=true
 OVERWRITELINKS=true
-VERBOSE=true
+VERBOSE=false
 
 ## Functions
 function version
@@ -24,7 +24,7 @@ function version
 
 function help
 {
-    echo "Usage: ./dotm [OPTIONS]"
+    echo "Usage: ./dotm [OPTIONS]" #You don't say?
 }
 
 function backup
@@ -85,6 +85,8 @@ function checkconfig
 
 function singleconfig
 {
+    # Previous way to do so was to get the line number and read the file starting here.
+    # TODO: Use awk's match.
     BEGINNING=$(grep -n "^$(echo $1):$" $CONFIGFILE | cut -d ':' -f 1)
     awk '{ if (NR > '$BEGINNING') if (length($0) > 0) { print } else { exit } }' $CONFIGFILE | while read DEST TARG; do
         createlink "$DEST" "$TARG"
