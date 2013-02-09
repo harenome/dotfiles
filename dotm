@@ -5,8 +5,8 @@
 # Replacing $HOME with another location for the testing stage
 TESTHOME=$HOME/tmp
 
-DATE="Feburary 2nd 2013"
-VERSION="0.1"
+DATE="Feburary 9th 2013"
+VERSION="0.2"
 
 # Dirty (and hopefully, temporary) way to get the full path
 DIRNAME="$(pwd)$([[ $(dirname $0) = "." ]] || echo "/$(dirname $0)")"
@@ -21,14 +21,23 @@ VERBOSE=false
 WRONGARGUMENT=false
 
 HELPSTRING="Usage: ./dotm [OPTIONS]\n\n
-\t--verbose\n
 \t--backup\n
-\t--overwrite-link\n
-\t--overwrite-file\n
-\t--overwrite-dir\n
+\t\tenable backups\n
 \t--force-overwrite\n
+\t\tforce overwriting of links, files and dir\n
+\t--help\n
+\t\tprint this help\n
+\t--overwrite-link\n
+\t\toverwrite links\n
+\t--overwrite-file\n
+\t\toverwrite files\n
+\t--overwrite-dir\n
+\t\toverwrite directories\n
+\t--verbose\n
+\t\tenable verbose mode\n
 \t--version\n
-\t--help\n"
+\t\tprint the version\n
+"
 
 ## Functions
 function version
