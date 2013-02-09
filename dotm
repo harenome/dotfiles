@@ -18,6 +18,7 @@ OVERWRITELINK=false
 OVERWRITEFILE=false
 OVERWRITEDIR=false
 VERBOSE=false
+WRONGARGUMENT=false
 
 ## Functions
 function version
@@ -100,7 +101,7 @@ function checkconfig
         HASERROR=true
     done
 
-    if $HASERROR; then exit 1; fi
+    if $HASERROR; then exit 78; fi
 }
 
 function singleconfig
@@ -144,11 +145,11 @@ else
                 "--force-overwrite" ) FORCEOVERWRITE=true;;
                 "--version" ) version; exit 0;;
                 "--help" ) printhelp; exit 0;;
-                * ) echo "Wrong argument: $ARG"; WRONGARGUMENT=true;;
+                * ) echo "Wrong option: $ARG"; WRONGARGUMENT=true;;
             esac
         fi
     done
-    if $WRONGARGUMENT; then exit 3; fi
+    if $WRONGARGUMENT; then exit 64; fi
     allconfig
 fi
 
