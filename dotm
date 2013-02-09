@@ -20,6 +20,16 @@ OVERWRITEDIR=false
 VERBOSE=false
 WRONGARGUMENT=false
 
+HELPSTRING="Usage: ./dotm [OPTIONS]\n\n
+\t--verbose\n
+\t--backup\n
+\t--overwrite-link\n
+\t--overwrite-file\n
+\t--overwrite-dir\n
+\t--force-overwrite\n
+\t--version\n
+\t--help\n"
+
 ## Functions
 function version
 {
@@ -30,7 +40,7 @@ function printhelp
 {
     # TODO: complete the help
 
-    echo "Usage: ./dotm [OPTIONS]" #You don't say?
+    echo -en $HELPSTRING
 }
 
 function backup
