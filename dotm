@@ -77,6 +77,7 @@ function printhelp
 
 function backup
 {
+    if $VERBOSE; then echo "Backuping $DESTINATION."; fi
     cp -r "$1" $BACKUPDIR/
 }
 
@@ -102,28 +103,26 @@ function createlink
                 if $VERBOSE; then echo "Overwriting the link (New target: $TARGET)."; fi
                 ln -sf "$TARGET" "$DESTINATION"
             elif $VERBOSE; then
-                echo "Ignoring."
+                echo "Ignoring. ($TARGET to $DESTINATION)" 1>&2
             fi
         elif [[ -f "$DESTINATION" ]]; then
             if $VERBOSE; then echo "There already exists a file at $DESTINATION." 1>&2; fi
-            if $DOBACKUPS; then
-                if $VERBOSE; then echo "Backuping $DESTINATION."; fi
-                backup "$DESTINATION"
-            fi
             if $OVERWRITEFILE || $FORCEOVERWRITE; then
+                if $DOBACKUPS; then backup "$DESTINATION"; fi
                 if $VERBOSE; then echo "Creating the symbolic link. $DESTINATION will lead to $TARGET."; fi
                 ln -sf "$TARGET" "$DESTINATION"
-            elif $VERBOSE; then echo "Ignoring."; fi
+            elif $VERBOSE; then
+                echo "Ignoring. ($TARGET to $DESTINATION)" 1>&2
+            fi
         elif [[ -d "$DESTINATION" ]]; then
             if $VERBOSE; then echo "$DESTINATION is a directory." 1>&2; fi
-            if $DOBACKUPS; then
-                if $VERBOSE; then echo "Backuping $DESTINATION."; fi
-                backup "$DESTINATION"
-            fi
             if $OVERWRITEDIR || $FORCEOVERWRITE; then
+                if $DOBACKUPS; then backup "$DESTINATION"; fi
                 if $VERBOSE; then echo "Creating the symbolic link. $DESTINATION will lead to $TARGET."; fi
                 rm -r "$DESTINATION"
                 ln -sf "$TARGET" "$DESTINATION"
+            elif $VERBOSE; then
+                echo "Ignoring. ($TARGET to $DESTINATION)" 1>&2
             fi
         fi
     else
