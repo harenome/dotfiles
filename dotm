@@ -5,8 +5,8 @@
 # Replacing $HOME with another location for the testing stage
 TESTHOME=$HOME/tmp
 
-DATE="Feburary 9th 2013"
-VERSION="0.2"
+DATE="Feburary 23rd 2013"
+VERSION="0.3"
 
 # Dirty (and hopefully, temporary) way to get the full path
 DIRNAME="$(pwd)$([[ $(dirname $0) = "." ]] || echo "/$(dirname $0)")"
@@ -19,6 +19,8 @@ OVERWRITEFILE=false
 OVERWRITEDIR=false
 VERBOSE=false
 WRONGARGUMENT=false
+UNKNOWNFILE=false
+FILELIST=( )
 
 HELPSTRING="Usage: ./dotm [OPTIONS]\n\n
 \t--backup\n
@@ -110,7 +112,7 @@ function createlink
 
 }
 
-function checkconfig
+function checkconfigfile
 {
     local HASERROR=false
 
@@ -121,6 +123,16 @@ function checkconfig
     done
 
     if $HASERROR; then exit 78; fi
+}
+
+function isinconfigfile
+{
+    if ! grep "^$(echo $1):$" $CONFIGFILE > /dev/null; then
+        echo "Error: Don't know how to handle the config files for $1. Please check your $CONFIGFILE file."
+        UNKNOWNFILE=true
+    else
+        FILELIST=( ${FILELIST[@]} $1 )
+    fi
 }
 
 function singleconfig
@@ -140,13 +152,8 @@ function allconfig
     done
 }
 
-function interactive
-{
-    echo ""
-}
-
 ## Main
-checkconfig
+checkconfigfile
 mkdir -p backups
 
 if [[ $# -eq 0 ]]; then
@@ -157,7 +164,7 @@ else
         if [[ ${ARG:0:2} = "--" ]]; then
             case $ARG in
                 "--verbose" ) VERBOSE=true;;
-                "--backup" ) DOBACKUPS=true;;
+                "--no-backup" ) DOBACKUPS=false;;
                 "--overwrite-link" ) OVERWRITELINK=true;;
                 "--overwrite-file" ) OVERWRITEFILE=true;;
                 "--overwrite-dir" ) OVERWRITEDIR=true;;
@@ -166,10 +173,21 @@ else
                 "--help" ) printhelp; exit 0;;
                 * ) echo "Wrong option: $ARG"; WRONGARGUMENT=true;;
             esac
+        else
+            isinconfigfile $ARG
         fi
     done
+
     if $WRONGARGUMENT; then exit 64; fi
-    allconfig
+    if $UNKNOWNFILE; then exit 78; fi
+
+    if [[ ${#FILELIST} -eq 0 ]]; then
+        allconfig
+    else
+        for FILE in ${FILELIST[@]}; do
+            singleconfig $FILE
+        done
+    fi
 fi
 
 exit 0
