@@ -135,7 +135,7 @@ nnoremap k gk
 
 "" Folding {{{
 " Enable folding, za to (un)fold.
-set foldmethod=indent
+set foldmethod=syntax
 " Maximum folds for the "indent" and "syntax" methods.
 set foldnestmax=10
 " Opens a fold when moving into it.
