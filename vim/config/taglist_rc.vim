@@ -17,7 +17,7 @@ nnoremap <silent> <F8> :TlistToggle<CR>
 
 "" Aspect {{{
 " Horizontal Window instead of Vertical
-let Tlist_Use_Horiz_Window = 1
+let Tlist_Use_Horiz_Window = 0
 let Tlist_WinHeight = 15
 " Disable Auto Highlight Tag
 "let Tlist_Auto_Highlight_Tag = 0

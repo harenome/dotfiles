@@ -154,6 +154,7 @@ if executable('ctags')
     map <F9> :!ctags -R .<CR><CR>
 endif
 set tags+=./tags
+set ofu=syntaxcomplete#Complete
 autocmd Filetype c runtime! autoload/ccomplete.vim
 "}}}
 
