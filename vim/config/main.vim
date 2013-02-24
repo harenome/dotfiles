@@ -84,6 +84,8 @@ set statusline+=[%{&ff}]%*
 set statusline+=%=
 " Some flags.
 set statusline+=%(%4*%h%w%*%5*%m%r%*%)
+" Syntastic flags.
+set statusline+=%5*%{SyntasticStatuslineFlag()}%*
 " Current position.
 set statusline+=\ %(%l,%c%V\ (%P)%)
 "}}}
@@ -183,6 +185,9 @@ source ~/.vim/config/acp_rc.vim
 " maps something to <F8> !
 source ~/.vim/config/taglist_rc.vim
 "}}}
+
+"" Syntastic
+source ~/.vim/config/syntastic_rc.vim
 
 "" Special settings
 " vim:ft=vim:fdm=marker:ff=unix:foldopen=all:foldclose=all
