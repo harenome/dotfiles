@@ -3,3 +3,4 @@ backups/*
 
 ## Ignore vim swp files
 *.swp
+vim/.netrwhist
