@@ -1,17 +1,18 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" HarnoRanaivo's .vim/config/acp_rc.vim file
+" HarnoRanaivo's .vim/config/syntastic_rc.vim file
 " Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
 " Last Change: February 24th 2013
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
-"" Triggering of the auto-popup {{{
-" Default is 0. If non-zero, the auto-popup is not triggered by cursor moves.
-let g:acp_mappingDriven = 1
+"" Behaviour {{{
+" Check when buffers are first loaded
+let g:syntastic_check_on_open=1
+" Auto jump to errors when saving or loading a file
+let g:syntastic_auto_jump=1
 "}}}
 
-"" Length of keyword characters {{{
-" Default is 2
-let g:acp_behaviorKeywordLength = 4
+"" Custom Statusline {{{
+let g:syntastic_stl_format='%W{[WARNING(S) : %w]}%E{[ERROR(S) : %e]}'
 "}}}
 
 "" Special settings
