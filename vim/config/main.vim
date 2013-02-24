@@ -5,27 +5,22 @@
 "==============================================================================
 
 " If something is not commented, try ':h option'.
+" Type zi to open all folds.
 
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" No compatibility with legacy vi
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" No compatibility with legacy vi {{{
 " This must be first, as it changes other options.
 set nocompatible
+"}}}
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Pathogen, plugin manager
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Pathogen, plugin manager {{{
 " It apparently is better to load pathogen first.
 " And also have the filetype thing done after pathogen's loading.
 filetype off
 call pathogen#infect()
 Helptags
+"}}}
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Basics
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Basics {{{
 set mouse=a
 set showmode
 set ruler
@@ -46,20 +41,16 @@ let mapleader="ù"
 
 " Hides buffers instead of closing them.
 set hidden
+"}}}
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Syntax highlighting
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Syntax highlighting {{{
 syntax on 
 colorscheme rhinestones-dark
 set t_Co=256
 set showmatch
+"}}}
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Line numbers
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Line numbers {{{
 set number
 let g:switchednumber = 0
 function! SwitchLineNumber()
@@ -72,11 +63,9 @@ function! SwitchLineNumber()
     endif
 endfunction
 map <S-space> :call SwitchLineNumber()<CR>
+"}}}
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Status line
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Status line {{{
 " Always show status.
 set laststatus=2
 " Initialisation.
@@ -97,27 +86,23 @@ set statusline+=%=
 set statusline+=%(%4*%h%w%*%5*%m%r%*%)
 " Current position.
 set statusline+=\ %(%l,%c%V\ (%P)%)
+"}}}
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Indenting
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Indenting {{{
 " A tab is 4 spaces.
 set tabstop=4
 set shiftwidth=4
 set shiftround
 
-" Use spaces, not tabs
+"" Use spaces, not tabs
 set expandtab
 set smarttab
 set autoindent
 set smartindent
 set copyindent
+"}}}
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Searching
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Searching {{{
 " Hihglight matches.
 set hlsearch
 " Incremental searching.
@@ -126,41 +111,33 @@ set incsearch
 set ignorecase
 " ...unless they contain at least one capital letter.
 set smartcase
+"}}}
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Tabs
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Tabs {{{
 map <S-t> :tabnew<CR>           " <S-t> to open a new tab
 noremap <A-j> gT                " <A-j> to move to left tab
 noremap <A-k> gt                " <A-k> to move to right tab
+"}}}
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Windows
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Windows {{{
 map <C-k> <C-w>k
 map <C-l> <C-w>l
 map <C-h> <C-w>h
 map <C-j> <C-w>j
+"}}}
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Line wrapping
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Line wrapping {{{
 " Move inside of the current line when wrapped, instead of moving to the next
 " true line.
 nnoremap j gj
 nnoremap k gk
+"}}}
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Folding
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Folding {{{
 " Enable folding, za to (un)fold.
 set foldmethod=indent
 " Maximum folds for the "indent" and "syntax" methods.
-set foldnestmax=1
+set foldnestmax=10
 " Opens a fold when moving into it.
 set foldopen=all
 " Closes a fold when moving out of it.
@@ -170,21 +147,17 @@ nnoremap <space> zi
 " Folding bonus.
 autocmd InsertEnter * setlocal foldclose=""
 autocmd InsertLeave * setlocal foldclose=all
+"}}}
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Omni-completion
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Omni-completion {{{
 if executable('ctags')
     map <F9> :!ctags -R .<CR><CR>
 endif
 set tags+=./tags
 autocmd Filetype c runtime! autoload/ccomplete.vim
+"}}}
 
-
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
-" Plugins
-"""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
+"" Plugins {{{
 " I use separate files so that I can easily add/remove and enable/disable
 " options and plugin. It's very useful as I am sometimes on computers that
 " do not support the features needed for some of them.
@@ -202,9 +175,13 @@ source ~/.vim/config/supertab_rc.vim
 "" AutoComplPop (ACP)
 " If non-zero, auto-popup is enabled at startup
 " (the commands are :AcpEnable and :AcpDisable)
-let g:acp_enableAtStartup = 1
+let g:acp_enableAtStartup = 0
 source ~/.vim/config/acp_rc.vim
 
 "" TagList
 " maps something to <F8> !
 source ~/.vim/config/taglist_rc.vim
+"}}}
+
+"" Special settings
+" vim:ft=vim:fdm=marker:ff=unix:foldopen=all:foldclose=all
