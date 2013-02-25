@@ -193,6 +193,9 @@ source ~/.vim/config/syntastic_rc.vim
 
 "" Fugitive
 source ~/.vim/config/fugitive_rc.vim
+
+"" Gitv
+source ~/.vim/config/gitv_rc.vim
 "}}}
 
 "" Special settings
