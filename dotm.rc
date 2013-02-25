@@ -5,3 +5,6 @@ vim:
 
 gvim:
 .gvimrc gvim/gvimrc
+
+abcde:
+.abcde.conf abcde/abcde.conf
