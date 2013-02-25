@@ -169,7 +169,7 @@ autocmd Filetype c runtime! autoload/ccomplete.vim
 source ~/.vim/config/minibufexpl_rc.vim
 
 "" Gundo
-" maps something to <F5> !
+" maps something to <F4> !
 source ~/.vim/config/gundo_rc.vim
 
 "" SuperTab
@@ -184,10 +184,11 @@ source ~/.vim/config/acp_rc.vim
 "" TagList
 " maps something to <F8> !
 source ~/.vim/config/taglist_rc.vim
-"}}}
 
 "" Syntastic
+" maps something to <F5> and <F6> !
 source ~/.vim/config/syntastic_rc.vim
+"}}}
 
 "" Special settings
 " vim:ft=vim:fdm=marker:ff=unix:foldopen=all:foldclose=all

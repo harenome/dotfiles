@@ -5,7 +5,7 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 "" Mapping {{{
-nnoremap <F5> :GundoToggle<CR>
+nnoremap <F4> :GundoToggle<CR>
 "}}}
 
 "" Gundo graph {{{
