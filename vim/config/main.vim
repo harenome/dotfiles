@@ -75,7 +75,7 @@ set statusline+=%1*#%-0.3(%n\ %)%*
 " Fugitive (git branch)
 set statusline+=%{fugitive#statusline()}
 " File name.
-set statusline+=\ %2*%f%*
+set statusline+=%2*%f%*
 " File type.
 set statusline+=\ %3*[%{strlen(&ft)?&ft:'plain\ text'}]
 " File encoding.
