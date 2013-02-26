@@ -172,8 +172,10 @@ source ~/.vim/config/minibufexpl_rc.vim
 "}}}
 
 "" Gundo {{{
+" Disable gundo
+let g:gundo_disable = 1
 " maps something to <F4> !
-source ~/.vim/config/gundo_rc.vim
+"source ~/.vim/config/gundo_rc.vim
 "}}}
 
 "" SuperTab {{{
@@ -209,6 +211,11 @@ source ~/.vim/config/gitv_rc.vim
 " Disable the plugin
 "let g:loaded_ctrlp = 1
 source ~/.vim/config/ctrlp_rc.vim
+"}}}
+
+"" Undotree {{{
+" Maps something to <F4> !
+source ~/.vim/config/undotree_rc.vim
 "}}}
 
 "}}}
