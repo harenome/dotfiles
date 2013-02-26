@@ -10,3 +10,6 @@
 [submodule "vim/bundle/ctrlp"]
 	path = vim/bundle/ctrlp
 	url = git://github.com/kien/ctrlp.vim.git
+[submodule "vim/bundle/undotree"]
+	path = vim/bundle/undotree
+	url = git://github.com/mbbill/undotree.git
