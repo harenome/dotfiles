@@ -191,7 +191,7 @@ source ~/.vim/config/acp_rc.vim
 
 "" TagList {{{
 " maps something to <F8> !
-source ~/.vim/config/taglist_rc.vim
+"source ~/.vim/config/taglist_rc.vim
 "}}}
 
 "" Syntastic {{{
@@ -216,6 +216,10 @@ source ~/.vim/config/ctrlp_rc.vim
 "" Undotree {{{
 " Maps something to <F4> !
 source ~/.vim/config/undotree_rc.vim
+"}}}
+
+"" Tagbar {{{
+source ~/.vim/config/tagbar_rc.vim
 "}}}
 
 "}}}
