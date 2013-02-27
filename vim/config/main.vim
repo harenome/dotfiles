@@ -225,6 +225,8 @@ source ~/.vim/config/tagbar_rc.vim
 "" Numbers {{{
 " Enable or disable numbers plugin
 let g:enable_numbers = 1
+" Mapping
+nnoremap <F3> :NumbersToggle<CR>
 "}}}
 
 "}}}
