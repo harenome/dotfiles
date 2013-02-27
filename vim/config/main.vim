@@ -52,17 +52,17 @@ set showmatch
 
 "" Line numbers {{{
 set number
-let g:switchednumber = 0
-function! SwitchLineNumber()
-    if g:switchednumber == 0
-        let g:switchednumber = 1
-        set relativenumber
-    else
-        let g:switchednumber = 0
-        set number
-    endif
-endfunction
-map <S-space> :call SwitchLineNumber()<CR>
+"let g:switchednumber = 0
+"function! SwitchLineNumber()
+"    if g:switchednumber == 0
+"        let g:switchednumber = 1
+"        set relativenumber
+"    else
+"        let g:switchednumber = 0
+"        set number
+"    endif
+"endfunction
+"map <S-space> :call SwitchLineNumber()<CR>
 "}}}
 
 "" Status line {{{
@@ -220,6 +220,11 @@ source ~/.vim/config/undotree_rc.vim
 
 "" Tagbar {{{
 source ~/.vim/config/tagbar_rc.vim
+"}}}
+
+"" Numbers {{{
+" Enable or disable numbers plugin
+let g:enable_numbers = 1
 "}}}
 
 "}}}
