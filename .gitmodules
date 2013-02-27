@@ -19,3 +19,6 @@
 [submodule "vim/bundle/numbers"]
 	path = vim/bundle/numbers
 	url = git://github.com/myusuf3/numbers.vim.git
+[submodule "vim/bundle/rhinestones-colors"]
+	path = vim/bundle/rhinestones-colors
+	url = git://github.com/HarnoRanaivo/vim-colors-rhinestones.git
