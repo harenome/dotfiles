@@ -167,6 +167,9 @@ autocmd Filetype c runtime! autoload/ccomplete.vim
 " options and plugin. It's very useful as I am sometimes on computers that
 " do not support the features needed for some of them.
 
+" Supposedly speeds up things when using lots of plugins.
+set lazyredraw
+
 "" MiniBufExpl {{{
 source ~/.vim/config/minibufexpl_rc.vim
 "}}}
