@@ -1,11 +1,12 @@
 "==============================================================================
 " HarnoRanaivo's .vimrc file
 " Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
-" Last Change: February 24th 2013
+" Last Change: March 3rd 2013
 "==============================================================================
 
 " If something is not commented, try ':h option'.
-" Type zi to open all folds.
+" Folds will automatically open and close themselves as you move in and out.
+" If this bothers you, type 'zi' to open all folds.
 
 "" No compatibility with legacy vi {{{
 " This must be first, as it changes other options.
@@ -52,6 +53,9 @@ set showmatch
 
 "" Line numbers {{{
 set number
+" Previous way to switch between relativenumber and number, before I found
+" 'numbers'. I might switch back since I don't use the 'numbers' plugin's
+" automatic trigger.
 "let g:switchednumber = 0
 "function! SwitchLineNumber()
 "    if g:switchednumber == 0
@@ -175,7 +179,7 @@ source ~/.vim/config/minibufexpl_rc.vim
 "}}}
 
 "" Gundo {{{
-" Disable gundo
+" Disable gundo.
 let g:gundo_disable = 1
 " maps something to <F4> !
 "source ~/.vim/config/gundo_rc.vim
@@ -186,19 +190,19 @@ source ~/.vim/config/supertab_rc.vim
 "}}}
 
 "" AutoComplPop (ACP) {{{
-" If non-zero, auto-popup is enabled at startup
+" If non-zero, auto-popup is enabled at startup.
 " (the commands are :AcpEnable and :AcpDisable)
 let g:acp_enableAtStartup = 0
 source ~/.vim/config/acp_rc.vim
 "}}}
 
 "" TagList {{{
-" maps something to <F8> !
+" Maps something to <F8> !
 "source ~/.vim/config/taglist_rc.vim
 "}}}
 
 "" Syntastic {{{
-" maps something to <F5> and <F6> !
+" Maps something to <F5> and <F6> !
 source ~/.vim/config/syntastic_rc.vim
 "}}}
 
@@ -211,7 +215,7 @@ source ~/.vim/config/gitv_rc.vim
 "}}}
 
 "" CtrlP {{{
-" Disable the plugin
+" Disable the plugin.
 "let g:loaded_ctrlp = 1
 source ~/.vim/config/ctrlp_rc.vim
 "}}}
@@ -222,17 +226,18 @@ source ~/.vim/config/undotree_rc.vim
 "}}}
 
 "" Tagbar {{{
+" Maps something to <F8> !
 source ~/.vim/config/tagbar_rc.vim
 "}}}
 
 "" Numbers {{{
-" Enable or disable numbers plugin
+" Enable or disable numbers plugin.
 let g:enable_numbers = 0
-" Mapping
+" Mapping to <F3> !
 nnoremap <F3> :NumbersToggle<CR>
 "}}}
 
 "}}}
 
-"" Special settings
+"" Special settings for this file.
 " vim:ft=vim:fdm=marker:ff=unix:foldopen=all:foldclose=all
