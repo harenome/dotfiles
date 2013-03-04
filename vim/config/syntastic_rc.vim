@@ -10,8 +10,10 @@ nnoremap <F6> :Errors<CR>
 "}}}
 
 "" Behaviour {{{
+" Mode.
+let g:syntastic_mode_map = { "mode": "passive", "active_filetypes": [], "passive_filetypes": [] }
 " Check when buffers are first loaded
-let g:syntastic_check_on_open = 1
+let g:syntastic_check_on_open = 0
 " Auto jump to errors when saving or loading a file
 let g:syntastic_auto_jump = 1
 " Auto open and close the error window
