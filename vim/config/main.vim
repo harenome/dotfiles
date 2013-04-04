@@ -166,9 +166,19 @@ set ofu=syntaxcomplete#Complete
 autocmd Filetype c runtime! autoload/ccomplete.vim
 "}}}
 
-"" Highlight current line in Insert mode
+"" Highlight current line in Insert mode {{{
 autocmd InsertLeave * set nocul
 autocmd InsertEnter * set cul
+"}}}
+
+"" Highlight limit column {{{
+"set colorcolumn=80
+"}}}
+
+"" Selection lasts after indenting {{{
+vmap > >gv
+vmap < <gv
+"}}}
 
 "" Plugins {{{
 " I use separate files so that I can easily add/remove and enable/disable
