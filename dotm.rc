@@ -1,3 +1,8 @@
+# Bash files
+bash:
+.bashrc bash/bashrc
+.bash_aliases bash/aliases
+
 # Vim files
 vim:
 .vim vim
@@ -6,5 +11,6 @@ vim:
 gvim:
 .gvimrc gvim/gvimrc
 
+# Abcde
 abcde:
 .abcde.conf abcde/abcde.conf
