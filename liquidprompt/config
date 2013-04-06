@@ -6,7 +6,7 @@
 # If you want to use different themes and features,
 # you can load the corresponding files here:
 #source ~/code/liquidprompt/nojhan.theme
-#LP_PS1_FILE="~/code/liquidprompt/nojhan.ps1"
+LP_PS1_FILE="~/liquidprompt/prompts/kshegzyaj.ps1"
 
 #############
 # BEHAVIOUR #
@@ -14,7 +14,7 @@
 
 # Maximal value under which the battery level is displayed
 # Recommended value is 75
-LP_BATTERY_THRESHOLD=75
+LP_BATTERY_THRESHOLD=50
 
 # Minimal value after which the load average is displayed
 # Recommended value is 60
@@ -36,7 +36,7 @@ LP_HOSTNAME_ALWAYS=0
 # Do you want to display the user, even if he is the same than the logged one?
 # Defaults to 1 (always display the user)
 # set to 0 if you want to hide the logged user (it will always display different users)
-LP_USER_ALWAYS=1
+LP_USER_ALWAYS=0
 
 # Do you want to display the percentages of load/batteries along with their
 # corresponding marks? Set to 0 to only print the colored marks.
@@ -45,7 +45,7 @@ LP_PERCENTS_ALWAYS=1
 
 # Do you want to use the permissions feature ?
 # Recommended value is 1
-LP_ENABLE_PERM=1
+LP_ENABLE_PERM=0
 
 # Do you want to use the shorten path feature ?
 # Recommended value is 1
@@ -53,7 +53,7 @@ LP_ENABLE_SHORTEN_PATH=1
 
 # Do you want to use the proxy detection feature ?
 # Recommended value is 1
-LP_ENABLE_PROXY=1
+LP_ENABLE_PROXY=0
 
 # Do you want to use the jobs feature ?
 # Recommended value is 1
@@ -61,11 +61,11 @@ LP_ENABLE_JOBS=1
 
 # Do you want to use the load feature ?
 # Recommended value is 1
-LP_ENABLE_LOAD=1
+LP_ENABLE_LOAD=0
 
 # Do you want to use the batt feature ?
 # Recommended value is 1
-LP_ENABLE_BATT=1
+LP_ENABLE_BATT=0
 
 # Do you want to use vcs features with root account
 # Recommended value is 0
@@ -77,23 +77,23 @@ LP_ENABLE_GIT=1
 
 # Do you want to use the svn special features ?
 # Recommended value is 1
-LP_ENABLE_SVN=1
+LP_ENABLE_SVN=0
 
 # Do you want to use the mercurial special features ?
 # Recommended value is 1
-LP_ENABLE_HG=1
+LP_ENABLE_HG=0
 
 # Do you want to use the fossil special features ?
 # Recommended value is 1
-LP_ENABLE_FOSSIL=1
+LP_ENABLE_FOSSIL=0
 
 # Do you want to use the bzr special features ?
 # Recommanded value is 1
-LP_ENABLE_BZR=1
+LP_ENABLE_BZR=0
 
 # Show time of the last prompt display
 # Recommended value is 0
-LP_ENABLE_TIME=0
+LP_ENABLE_TIME=1
 
 # Use the liquid prompt as the title of the terminal window
 # This may not work properly on exotic terminals, thus the
