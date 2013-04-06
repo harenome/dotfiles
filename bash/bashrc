@@ -105,3 +105,8 @@ fi
 if [ -f /etc/bash_completion ] && ! shopt -oq posix; then
     . /etc/bash_completion
 fi
+
+# Liquidprompt
+if [ -f ~/.liquidprompt/liquidprompt ]; then
+    source ~/.liquidprompt/liquidprompt
+fi

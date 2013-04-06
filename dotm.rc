@@ -3,6 +3,11 @@ bash:
 .bashrc bash/bashrc
 .bash_aliases bash/aliases
 
+# Liquidprompt
+liquidprompt:
+.liquidprompt liquidprompt
+.liquidpromptrc liquidprompt/config
+
 # Vim files
 vim:
 .vim vim
