@@ -1,3 +1,13 @@
+# Bash files
+bash:
+.bashrc bash/config
+.bash_aliases bash/aliases
+
+# Liquidprompt
+liquidprompt:
+.liquidprompt liquidprompt
+.liquidpromptrc liquidprompt/config
+
 # Vim files
 vim:
 .vim vim
@@ -6,5 +16,6 @@ vim:
 gvim:
 .gvimrc gvim/gvimrc
 
+# Abcde
 abcde:
 .abcde.conf abcde/abcde.conf

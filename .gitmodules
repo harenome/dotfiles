@@ -22,3 +22,6 @@
 [submodule "vim/bundle/rhinestones-colors"]
 	path = vim/bundle/rhinestones-colors
 	url = git://github.com/HarnoRanaivo/vim-colors-rhinestones.git
+[submodule "liquidprompt/upstream"]
+	path = liquidprompt/upstream
+	url = git://github.com/nojhan/liquidprompt.git
