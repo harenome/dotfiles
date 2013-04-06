@@ -1,6 +1,6 @@
 # Bash files
 bash:
-.bashrc bash/bashrc
+.bashrc bash/config
 .bash_aliases bash/aliases
 
 # Liquidprompt
