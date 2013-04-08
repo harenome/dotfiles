@@ -1,4 +1,16 @@
+# apt-get
 alias update='apt-get update'
 alias upgrade='apt-get upgrade'
+
+# git
+alias g='git'
+alias gco='g co'
+alias gci='g ci'
+alias gst='g st'
+alias gbr='g br'
+alias gdf='g df'
+alias gamend='g amend'
+alias glg='g lg'
+alias glast='g last'
 
 # vim:ft=sh
