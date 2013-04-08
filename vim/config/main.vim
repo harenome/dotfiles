@@ -137,6 +137,8 @@ map <C-j> <C-w>j
 "" Line wrapping {{{
 " Move inside of the current line when wrapped, instead of moving to the next
 " true line.
+set wrap
+set linebreak
 nnoremap j gj
 nnoremap k gk
 "}}}
