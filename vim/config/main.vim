@@ -1,7 +1,7 @@
 "==============================================================================
 " HarnoRanaivo's .vimrc file
 " Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
-" Last Change: March 3rd 2013
+" Last Change: April 12th 2013
 "==============================================================================
 
 " If something is not commented, try ':h option'.
@@ -251,6 +251,10 @@ source ~/.vim/config/tagbar_rc.vim
 let g:enable_numbers = 0
 " Mapping to <F3> !
 nnoremap <F3> :NumbersToggle<CR>
+"}}}
+
+"" Alternate {{{
+source ~/.vim/config/alternate_rc.vim
 "}}}
 
 "}}}
