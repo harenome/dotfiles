@@ -4,8 +4,9 @@
 " Last Change: May 28th 2012
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+set guioptions=aegT
 "" Disable menu
-set guioptions-=m
+"set guioptions-=m
 
 "" Disable toolbar
 "set guioptions-=T
@@ -22,7 +23,7 @@ set guioptions-=m
 "map <silent> <F12> :call ToggleToolbar()<CR>
 
 "" Disable scrollbar
-set guioptions-=r
+"set guioptions-=rRlL
 
 "" Fullscreen
 "if has('unix') && executable('wmctrl')
