@@ -37,3 +37,7 @@
 [submodule "vim/bundle/vim-repeat"]
 	path = vim/bundle/vim-repeat
 	url = git://github.com/tpope/vim-repeat.git
+[submodule "vim/bundle/indentLine"]
+	path = vim/bundle/indentLine
+	url = git://github.com/Yggdroot/indentLine.git
+    ignore = dirty
