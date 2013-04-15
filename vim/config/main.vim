@@ -139,6 +139,7 @@ map <C-j> <C-w>j
 " true line.
 set wrap
 set linebreak
+set showbreak=↪
 nnoremap j gj
 nnoremap k gk
 "}}}
