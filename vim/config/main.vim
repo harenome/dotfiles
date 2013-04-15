@@ -257,6 +257,10 @@ nnoremap <F3> :NumbersToggle<CR>
 source ~/.vim/config/alternate_rc.vim
 "}}}
 
+"" Rainbow {{{
+source ~/.vim/config/rainbow_rc.vim
+"}}}
+
 "}}}
 
 "" Special settings for this file.
