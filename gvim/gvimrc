@@ -5,10 +5,10 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 "" Disable menu
-"set guioptions-=m
+set guioptions-=m
 
 "" Disable toolbar
-set guioptions-=T
+"set guioptions-=T
 "let g:toolbar = 0
 "function! ToggleToolbar()
 "    if g:toolbar == 0
