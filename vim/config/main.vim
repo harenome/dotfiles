@@ -139,6 +139,7 @@ map <C-j> <C-w>j
 " true line.
 set wrap
 set linebreak
+set showbreak=↪
 nnoremap j gj
 nnoremap k gk
 "}}}
@@ -255,6 +256,10 @@ nnoremap <F3> :NumbersToggle<CR>
 
 "" Alternate {{{
 source ~/.vim/config/alternate_rc.vim
+"}}}
+
+"" Rainbow {{{
+source ~/.vim/config/rainbow_rc.vim
 "}}}
 
 "}}}
