@@ -28,3 +28,6 @@
 [submodule "vim/bundle/vim-pasta"]
 	path = vim/bundle/vim-pasta
 	url = git://github.com/sickill/vim-pasta.git
+[submodule "vim/bundle/rainbow"]
+	path = vim/bundle/rainbow
+	url = git://github.com/oblitum/rainbow.git
