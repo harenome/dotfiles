@@ -5,6 +5,8 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 set guioptions=aegT
+
+set guifont=Ubuntu\ Mono\ 10,Monospace\ 10
 "" Disable menu
 "set guioptions-=m
 
