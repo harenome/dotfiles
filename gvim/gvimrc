@@ -1,17 +1,26 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 " HarnoRanaivo's .gvimrc file
 " Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
-" Last Change: May 28th 2012
+" Last Change: April 16th 2013
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
+"" General settings {{{
 set guioptions=aegT
-
 set guifont=Ubuntu\ Mono\ 10,Monospace\ 10
-"" Disable menu
-"set guioptions-=m
 
-"" Disable toolbar
-"set guioptions-=T
+" Set the size of the window on opening.
+set lines=32
+set columns=100
+"}}}
+
+"" ToolBar overriding {{{
+aunmenu ToolBar
+source ~/.vim/config/toolbar.vim
+"}}}
+
+"" Previous settings {{{
+" I probably won't use these functions again, but I keep them,
+" for the time being. Just in case.
 "let g:toolbar = 0
 "function! ToggleToolbar()
 "    if g:toolbar == 0
@@ -42,3 +51,7 @@ set guifont=Ubuntu\ Mono\ 10,Monospace\ 10
 "    endfunction
 "    map <silent> <F11> :call ToggleFullscreen()<CR>
 "endif
+"}}}
+
+"" Special settings for this file.
+" vim:ft=vim:fdm=marker:ff=unix:foldopen=all:foldclose=all
