@@ -23,7 +23,7 @@ if !exists("did_install_custom_toolbar")
     amenu icon=~/.vim/bitmaps/16/document-new.png 1.10 ToolBar.New :new<CR>
     amenu icon=~/.vim/bitmaps/16/document-open.png 1.20 ToolBar.Open :browse confirm e<CR>
     an <silent> icon=~/.vim/bitmaps/16/document-save.png 1.30 ToolBar.Save :if expand("%") == ""<Bar>browse confirm w<Bar>else<Bar>confirm w<Bar>endif<CR>
-    an icon=~/.vim/bitmaps/16/document-save-as.png 1.40 ToolBar.SaveAll :browse confirm wa<cr>
+    an icon=~/.vim/bitmaps/16/system-floppy.png 1.40 ToolBar.SaveAll :browse confirm wa<cr>
 
     an 1.45 ToolBar.-sep1- <Nop>
 
@@ -40,32 +40,46 @@ if !exists("did_install_custom_toolbar")
     exe 'vnoremenu <script> ToolBar.Paste ' . paste#paste_cmd['v']
     exe 'inoremenu <script> ToolBar.Paste ' . paste#paste_cmd['i']
 
-    if !has("gui_athena")
-        an 1.95 ToolBar.-sep3- <Nop>
+    an 1.95 ToolBar.-sep3- <Nop>
 
-        an icon=~/.vim/bitmaps/16/edit-find-replace.png 1.100 ToolBar.Replace :promptrepl<CR>
+    an icon=~/.vim/bitmaps/16/system-run.png 1.100 ToolBar.Make :make<CR>
+    " an icon=~/.vim/bitmaps/16/gtk-select-all.png 1.110 ToolBar.RunCtags :exe "!" . g:ctags_command<CR>
+    " an icon=~/.vim/bitmaps/16/go-jump.png 1.120 ToolBar.TagJump g<C-]>
+    an icon=~/.vim/bitmaps/16/stock_spellcheck.png 1.130 ToolBar.Syntastic :SyntasticCheck<CR>
+    an icon=~/.vim/bitmaps/16/document-revert.png 1.140 ToolBar.Alternate :A<CR>
+
+    an 1.195 ToolBar.-sep4- <Nop>
+
+    an icon=~/.vim/bitmaps/16/accessories-dictionary.png 1.200 ToolBar.Tagbar :TagbarToggle<CR>
+    an icon=~/.vim/bitmaps/16/stock_spam.png 1.210 ToolBar.Undotree :UndotreeToggle<CR>
+    an icon=~/.vim/bitmaps/16/system-file-manager.png 1.220 ToolBar.FileExplorer :Vex<CR>
+
+    an 1.295 ToolBar.-sep5- <Nop>
+    an icon=~/.vim/bitmaps/16/preferences-system-windows.png 1.300 ToolBar.MiniBufExplorer :TMiniBufExplorer<CR>
+    an icon=~/.vim/bitmaps/16/window_fullscreen.png 1.310 ToolBar.Maximize <C-w>_
+    an icon=~/.vim/bitmaps/16/zoom-fit-best.png 1.320 ToolBar.ResizeEqual <C-w>=
+
+    an 1.395 ToolBar.-sep6- <Nop>
+    an icon=~/.vim/bitmaps/16/applications-engineering.png 1.400 ToolBar.Numbers :NumbersToggle<CR>
+    nmenu icon=~/.vim/bitmaps/16/format-text-direction-ltr.png 1.410 ToolBar.Comment gcc
+    vmenu icon=~/.vim/bitmaps/16/format-text-direction-ltr.png 1.410 ToolBar.Comment gc
+    imenu icon=~/.vim/bitmaps/16/format-text-direction-ltr.png 1.410 ToolBar.Comment <C-O>gcc
+    nmenu icon=~/.vim/bitmaps/16/format-indent-more.png 1.420 ToolBar.IndentMore >>
+    vmenu icon=~/.vim/bitmaps/16/format-indent-more.png 1.420 ToolBar.IndentMore >
+    imenu icon=~/.vim/bitmaps/16/format-indent-more.png 1.420 ToolBar.IndentMore <C-O>>>
+    nmenu icon=~/.vim/bitmaps/16/format-indent-less.png 1.430 ToolBar.IndentLess <<
+    vmenu icon=~/.vim/bitmaps/16/format-indent-less.png 1.430 ToolBar.IndentLess <
+    imenu icon=~/.vim/bitmaps/16/format-indent-less.png 1.430 ToolBar.IndentLess <C-O><<
+
+    if !has("gui_athena")
+        an 1.895 ToolBar.-sep7- <Nop>
+
+        an icon=~/.vim/bitmaps/16/edit-find-replace.png 1.900 ToolBar.Replace :promptrepl<CR>
         vunmenu ToolBar.Replace
         vnoremenu icon=~/.vim/bitmaps/16/edit-find-replace.png ToolBar.Replace y:promptrepl <C-R>=<SID>FixFText()<CR><CR>
-        an icon=~/.vim/bitmaps/16/go-next.png 1.110 ToolBar.FindNext n
-        an icon=~/.vim/bitmaps/16/go-previous.png 1.120 ToolBar.FindPrev N
+        an icon=~/.vim/bitmaps/16/go-next.png 1.910 ToolBar.FindNext n
+        an icon=~/.vim/bitmaps/16/go-previous.png 1.920 ToolBar.FindPrev N
     endif
-
-    an 1.245 ToolBar.-sep6- <Nop>
-
-    an icon=~/.vim/bitmaps/16/system-run/png 1.250 ToolBar.Make :make<CR>
-    an icon=~/.vim/bitmaps/16/gtk-select-all.png 1.270 ToolBar.RunCtags :exe "!" . g:ctags_command<CR>
-    an icon=~/.vim/bitmaps/16/go-jump.png 1.280 ToolBar.TagJump g<C-]>
-
-    an 1.295 ToolBar.-sep7- <Nop>
-
-    an icon=~/.vim/bitmaps/16/document-page-setup.png 1.300 ToolBar.Tagbar :TagbarToggle<CR>
-    an icon=~/.vim/bitmaps/16/stock_spam.png 1.310 ToolBar.Undotree :UndotreeToggle<CR>
-    an icon=~/.vim/bitmaps/16/stock_spellcheck.png 1.320 ToolBar.Syntastic :SyntasticCheck<CR>
-    an icon=~/.vim/bitmaps/16/document-revert.png 1.330 ToolBar.Alternate :A<CR>
-
-    an 1.505 ToolBar.-sep8- <Nop>
-    an icon=~/.vim/bitmaps/16/window_fullscreen.png 1.510 ToolBar.Maximize <C-w>_
-    an icon=~/.vim/bitmaps/16/zoom-fit-best.png 1.520 ToolBar.ResizeEqual <C-w>=
     "}}}
 
     "" ToolTips {{{
@@ -79,22 +93,30 @@ if !exists("did_install_custom_toolbar")
     tmenu 1.80 ToolBar.Copy Copier
     tmenu 1.90 ToolBar.Paste Coller
 
+    tmenu 1.100 ToolBar.Make Compiler
+    " tmenu 1.110 ToolBar.RunCtags Lancer ctags
+    " tmenu 1.120 ToolBar.TagJump Aller à l'étiquette
+    tmenu 1.130 ToolBar.Syntastic Rechercher les erreurs
+    tmenu 1.140 ToolBar.Alternate Alterner entre le header et le code source
+
+    tmenu 1.200 ToolBar.Tagbar Afficher les tags
+    tmenu 1.210 ToolBar.Undotree Afficher l'historique d'édition
+    tmenu 1.220 ToolBar.FileExplorer Afficher Vex
+
+    tmenu 1.300 ToolBar.MiniBufExplorer Afficher le mini explorateur de tampons
+    tmenu 1.310 ToolBar.Maximize Maximiser la fenêtre
+    tmenu 1.320 ToolBar.ResizeEqual Redimensionner toutes les fenêtres à la même taille
+
+    tmenu 1.400 ToolBar.Numbers Alterner entre affichage classique et relatif des numéros de lignes
+    tmenu 1.410 ToolBar.Comment Commenter
+    tmenu 1.420 ToolBar.IndentMore Indenter
+    tmenu 1.430 ToolBar.IndentLess Désindenter
+
     if !has("gui_athena")
-        tmenu 1.100 ToolBar.Replace Rechercher et remplacer
-        tmenu 1.110 ToolBar.FindNext Occurence suivante
-        tmenu 1.120 ToolBar.FindPrev Occurence précédente
+        tmenu 1.900 ToolBar.Replace Rechercher et remplacer
+        tmenu 1.910 ToolBar.FindNext Occurence suivante
+        tmenu 1.920 ToolBar.FindPrev Occurence précédente
     endif
-
-    tmenu 1.250 ToolBar.Make Compiler
-    tmenu 1.270 ToolBar.RunCtags Lancer ctags
-    tmenu 1.280 ToolBar.TagJump Aller à l'étiquette
-    tmenu 1.300 ToolBar.Tagbar Afficher les tags
-    tmenu 1.310 ToolBar.Undotree Afficher l'historique d'édition
-    tmenu 1.320 ToolBar.Syntastic Rechercher les erreurs
-    tmenu 1.330 ToolBar.Alternate Alterner entre le header et le code source
-
-    tmenu 1.510 ToolBar.Maximize Maximiser la fenêtre
-    tmenu 1.520 ToolBar.ResizeEqual Redimensionner toutes les fenêtres à la même taille
     "}}}
 endif
 "}}}
