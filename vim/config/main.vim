@@ -144,6 +144,10 @@ nnoremap j gj
 nnoremap k gk
 "}}}
 
+"" Listchars {{{
+set list lcs=trail:·,tab:»·
+"}}}
+
 "" Folding {{{
 " Enable folding, za to (un)fold.
 set foldmethod=syntax
