@@ -262,6 +262,11 @@ source ~/.vim/config/alternate_rc.vim
 source ~/.vim/config/rainbow_rc.vim
 "}}}
 
+"" Git Gutter {{{
+let g:gitgutter_enabled = 1
+source ~/.vim/config/gitgutter_rc.vim
+"}}}
+
 "}}}
 
 "" Special settings for this file.
