@@ -1,7 +1,7 @@
 "==============================================================================
 " HarnoRanaivo's .vimrc file
 " Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
-" Last Change: April 12th 2013
+" Last Change: April 20th 2013
 "==============================================================================
 
 " If something is not commented, try ':h option'.
@@ -45,7 +45,7 @@ set hidden
 "}}}
 
 "" Syntax highlighting {{{
-syntax on 
+syntax on
 colorscheme rhinestones-dark
 set t_Co=256
 set showmatch
@@ -152,7 +152,7 @@ set list lcs=trail:·,tab:»·
 " Enable folding, za to (un)fold.
 set foldmethod=syntax
 " Maximum folds for the "indent" and "syntax" methods.
-set foldnestmax=10
+set foldnestmax=5
 " Opens a fold when moving into it.
 set foldopen=all
 " Closes a fold when moving out of it.
@@ -174,8 +174,9 @@ autocmd Filetype c runtime! autoload/ccomplete.vim
 "}}}
 
 "" Highlight current line in Insert mode {{{
-autocmd InsertLeave * set nocul
-autocmd InsertEnter * set cul
+" autocmd InsertLeave * setlocal nocul
+" autocmd InsertEnter * setlocal cul
+" set cul
 "}}}
 
 "" Highlight limit column {{{
@@ -187,90 +188,8 @@ vmap > >gv
 vmap < <gv
 "}}}
 
-"" Plugins {{{
-" I use separate files so that I can easily add/remove and enable/disable
-" options and plugin. It's very useful as I am sometimes on computers that
-" do not support the features needed for some of them.
-
-" Supposedly speeds up things when using lots of plugins.
-"set lazyredraw
-
-"" MiniBufExpl {{{
-source ~/.vim/config/minibufexpl_rc.vim
-"}}}
-
-"" Gundo {{{
-" Disable gundo.
-let g:gundo_disable = 1
-" maps something to <F4> !
-"source ~/.vim/config/gundo_rc.vim
-"}}}
-
-"" SuperTab {{{
-source ~/.vim/config/supertab_rc.vim
-"}}}
-
-"" AutoComplPop (ACP) {{{
-" If non-zero, auto-popup is enabled at startup.
-" (the commands are :AcpEnable and :AcpDisable)
-let g:acp_enableAtStartup = 0
-source ~/.vim/config/acp_rc.vim
-"}}}
-
-"" TagList {{{
-" Maps something to <F8> !
-"source ~/.vim/config/taglist_rc.vim
-"}}}
-
-"" Syntastic {{{
-" Maps something to <F5> and <F6> !
-source ~/.vim/config/syntastic_rc.vim
-"}}}
-
-"" Fugitive {{{
-source ~/.vim/config/fugitive_rc.vim
-"}}}
-
-"" Gitv {{{
-source ~/.vim/config/gitv_rc.vim
-"}}}
-
-"" CtrlP {{{
-" Disable the plugin.
-"let g:loaded_ctrlp = 1
-source ~/.vim/config/ctrlp_rc.vim
-"}}}
-
-"" Undotree {{{
-" Maps something to <F4> !
-source ~/.vim/config/undotree_rc.vim
-"}}}
-
-"" Tagbar {{{
-" Maps something to <F8> !
-source ~/.vim/config/tagbar_rc.vim
-"}}}
-
-"" Numbers {{{
-" Enable or disable numbers plugin.
-let g:enable_numbers = 0
-" Mapping to <F3> !
-nnoremap <F3> :NumbersToggle<CR>
-"}}}
-
-"" Alternate {{{
-source ~/.vim/config/alternate_rc.vim
-"}}}
-
-"" Rainbow {{{
-source ~/.vim/config/rainbow_rc.vim
-"}}}
-
-"" Git Gutter {{{
-let g:gitgutter_enabled = 1
-source ~/.vim/config/gitgutter_rc.vim
-"}}}
-
+"" Plugin configuration {{{
+source ~/.vim/config/plugins_rc.vim
 "}}}
 
 "" Special settings for this file.
