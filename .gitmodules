@@ -22,6 +22,7 @@
 [submodule "vim/bundle/rhinestones-colors"]
 	path = vim/bundle/rhinestones-colors
 	url = git@github.com:HarnoRanaivo/vim-colors-rhinestones.git
+    ignore = dirty
 [submodule "liquidprompt/upstream"]
 	path = liquidprompt/upstream
 	url = git://github.com/nojhan/liquidprompt.git
@@ -40,4 +41,11 @@
 [submodule "vim/bundle/indentLine"]
 	path = vim/bundle/indentLine
 	url = git://github.com/Yggdroot/indentLine.git
+    ignore = dirty
+[submodule "vim/bundle/vim-gitgutter"]
+	path = vim/bundle/vim-gitgutter
+	url = git://github.com/airblade/vim-gitgutter.git
+[submodule "vim/bundle/vimpanel"]
+	path = vim/bundle/vimpanel
+	url = git://github.com/mihaifm/vimpanel.git
     ignore = dirty
