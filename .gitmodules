@@ -49,3 +49,6 @@
 	path = vim/bundle/vimpanel
 	url = git://github.com/mihaifm/vimpanel.git
     ignore = dirty
+[submodule "vim/bundle/vim-mipssyntax"]
+	path = vim/bundle/vim-mipssyntax
+	url = git@github.com:HarnoRanaivo/vim-mipssyntax.git
