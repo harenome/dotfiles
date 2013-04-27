@@ -51,7 +51,7 @@ if !exists("did_install_custom_toolbar")
     an 1.195 ToolBar.-sep4- <Nop>
 
     an icon=~/.vim/bitmaps/16/accessories-dictionary.png 1.200 ToolBar.Tagbar :TagbarToggle<CR>
-    if version >= 7.3
+    if version >= 703
         an icon=~/.vim/bitmaps/16/stock_spam.png 1.210 ToolBar.Undotree :UndotreeToggle<CR>
     endif
     an icon=~/.vim/bitmaps/16/system-file-manager.png 1.220 ToolBar.FileExplorer :Vex<CR>
@@ -62,7 +62,7 @@ if !exists("did_install_custom_toolbar")
     an icon=~/.vim/bitmaps/16/zoom-fit-best.png 1.320 ToolBar.ResizeEqual <C-w>=
 
     an 1.395 ToolBar.-sep6- <Nop>
-    if version >= 7.3
+    if version >= 703
         an icon=~/.vim/bitmaps/16/applications-engineering.png 1.400 ToolBar.Numbers :NumbersToggle<CR>
     endif
     nmenu icon=~/.vim/bitmaps/16/format-text-direction-ltr.png 1.410 ToolBar.Comment gcc
@@ -104,7 +104,7 @@ if !exists("did_install_custom_toolbar")
     tmenu 1.140 ToolBar.Alternate Alterner entre le header et le code source
 
     tmenu 1.200 ToolBar.Tagbar Afficher les tags
-    if version >= 7.3
+    if version >= 703
         tmenu 1.210 ToolBar.Undotree Afficher l'historique d'édition
     endif
     tmenu 1.220 ToolBar.FileExplorer Afficher Vex
@@ -113,7 +113,7 @@ if !exists("did_install_custom_toolbar")
     tmenu 1.310 ToolBar.Maximize Maximiser la fenêtre
     tmenu 1.320 ToolBar.ResizeEqual Redimensionner toutes les fenêtres à la même taille
 
-    if version >= 7.3
+    if version >= 703
         tmenu 1.400 ToolBar.Numbers Alterner entre affichage classique et relatif des numéros de lignes
     endif
     tmenu 1.410 ToolBar.Comment Commenter
