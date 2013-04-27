@@ -16,6 +16,7 @@ vim:
 .vimrc vim/config/main.vim
 
 gvim:
+.gvim gvim
 .gvimrc gvim/gvimrc
 
 # Abcde

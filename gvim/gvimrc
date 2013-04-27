@@ -6,7 +6,7 @@
 
 "" General settings {{{
 set guioptions=aegT
-set guifont=DejaVu\ Sans\ Mono\ 9,Ubuntu\ Mono\ 10,Deja\ Vu\ Sans\ Mono\ 10,Monospace\ 10
+set guifont=Ubuntu\ Mono\ 10,Deja\ Vu\ Sans\ Mono\ 10,Monospace\ 10
 
 " Set the size of the window on opening.
 set lines=32
@@ -15,7 +15,18 @@ set columns=100
 
 "" ToolBar overriding {{{
 aunmenu ToolBar
-source ~/.vim/config/toolbar.vim
+source ~/.gvim/toolbar.vim
+"}}}
+
+"" Local settings {{{
+" I try to make sure my dotfiles work whatever the computer I'm using,
+" but some of them still need some special tweaking.
+if filereadable(expand('~/.local/gvimrc'))
+    source ~/.local/gvimrc
+endif
+" Shall I have two files ? (One for things that must be loaded first, and one
+" for things that should be loaded after the general settings). For the
+" time being, I only need one.
 "}}}
 
 "" Previous settings {{{
