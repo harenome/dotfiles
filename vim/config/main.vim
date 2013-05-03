@@ -17,7 +17,7 @@ set nocompatible
 " It apparently is better to load pathogen first.
 " And also have the filetype thing done after pathogen's loading.
 filetype off
-call pathogen#infect()
+execute pathogen#infect('~/.vim/bundle-active/')
 Helptags
 "}}}
 
