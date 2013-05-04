@@ -69,6 +69,11 @@ let g:gitgutter_enabled = 1
 source ~/.vim/config/gitgutter_rc.vim
 "}}}
 
+"" EasyTags {{{
+let g:easytags_autoupdate = 1
+source ~/.vim/config/vim-easytags_rc.vim
+"}}}
+
 "}}}
 
 "" Special settings for this file.
