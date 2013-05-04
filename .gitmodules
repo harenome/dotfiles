@@ -52,3 +52,6 @@
 [submodule "vim/bundle/vim-mipssyntax"]
 	path = vim/bundle/vim-mipssyntax
 	url = git@github.com:HarnoRanaivo/vim-mipssyntax.git
+[submodule "vim/bundle/vim-easytags"]
+	path = vim/bundle/vim-easytags
+	url = git://github.com/xolox/vim-easytags.git
