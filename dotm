@@ -1,6 +1,18 @@
 #!/bin/bash
 # Little dotfiles manager
 
+# Program: dotm
+# Author: Harenome RANAIVOARIVONY RAZANAJATO
+# Version: 0.4
+# Date: May 8th 2013
+# License: WTFPL v2
+#
+# This program is free software. It comes WITHOUT ANY WARRANTY, to
+# the extent permitted by applicable law. You can redistribute it
+# and/or modify it under the terms of the Do What The Fuck You Want
+# To Public License, Version 2, as published by Sam Hocevar. See
+# http://sam.zoy.org/wtfpl/COPYING for more details.
+
 #------------------------------------------------------------------------------
 # Global variables
 #------------------------------------------------------------------------------
@@ -12,28 +24,29 @@ CONFIGDIR=$HOME
 CONFIGFILE="dotm.rc"
 
 ## Variables for version and help printing
-DATE="Feburary 23rd 2013"
-VERSION="0.3"
-
-VERSIONSTRING="dotm, version $VERSION ($DATE)
-
-This program is free software. It comes WITHOUT ANY WARRANTY, to
+DATE="May 8th 2013"
+VERSION="0.3.1"
+LICENCEDISCLAIMER="This program is free software. It comes WITHOUT ANY WARRANTY, to
 the extent permitted by applicable law. You can redistribute it
 and/or modify it under the terms of the Do What The Fuck You Want
 To Public License, Version 2, as published by Sam Hocevar. See
-http://sam.zoy.org/wtfpl/COPYING for more details.
+http://www.wtfpl.net for more details."
 
-Written by Harenome Ranaivoarivony Razanajato"
+AUTHORS="Harenome Ranaivoarivony Razanajato"
+
+VERSIONSTRING="dotm, version $VERSION ($DATE)
+
+$LICENCEDISCLAIMER
+
+Written by $AUTHORS"
 
 HELPSTRING="Usage: $0 [OPTIONS]... [FILES]...
 
 Options:
-    --backup
-        enable backups
+    --no-backup
+        disable backups
     --force-overwrite
         force overwriting of links, files and dir
-    --help
-        print this help
     --overwrite-link
         overwrite links
     --overwrite-file
@@ -42,8 +55,13 @@ Options:
         overwrite directories
     --verbose
         enable verbose mode
+    --list
+        list available sections
+    --help
+        print this help
     --version
-        print the version"
+        print the version
+"
 
 ## Vital variables for the script
 # Dirty (and hopefully, temporary) way to get the full path
@@ -56,7 +74,7 @@ OVERWRITEFILE=false
 OVERWRITEDIR=false
 VERBOSE=false
 WRONGARGUMENT=false
-UNKNOWNFILE=false
+UNKNOWNSECTION=false
 FILELIST=( )
 
 #------------------------------------------------------------------------------
@@ -68,7 +86,7 @@ function version
     echo -e "$VERSIONSTRING"
 }
 
-function printhelp
+function printHelp
 {
     # TODO: complete the help
 
@@ -87,7 +105,7 @@ function restore
     cp -rf "backups/$1" $CONFIGDIR/
 }
 
-function createlink
+function createLink
 {
     # TODO: manage overwriting of regular files and directories
 
@@ -132,59 +150,78 @@ function createlink
 
 }
 
-function checkconfigfile
+function checkConfigFile
 {
     local HASERROR=false
 
-    for FILE in $(grep -Env "#|:|^$" $CONFIGFILE | cut -d " " -f 2); do
-        [[ ! -e "$FILE" ]] &&
-        echo "Error: The file $FILE doesn't exist. Please check your $CONFIGFILE file." 1>&2 &&
+    if [[ -f "$CONFIGFILE" ]]; then
+        for FILE in $(grep -Env "#|:|^$" $CONFIGFILE | cut -d " " -f 2); do
+            [[ ! -e "$FILE" ]] &&
+            echo "Error: The file $FILE does not exist. Please check your $CONFIGFILE file." 1>&2 &&
+            HASERROR=true
+        done
+    else
+        echo "Error: The config file \"$CONFIGFILE\" does not exist." 1>&2
         HASERROR=true
-    done
+    fi
 
     if $HASERROR; then exit 78; fi
 }
 
-function isinconfigfile
+function isInConfigFile
 {
     if ! grep "^$(echo $1):$" $CONFIGFILE > /dev/null; then
         echo "Error: Don't know how to handle the config files for $1. Please check your $CONFIGFILE file." 1>&2
-        UNKNOWNFILE=true
+        UNKNOWNSECTION=true
     else
         FILELIST=( ${FILELIST[@]} $1 )
     fi
 }
 
-function singleconfig
+function singleConfig
 {
     # Previous way to do so was to get the line number and read the file starting here.
     # TODO: Use awk's match.
     BEGINNING=$(grep -n "^$(echo $1):$" $CONFIGFILE | cut -d ':' -f 1)
     awk '{ if (NR > '$BEGINNING') if (length($0) > 0) { print } else { exit } }' $CONFIGFILE | while read DEST TARG; do
-        createlink "$DEST" "$TARG"
+        createLink "$DEST" "$TARG"
     done
 }
 
-function allconfig
+function allConfig
 {
-    awk '{ if (! match($0,":|#|^$")) { print } }' $CONFIGFILE | while read DEST TARG; do
-        createlink "$DEST" "$TARG"
+    awk '{ if (! match($0,":|^#|^$")) { print } }' $CONFIGFILE | while read DEST TARG; do
+        createLink "$DEST" "$TARG"
     done
+}
+
+function listSections
+{
+    grep "^.*:$" $CONFIGFILE | tr -d ':'
 }
 
 #------------------------------------------------------------------------------
 # Main
 #------------------------------------------------------------------------------
 
-checkconfigfile
+checkConfigFile
 mkdir -p $BACKUPDIR
 
 if [[ $# -eq 0 ]]; then
-    allconfig
+    allConfig
 else
     # getopt and getopts are a bit painful
     for ARG in $*; do
-        if [[ ${ARG:0:2} = "--" ]]; then
+        if [[ ${ARG:0:1} = "-" ]] && [[ ${ARG:0:2} != "--" ]]; then
+            case $ARG in
+                "-v" ) VERBOSE=true;;
+                "-f" ) FORCEOVERWRITE=true;;
+                "-l" ) listSections; exit 0;;
+                "-V" ) version; exit 0;;
+                "-h" ) printHelp; exit 0;;
+                * ) echo "Wrong option: $ARG" 1>&2; WRONGARGUMENT=true;;
+            esac
+        elif [[ ${ARG:0:2} = "--" ]]; then
             case $ARG in
                 "--verbose" ) VERBOSE=true;;
                 "--no-backup" ) DOBACKUPS=false;;
@@ -192,23 +229,24 @@ else
                 "--overwrite-file" ) OVERWRITEFILE=true;;
                 "--overwrite-dir" ) OVERWRITEDIR=true;;
                 "--force-overwrite" ) FORCEOVERWRITE=true;;
+                "--list" ) listSections; exit 0;;
                 "--version" ) version; exit 0;;
-                "--help" ) printhelp; exit 0;;
+                "--help" ) printHelp; exit 0;;
                 * ) echo "Wrong option: $ARG" 1>&2; WRONGARGUMENT=true;;
             esac
         else
-            isinconfigfile $ARG
+            isInConfigFile $ARG
         fi
     done
 
     if $WRONGARGUMENT; then exit 64; fi
-    if $UNKNOWNFILE; then exit 78; fi
+    if $UNKNOWNSECTION; then exit 78; fi
 
     if [[ ${#FILELIST} -eq 0 ]]; then
-        allconfig
+        allConfig
     else
         for FILE in ${FILELIST[@]}; do
-            singleconfig $FILE
+            singleConfig $FILE
         done
     fi
 fi
