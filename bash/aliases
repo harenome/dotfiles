@@ -13,4 +13,8 @@ alias gamend='g amend'
 alias glg='g lg'
 alias glast='g last'
 
+if [[ -f ~/.local/dotfiles/bash/aliases ]]; then
+    source ~/.local/dotfiles/bash/aliases
+fi
+
 # vim:ft=sh
