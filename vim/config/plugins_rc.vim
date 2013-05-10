@@ -1,7 +1,7 @@
 "==============================================================================
 " HarnoRanaivo's .vim/config/plugins_rc file
 " Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
-" Last Change: April 20th 2013
+" Last Change: May 10th 2013
 "==============================================================================
 
 "" Plugins {{{
@@ -72,6 +72,15 @@ source ~/.vim/config/gitgutter_rc.vim
 "" EasyTags {{{
 let g:easytags_autoupdate = 1
 source ~/.vim/config/vim-easytags_rc.vim
+"}}}
+
+"" Vimpanel {{{
+source ~/.vim/config/vimpanel_rc.vim
+"}}}
+
+"" NERDTree {{{
+" let loaded_nerd_tree = 1
+source ~/.vim/config/nerdtree_rc.vim
 "}}}
 
 "}}}

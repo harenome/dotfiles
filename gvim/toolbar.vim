@@ -54,7 +54,7 @@ if !exists("did_install_custom_toolbar")
     if version >= 703
         an icon=~/.gvim/bitmaps/16/stock_spam.png 1.210 ToolBar.Undotree :UndotreeToggle<CR>
     endif
-    an icon=~/.gvim/bitmaps/16/system-file-manager.png 1.220 ToolBar.FileExplorer :Vex<CR>
+    an icon=~/.gvim/bitmaps/16/system-file-manager.png 1.220 ToolBar.FileExplorer :NERDTreeToggle<CR>
 
     an 1.295 ToolBar.-sep5- <Nop>
     an icon=~/.gvim/bitmaps/16/preferences-system-windows.png 1.300 ToolBar.MiniBufExplorer :TMiniBufExplorer<CR>
@@ -107,7 +107,7 @@ if !exists("did_install_custom_toolbar")
     if version >= 703
         tmenu 1.210 ToolBar.Undotree Afficher l'historique d'édition
     endif
-    tmenu 1.220 ToolBar.FileExplorer Afficher Vex
+    tmenu 1.220 ToolBar.FileExplorer Afficher NERDTree
 
     tmenu 1.300 ToolBar.MiniBufExplorer Afficher le mini explorateur de tampons
     tmenu 1.310 ToolBar.Maximize Maximiser la fenêtre

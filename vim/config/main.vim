@@ -1,7 +1,7 @@
 "==============================================================================
 " HarnoRanaivo's .vimrc file
 " Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
-" Last Change: April 20th 2013
+" Last Change: May 10th 2013
 "==============================================================================
 
 " If something is not commented, try ':h option'.
@@ -38,7 +38,8 @@ filetype plugin indent on
 
 " New leader key (the default is "\", unconvenient on french azerty
 " keyboards).
-let mapleader="ù"
+let mapleader=","
+let maplocalleader="ù"
 
 " Hides buffers instead of closing them.
 set hidden
@@ -174,8 +175,8 @@ autocmd Filetype c runtime! autoload/ccomplete.vim
 "}}}
 
 "" Highlight current line in Insert mode {{{
-" autocmd InsertLeave * setlocal nocul
-" autocmd InsertEnter * setlocal cul
+autocmd InsertLeave * setlocal nocul
+autocmd InsertEnter * setlocal cul
 " set cul
 "}}}
 
