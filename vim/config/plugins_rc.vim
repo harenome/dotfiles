@@ -78,6 +78,11 @@ source ~/.vim/config/vim-easytags_rc.vim
 source ~/.vim/config/vimpanel_rc.vim
 "}}}
 
+"" NERDTree {{{
+" let loaded_nerd_tree = 1
+source ~/.vim/config/nerdtree_rc.vim
+"}}}
+
 "}}}
 
 "" Special settings for this file.
