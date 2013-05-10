@@ -61,3 +61,4 @@
 [submodule "vim/bundle/vim-expand-region"]
 	path = vim/bundle/vim-expand-region
 	url = git://github.com/terryma/vim-expand-region.git
+    ignore = dirty
