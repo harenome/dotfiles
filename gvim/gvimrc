@@ -21,8 +21,8 @@ source ~/.gvim/toolbar.vim
 "" Local settings {{{
 " I try to make sure my dotfiles work whatever the computer I'm using,
 " but some of them still need some special tweaking.
-if filereadable(expand('~/.local/gvimrc'))
-    source ~/.local/gvimrc
+if filereadable(expand('~/.local/dotfiles/gvim/gvimrc'))
+    source ~/.local/dotfiles/gvim/gvimrc
 endif
 " Shall I have two files ? (One for things that must be loaded first, and one
 " for things that should be loaded after the general settings). For the
