@@ -58,3 +58,11 @@
 [submodule "vim/bundle/vim-detailed"]
 	path = vim/bundle/vim-detailed
 	url = git@github.com:rking/vim-detailed.git
+[submodule "vim/bundle/vim-expand-region"]
+	path = vim/bundle/vim-expand-region
+	url = git://github.com/terryma/vim-expand-region.git
+    ignore = dirty
+[submodule "vim/bundle/clam"]
+	path = vim/bundle/clam
+	url = git://github.com/sjl/clam.vim.git
+    ignore = dirty
