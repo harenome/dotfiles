@@ -188,6 +188,11 @@ vmap > >gv
 vmap < <gv
 "}}}
 
+"" Paths {{{
+set path+=include/
+set path+=src/
+"}}}
+
 "" Plugin configuration {{{
 source ~/.vim/config/plugins_rc.vim
 "}}}
