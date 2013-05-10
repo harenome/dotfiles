@@ -175,8 +175,8 @@ autocmd Filetype c runtime! autoload/ccomplete.vim
 "}}}
 
 "" Highlight current line in Insert mode {{{
-" autocmd InsertLeave * setlocal nocul
-" autocmd InsertEnter * setlocal cul
+autocmd InsertLeave * setlocal nocul
+autocmd InsertEnter * setlocal cul
 " set cul
 "}}}
 
