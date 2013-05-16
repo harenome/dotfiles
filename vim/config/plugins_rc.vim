@@ -70,7 +70,7 @@ source ~/.vim/config/gitgutter_rc.vim
 "}}}
 
 "" EasyTags {{{
-let g:easytags_autoupdate = 1
+let g:easytags_on_cursorhold = 1
 source ~/.vim/config/vim-easytags_rc.vim
 "}}}
 
@@ -81,6 +81,11 @@ source ~/.vim/config/vimpanel_rc.vim
 "" NERDTree {{{
 " let loaded_nerd_tree = 1
 source ~/.vim/config/nerdtree_rc.vim
+"}}}
+
+"" NeatFoldText {{{
+" let g:loaded_NeatFoldText = 1
+source ~/.vim/config/neatfoldtext_rc.vim
 "}}}
 
 "}}}

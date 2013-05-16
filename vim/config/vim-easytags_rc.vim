@@ -5,14 +5,24 @@
 """""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""""
 
 "" Files {{{
+let g:easytags_file = '~/.local/dotfiles/vim/easytags'
+let g:easytags_by_filetype = 1
 let g:easytags_dynamic_files = 2
 let g:easytags_autorecurse = 1
+let g:easytags_resolve_links = 1
 "}}}
 
 "" Update time {{{
 let g:easytags_updatetime_min = 8000
-let g:easytags_on_cursorhold = 0
+"}}}
 
+"" Automatic updates {{{
+let g:easytags_autoupdate = 1
+let g:easytags_auto_highlight = 1
+"}}}
+
+"" Python {{{
+let g:easytags_python_enabled = 1
 "}}}
 
 "" Special settings
