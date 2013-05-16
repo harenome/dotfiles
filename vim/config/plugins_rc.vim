@@ -83,6 +83,11 @@ source ~/.vim/config/vimpanel_rc.vim
 source ~/.vim/config/nerdtree_rc.vim
 "}}}
 
+"" NeatFoldText {{{
+" let g:loaded_NeatFoldText = 1
+source ~/.vim/config/neatfoldtext_rc.vim
+"}}}
+
 "}}}
 
 "" Special settings for this file.
