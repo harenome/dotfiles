@@ -169,14 +169,14 @@ autocmd InsertLeave * setlocal foldclose=all
 if executable('ctags')
     map <F9> :!ctags -R .<CR><CR>
 endif
-set tags=./tags
+set tags+=./tags
 set ofu=syntaxcomplete#Complete
 autocmd Filetype c runtime! autoload/ccomplete.vim
 "}}}
 
-"" Highlight current line in Insert mode {{{
-autocmd InsertLeave * setlocal nocul
-autocmd InsertEnter * setlocal cul
+"" Highlight current line and column in Insert mode {{{
+autocmd InsertLeave * setlocal nocul nocuc
+autocmd InsertEnter * setlocal cul cuc
 " set cul
 "}}}
 

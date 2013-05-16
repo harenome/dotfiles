@@ -70,7 +70,7 @@ source ~/.vim/config/gitgutter_rc.vim
 "}}}
 
 "" EasyTags {{{
-let g:easytags_autoupdate = 1
+let g:easytags_on_cursorhold = 1
 source ~/.vim/config/vim-easytags_rc.vim
 "}}}
 
