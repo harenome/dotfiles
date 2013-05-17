@@ -73,28 +73,66 @@ set number
 "" Status line {{{
 " Always show status.
 set laststatus=2
+
+"" Active, normal mode {{{
 " Initialisation.
-set statusline=
+let statusLineActiveNormal = ''
 " Buffer number.
-set statusline+=%1*#%-0.3(%n\ %)%*
+let statusLineActiveNormal = statusLineActiveNormal . '%#STANBuffer#\ ▞%-0.3(%n\ %)%*'
 " Fugitive (git branch)
-set statusline+=%6*%{fugitive#statusline()}%*
+let statusLineActiveNormal = statusLineActiveNormal . "%(%#STANGit#%{strlen(fugitive#head())?'\\ ⍿⍿\\ '.fugitive#head().':':''}%*%)"
 " File name.
-set statusline+=%2*%f%*
+let statusLineActiveNormal = statusLineActiveNormal . '%#STANFile#\ %f\ %*'
 " File type.
-set statusline+=\ %3*[%{strlen(&ft)?&ft:'plain\ text'}]
+let statusLineActiveNormal = statusLineActiveNormal . "%#STANFileTypes#\\ [%{strlen(&ft)?&ft:'plain\\ text'}]"
 " File encoding.
-set statusline+=[%{strlen(&fenc)?&fenc:'no\ encoding'}]
+let statusLineActiveNormal = statusLineActiveNormal . "[%{strlen(&fenc)?&fenc:'no\\ encoding'}]"
 " File type, bis.
-set statusline+=[%{&ff}]%*
+let statusLineActiveNormal = statusLineActiveNormal . '[%{&ff}]\ %*'
 " Alignment separator
-set statusline+=%=
+let statusLineActiveNormal = statusLineActiveNormal . '%='
 " Some flags.
-set statusline+=%(%4*%h%w%*%5*%m%r%*%)
+let statusLineActiveNormal = statusLineActiveNormal . '%#STANGreenFlags#%(\ %h\ %)%*%#STANOrangeFlags#%(\ %w\ %)%*'
+let statusLineActiveNormal = statusLineActiveNormal . '%#STANRedFlags#%(\ %m\ %)%*%#STANOrangeFlags#%(\ %r\ %)%*'
 " Syntastic flags.
-set statusline+=%5*%{SyntasticStatuslineFlag()}%*
+let statusLineActiveNormal = statusLineActiveNormal . '%#STANRedFlags#%{SyntasticStatuslineFlag()}%*'
 " Current position.
-set statusline+=\ %(%l,%c%V\ (%P)%)
+let statusLineActiveNormal = statusLineActiveNormal . '%#STANPositionLight#\ %c%#STANPositionDark#%V\ \|\ '
+let statusLineActiveNormal = statusLineActiveNormal . '%#STANPositionLight#%l%#STANPositionDark#/%L\ '
+let statusLineActiveNormal = statusLineActiveNormal . '%#STANPositionPercentage#\ %P\ %*'
+"}}}
+
+"" Inactive {{{
+" Initialisation.
+let statusLineNC = ''
+" Buffer number.
+let statusLineNC = statusLineNC . '%#STNCBuffer#\ ▞%-0.3(%n\ %)%*'
+" Fugitive (git branch)
+let statusLineNC = statusLineNC . "%(%#STNCGit#%{strlen(fugitive#head())?'\\ ⍿⍿\\ '.fugitive#head().':':''}%*%)"
+" File name.
+let statusLineNC = statusLineNC . '%#STNCFile#\ %f\ %*'
+" File type.
+let statusLineNC = statusLineNC . "%#STNCFileTypes#\\ [%{strlen(&ft)?&ft:'plain\\ text'}]"
+" File encoding.
+let statusLineNC = statusLineNC . "[%{strlen(&fenc)?&fenc:'no\\ encoding'}]"
+" File type, bis.
+let statusLineNC = statusLineNC . '[%{&ff}]\ %*'
+" Alignment separator
+let statusLineNC = statusLineNC . '%='
+" Some flags.
+let statusLineNC = statusLineNC . '%#STNCGreenFlags#%(\ %h\ %)%*%#STNCOrangeFlags#%(\ %w\ %)%*'
+let statusLineNC = statusLineNC . '%#STNCRedFlags#%(\ %m\ %)%*%#STNCOrangeFlags#%(\ %r\ %)%*'
+" Syntastic flags.
+let statusLineNC = statusLineNC . '%#STNCRedFlags#%{SyntasticStatuslineFlag()}%*'
+" Current position.
+let statusLineNC = statusLineNC . '%#STNCPositionLight#\ %c%#STNCPositionDark#%V\ \|\ '
+let statusLineNC = statusLineNC . '%#STNCPositionLight#%l%#STNCPositionDark#/%L\ '
+let statusLineNC = statusLineNC . '%#STNCPositionPercentage#\ %P\ %*'
+"}}}
+
+execute 'set statusline =' . statusLineActiveNormal
+autocmd BufEnter * execute 'setlocal statusline =' . statusLineActiveNormal
+autocmd BufLeave * execute 'setlocal statusline =' . statusLineNC
 "}}}
 
 "" Indenting {{{
