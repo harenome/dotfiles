@@ -22,16 +22,16 @@ let g:syntastic_auto_loc_list = 1
 
 "" Appearance {{{
 " Symbols
-"let g:syntastic_error_symbol='!!'
-"let g:syntastic_style_error_symbol='✗'
-"let g:syntastic_warning_symbol='??'
-"let g:syntastic_style_warning_symbol='⚠'
+let g:syntastic_error_symbol='❌'
+let g:syntastic_style_error_symbol='❎'
+let g:syntastic_warning_symbol='▲'
+let g:syntastic_style_warning_symbol='△'
 " Location lists height
 let g:syntastic_loc_list_height=5
 "}}}
 
 "" Custom Statusline {{{
-let g:syntastic_stl_format = '%W{[WARNING(S) : %w]}%E{[ERROR(S) : %e]}'
+let g:syntastic_stl_format = '%W{ [%w] }%E{ [%e] }'
 "}}}
 
 "" Special settings

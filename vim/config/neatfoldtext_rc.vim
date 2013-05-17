@@ -6,6 +6,8 @@
 "" Appearance {{{
 let g:NeatFoldTextFancy = 1
 let g:NeatFoldTextZenComments = 1
+let g:NeatFoldTextCountSurroundLeft = '【 '
+let g:NeatFoldTextCountSurroundRight =' 】'
 "}}}
 
 "" Special settings
