@@ -167,9 +167,9 @@ autocmd InsertLeave * setlocal foldclose=all
 
 "" Omni-completion {{{
 if executable('ctags')
-    map <F9> :!ctags -R .<CR><CR>
+    map <F9> :!ctags -f .tags --fields=+l --c-kinds=+p --c++-kinds=+p -R .<CR><CR>
 endif
-set tags+=./tags
+set tags+=.tags,./.tags,../.tags,tags,./tags,../tags
 set ofu=syntaxcomplete#Complete
 autocmd Filetype c runtime! autoload/ccomplete.vim
 "}}}
