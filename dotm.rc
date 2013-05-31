@@ -22,3 +22,7 @@ gvim:
 # Abcde
 abcde:
 .abcde.conf abcde/abcde.conf
+
+# Tmux
+tmux:
+.tmux.conf tmux/tmux.conf
