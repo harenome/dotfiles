@@ -74,65 +74,8 @@ set number
 " Always show status.
 set laststatus=2
 
-"" Active, normal mode {{{
-" Initialisation.
-let statusLineActiveNormal = ''
-" Buffer number.
-let statusLineActiveNormal = statusLineActiveNormal . '%#STANBuffer#\ ▞%-0.3(%n\ %)%*'
-" Fugitive (git branch)
-let statusLineActiveNormal = statusLineActiveNormal . "%(%#STANGit#%{strlen(fugitive#head())?'\\ ⍿⍿\\ '.fugitive#head().':':''}%*%)"
-" File name.
-let statusLineActiveNormal = statusLineActiveNormal . '%#STANFile#\ %f\ %*'
-" File type.
-let statusLineActiveNormal = statusLineActiveNormal . "%#STANFileTypes#\\ [%{strlen(&ft)?&ft:'plain\\ text'}]"
-" File encoding.
-let statusLineActiveNormal = statusLineActiveNormal . "[%{strlen(&fenc)?&fenc:'no\\ encoding'}]"
-" File type, bis.
-let statusLineActiveNormal = statusLineActiveNormal . '[%{&ff}]\ %*'
-" Alignment separator
-let statusLineActiveNormal = statusLineActiveNormal . '%='
-" Some flags.
-let statusLineActiveNormal = statusLineActiveNormal . '%#STANGreenFlags#%(\ %h\ %)%*%#STANOrangeFlags#%(\ %w\ %)%*'
-let statusLineActiveNormal = statusLineActiveNormal . '%#STANRedFlags#%(\ %m\ %)%*%#STANOrangeFlags#%(\ %r\ %)%*'
-" Syntastic flags.
-let statusLineActiveNormal = statusLineActiveNormal . '%#STANRedFlags#%{SyntasticStatuslineFlag()}%*'
-" Current position.
-let statusLineActiveNormal = statusLineActiveNormal . '%#STANPositionLight#\ %c%#STANPositionDark#%V\ \|\ '
-let statusLineActiveNormal = statusLineActiveNormal . '%#STANPositionLight#%l%#STANPositionDark#/%L\ '
-let statusLineActiveNormal = statusLineActiveNormal . '%#STANPositionPercentage#\ %P\ %*'
-"}}}
-
-"" Inactive {{{
-" Initialisation.
-let statusLineNC = ''
-" Buffer number.
-let statusLineNC = statusLineNC . '%#STNCBuffer#\ ▞%-0.3(%n\ %)%*'
-" Fugitive (git branch)
-let statusLineNC = statusLineNC . "%(%#STNCGit#%{strlen(fugitive#head())?'\\ ⍿⍿\\ '.fugitive#head().':':''}%*%)"
-" File name.
-let statusLineNC = statusLineNC . '%#STNCFile#\ %f\ %*'
-" File type.
-let statusLineNC = statusLineNC . "%#STNCFileTypes#\\ [%{strlen(&ft)?&ft:'plain\\ text'}]"
-" File encoding.
-let statusLineNC = statusLineNC . "[%{strlen(&fenc)?&fenc:'no\\ encoding'}]"
-" File type, bis.
-let statusLineNC = statusLineNC . '[%{&ff}]\ %*'
-" Alignment separator
-let statusLineNC = statusLineNC . '%='
-" Some flags.
-let statusLineNC = statusLineNC . '%#STNCGreenFlags#%(\ %h\ %)%*%#STNCOrangeFlags#%(\ %w\ %)%*'
-let statusLineNC = statusLineNC . '%#STNCRedFlags#%(\ %m\ %)%*%#STNCOrangeFlags#%(\ %r\ %)%*'
-" Syntastic flags.
-let statusLineNC = statusLineNC . '%#STNCRedFlags#%{SyntasticStatuslineFlag()}%*'
-" Current position.
-let statusLineNC = statusLineNC . '%#STNCPositionLight#\ %c%#STNCPositionDark#%V\ \|\ '
-let statusLineNC = statusLineNC . '%#STNCPositionLight#%l%#STNCPositionDark#/%L\ '
-let statusLineNC = statusLineNC . '%#STNCPositionPercentage#\ %P\ %*'
-"}}}
-
-execute 'set statusline =' . statusLineActiveNormal
-autocmd BufEnter * execute 'setlocal statusline =' . statusLineActiveNormal
-autocmd BufLeave * execute 'setlocal statusline =' . statusLineNC
+" Source statusline config file
+source ~/.vim/config/statusline_rc.vim
 "}}}
 
 "" Indenting {{{
