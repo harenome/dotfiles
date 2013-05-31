@@ -13,6 +13,9 @@ alias gamend='g amend'
 alias glg='g lg'
 alias glast='g last'
 
+# tmux
+alias tmux='tmux -2'
+
 if [[ -f ~/.local/dotfiles/bash/aliases ]]; then
     source ~/.local/dotfiles/bash/aliases
 fi
