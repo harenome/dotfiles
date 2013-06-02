@@ -75,3 +75,12 @@
 [submodule "vim/bundle/vim-neatfoldtext"]
 	path = vim/bundle/vim-neatfoldtext
 	url = git@github.com:HarnoRanaivo/vim-neatfoldtext.git
+[submodule "vim/bundle/vim-css-color"]
+	path = vim/bundle/vim-css-color
+	url = git://github.com/ap/vim-css-color.git
+[submodule "vim/bundle/vim-dispatch"]
+	path = vim/bundle/vim-dispatch
+	url = git://github.com/tpope/vim-dispatch.git
+[submodule "vim/bundle/vim-tbone"]
+	path = vim/bundle/vim-tbone
+	url = git://github.com/tpope/vim-tbone.git
