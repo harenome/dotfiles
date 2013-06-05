@@ -26,3 +26,7 @@ abcde:
 # Tmux
 tmux:
 .tmux.conf tmux/tmux.conf
+
+# Screen
+screen:
+.screenrc screen/screenrc
