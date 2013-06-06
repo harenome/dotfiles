@@ -15,3 +15,7 @@ dotm : localdirs
 
 gnometerm :
 	cat gnome-terminal/dump | dconf load /org/gnome/terminal/legacy/profiles:/
+
+update :
+	git submodule init
+	git submodule update
