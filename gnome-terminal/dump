@@ -1,0 +1,17 @@
+[:8d3f4b6c-f453-4c9b-9fef-2d818491f368]
+foreground-color='rgb(238,238,238)'
+visible-name='HarnoRanaivo'
+palette=['rgb(8,8,8)', 'rgb(215,0,0)', 'rgb(135,175,0)', 'rgb(215,215,95)', 'rgb(0,95,255)', 'rgb(255,135,215)', 'rgb(0,95,135)', 'rgb(168,168,168)', 'rgb(38,38,38)', 'rgb(215,95,95)', 'rgb(175,215,0)', 'rgb(255,255,95)', 'rgb(95,175,215)', 'rgb(255,215,215)', 'rgb(165,250,250)', 'rgb(238,238,238)']
+custom-command='hmux'
+default-size-columns=100
+default-size-rows=32
+use-custom-command=true
+use-custom-default-size=true
+use-theme-colors=false
+exit-action='close'
+background-color='rgb(38,38,38)'
+scrollbar-policy='never'
+
+[/]
+list=['8d3f4b6c-f453-4c9b-9fef-2d818491f368']
+default='8d3f4b6c-f453-4c9b-9fef-2d818491f368'

@@ -1,0 +1,5 @@
+#!/bin/bash
+# Command line to attach an unattached tmux session, or start a new one if
+# all currently running sessions are already attached.
+
+tmux -2 $(tmux ls | grep -v "(attached)" > /dev/null && echo attach -t $(tmux ls -F "#{session_name} #{?session_attached,(attached),}" | grep -v "(attached)" | head -n 1))

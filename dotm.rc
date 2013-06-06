@@ -30,3 +30,7 @@ tmux:
 # Screen
 screen:
 .screenrc screen/screenrc
+
+# Binaries
+bin:
+bin bin
