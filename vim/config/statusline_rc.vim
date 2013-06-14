@@ -32,9 +32,9 @@ endfunction
 " Initialisation.
 let statusLineActiveNormal = ''
 " Buffer number.
-let statusLineActiveNormal = statusLineActiveNormal . '%#STANBuffer#\ ▞%-0.3(%n\ %)%*'
+let statusLineActiveNormal = statusLineActiveNormal . '%#STANBuffer#\ %-0.3(%n\ %)%*'
 " Fugitive (git branch)
-let statusLineActiveNormal = statusLineActiveNormal . "%(%#STANGit#%{strlen(fugitive#head())?'\\ ⍿⍿\\ '.fugitive#head().':':''}%*%)"
+let statusLineActiveNormal = statusLineActiveNormal . "%(%#STANGit#%{strlen(fugitive#head())?'\\ '.fugitive#head().':':''}%*%)"
 " File name.
 let statusLineActiveNormal = statusLineActiveNormal . '%#STANFile#\ %f\ %*'
 " File type.
@@ -61,9 +61,9 @@ let statusLineActiveNormal = statusLineActiveNormal . '%#STANPositionPercentage#
 " Initialisation.
 let statusLineNC = ''
 " Buffer number.
-let statusLineNC = statusLineNC . '%#STNCBuffer#\ ▞%-0.3(%n\ %)%*'
+let statusLineNC = statusLineNC . '%#STNCBuffer#\ %-0.3(%n\ %)%*'
 " Fugitive (git branch)
-let statusLineNC = statusLineNC . "%(%#STNCGit#%{strlen(fugitive#head())?'\\ ⍿⍿\\ '.fugitive#head().':':''}%*%)"
+let statusLineNC = statusLineNC . "%(%#STNCGit#%{strlen(fugitive#head())?'\\ '.fugitive#head().':':''}%*%)"
 " File name.
 let statusLineNC = statusLineNC . '%#STNCFile#\ %f\ %*'
 " File type.
