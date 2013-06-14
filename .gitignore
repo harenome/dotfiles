@@ -1,6 +1,6 @@
 ## Ignore backups, if any
 backups/*
 
-## Ignore vim swp files
-*.swp
+## Vim
 vim/.netrwhist
+vim/spell

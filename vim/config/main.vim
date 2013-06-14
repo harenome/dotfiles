@@ -21,6 +21,14 @@ execute pathogen#infect('~/.vim/bundle-active/')
 Helptags
 "}}}
 
+"" Shell {{{
+set shell=/bin/bash
+"}}}
+
+"" Man plugin {{{
+runtime ftplugin/man.vim
+"}}}
+
 "" Basics {{{
 set mouse=a
 set showmode
@@ -173,6 +181,12 @@ vmap < <gv
 "" Paths {{{
 set path+=include/
 set path+=src/
+"}}}
+
+"" Swap and undo {{{
+set dir=~/.local/dotfiles/vim/swp
+set undodir=~/.local/dotfiles/vim/undo
+set undofile
 "}}}
 
 "" Plugin configuration {{{
