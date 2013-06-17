@@ -31,6 +31,15 @@ tmux:
 screen:
 .screenrc screen/screenrc
 
+# Fish
+fish:
+.config/fish/config.fish fish/config.fish
+.config/fish/functions fish/functions
+
+# htop
+htop:
+.config/htop/htoprc htop/htoprc
+
 # Binaries
 bin:
 bin bin

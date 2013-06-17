@@ -13,6 +13,9 @@ localdirs :
 	mkdir -p ~/.local/dotfiles/vim/undo
 	mkdir -p ~/.local/dotfiles/vim/spell
 	ln -s ~/.local/dotfiles/vim/spell vim/spell
+	mkdir -p ~/.config
+	mkdir -p ~/.config/htop
+	mkdir -p ~/.config/fish
 
 dotm : localdirs
 	./dotm --verbose --force-overwrite
