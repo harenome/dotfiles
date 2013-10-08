@@ -1,0 +1,28 @@
+#!/bin/sh
+# Little script to colour df output using colout.
+# Runs plain df if colout is not available.
+# colout: https://github.com/nojhan/colout
+
+COLOUT_COMMAND="colout \"^.*[1-2].%.*$\" cyan normal | colout \"^.*[3-4].%.*$\" green normal | colout \"^.*[5-6].%.*$\" yellow normal | colout \"^.*[7-8].%.*$\" magenta normal | colout \"^.*9.%.*$\" red normal | colout \"^.*100%.*$\" red bold"
+
+function isAvailable
+{
+    if command -v $1 > /dev/null 2>&1; then
+        return 0
+    else
+        return 1
+    fi
+}
+
+function colourDf
+{
+    df $@ | eval $COLOUT_COMMAND
+}
+
+if isAvailable colout; then
+    colourDf $@
+else
+    df $@
+fi
+
+exit 0
