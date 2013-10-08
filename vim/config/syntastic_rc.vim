@@ -33,6 +33,7 @@ let g:syntastic_loc_list_height=5
 "" Custom Statusline {{{
 let g:syntastic_stl_format = '%W{ [WARNING(S): %w] }%E{ [ERROR(S): %e] }'
 "}}}
+"
 
 "" Special settings
 " vim:ft=vim:fdm=marker:ff=unix:foldopen=all:foldclose=all

@@ -15,7 +15,7 @@ function launchMainSession
     tmux split-window -v "htop"
     tmux new-window -t "main" -n "dotfiles" -c "~/.dotfiles"
     tmux new-window -t "main" -n "monitoring" "htop"
-    tmux split-window -v "watch --color -d -n 600 \"df -h ext4 | colout \\\"^.*[4-9].%.*$\\\"\""
+    tmux split-window -v "watch --color -d -n 600 \"cdf -h -t ext4\""
     tmux new-window -t "main" -n "misc" -c $TMPDIR
     tmux select-window -t "work"
     tmux -2 attach -t "main"
