@@ -1,0 +1,21 @@
+# Vim files
+*.swp
+
+# C
+*.[ao]
+*.lib
+
+# Java
+*.class
+
+# Python
+*.pyc
+
+# Tags
+tags
+.tags
+
+# Various dirs.
+doc/
+obj/
+bin/
