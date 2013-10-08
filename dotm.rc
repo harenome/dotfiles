@@ -43,3 +43,7 @@ htop:
 # Binaries
 bin:
 bin bin
+
+# CVS
+cvs:
+.cvsignore cvs/cvsignore
