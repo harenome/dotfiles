@@ -1,3 +1,12 @@
+# This is a global “ignorefile” or “excludesfile”.
+# This file may be found “as is” in some projects if I was too lazy and
+# merely copied it into the root directory of the project without further
+# edition. Thus, please ignore irrelevant patterns.
+
+# Misc.
+*.old
+*~
+
 # Vim files
 *.swp
 
@@ -7,6 +16,9 @@
 
 # Java
 *.class
+*.jar
+*.war
+*.ear
 
 # Python
 *.pyc
@@ -19,3 +31,4 @@ tags
 doc/
 obj/
 bin/
+bytecode/
