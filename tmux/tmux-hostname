@@ -1,0 +1,20 @@
+#!/bin/bash
+# Script for tmux to print the machine's hostname if, and only if, the current
+# shell runs within a SSH connection.
+
+function check-ssh
+{
+    [[ $(env | grep SSH_CONNECTION) ]]
+    return $?
+}
+
+if [[ $# -ne 0 ]]; then
+    echo -e "Error: this script takes no arguments.\nUsage: $0" 1>&2
+    exit 64
+fi
+
+if check-ssh; then
+    echo -n "#[default,bg=colour237,fg=colour248] @#[default,bg=colour237,fg=colour159,bold]#H#[default,bg=colour237,fg=colour248]:"
+fi
+
+exit 0
