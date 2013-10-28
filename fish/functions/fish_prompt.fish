@@ -23,7 +23,8 @@ function fish_prompt --description 'Write out the prompt'
         set -g __error_status_color (set_color -o d70000)
         set -g __user_color (set_color -o ffd7d7)
         set -g __hostname_color (set_color -o ffaf00)
-        set -g __jobs_color (set_color -o d7d75f)
+        set -g __jobs_color (set_color d7d75f)
+        set -g __jobs_color_bold (set_color -o d7d75f)
         set -g __git_color (set_color a5f1f1)
         set -g __git_untracked_color (set_color d7af5f)
         set -g __git_untracked_color_bold (set_color -o d7af5f)
@@ -126,15 +127,14 @@ function fish_prompt --description 'Write out the prompt'
     set -l __jobs_bg (math $__jobs_number - $__jobs_stopped)
     set -l __fish_jobs
     if [ $__jobs_number -ne 0 ]
-        set __fish_jobs "$__jobs_color"
         if [ $__jobs_stopped -ne 0 ]
-            set __fish_jobs "$__fish_jobs""$__jobs_stopped""z"
-        end
-        if [ $__jobs_stopped -ne 0 -a $__jobs_bg -ne 0 ]
-            set __fish_jobs "$__fish_jobs""$__low_color""/""$__jobs_color"
+            set __fish_jobs "$__fish_jobs""$__jobs_color_bold""$__jobs_stopped""$__jobs_color""z"
+            if [ $__jobs_bg -ne 0 ]
+                set __fish_jobs "$__fish_jobs""$__low_color""/""$__jobs_color"
+            end
         end
         if [ $__jobs_bg -ne 0 ]
-            set __fish_jobs "$__fish_jobs""$__jobs_bg""&"
+            set __fish_jobs "$__fish_jobs""$__jobs_color_bold""$__jobs_bg""$__jobs_color""&"
         end
         set __fish_jobs "$__fish_jobs""$__normal_color"" "
         if [ $__delim = "$__low_color"">""$__normal_color" ]
@@ -157,18 +157,18 @@ function fish_prompt --description 'Write out the prompt'
     end
 end
 
-function fish_small_prompt --description 'Make the prompt small'
+function fish_prompt_small --description 'Make the prompt small'
     set -g __prompt_extra_small "true"
 end
 
-function fish_big_prompt --description 'Make the prompt big'
+function fish_prompt_big --description 'Make the prompt big'
     set -g __prompt_extra_small "false"
 end
 
-function fish_show_git_info --description 'Show git info on the prompt'
+function fish_prompt_show_git --description 'Show git info on the prompt'
     set -g __prompt_show_git "true"
 end
 
-function fish_hide_git_info --description 'Hide git info on the prompt'
+function fish_prompt_hide_git --description 'Hide git info on the prompt'
     set -g __prompt_show_git "false"
 end
