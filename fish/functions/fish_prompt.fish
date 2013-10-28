@@ -69,8 +69,8 @@ function fish_prompt --description 'Write out the prompt'
     if [ $__prompt_show_git = "true" ]
         if [ (__fish_git_prompt) ]
             set -l __git_files (git status --porcelain)
-            set -l __git_untracked (echo "$__git_files" | grep "??" | wc -l)
-            set -l __git_changed (echo "$__git_files" | grep "M" | wc -l)
+            set -l __git_untracked (echo "$__git_files" | grep -o "??" | wc -w)
+            set -l __git_changed (echo "$__git_files" | grep -o "M" | wc -w)
 
             set -l __git_stats
             if [ $__git_untracked -ne 0 ]
