@@ -1,0 +1,161 @@
+#!/bin/bash
+# Duplicate tmux sessions
+
+# See /usr/include/sysexits.h for exit codes.
+
+# Variables {{{
+#------------------------------------------------------------------------------
+
+# Script info {{{
+AUTHORS="Harenome Ranaivorarivony Razanajato"
+DATE="October 28th 2013"
+VERSION="0.1"
+VERSION_STRING="dmux, version $VERSION ($DATE)
+
+Written by $AUTHORS
+"
+
+USAGE_STRING="Usage: $0 [<tmux session name> | --help | --version]"
+
+HELP_STRING="$USAGE_STRING
+
+This script will create a new session and group it with an existing session
+or create 2 new sessions and group them.
+Either way, the session will be destroyed when detached, but since it
+was grouped with another one, nothing will be lost.
+
+Options:
+    --kill-both, -k
+        ask whether both sessions should be killed on exit
+    --force-kill-both, -f
+        like --kill-both but without confirmation
+        has no effect if not used with --kill-both
+    --help, -h
+        print this help
+    --version, -v
+        print the version
+"
+# }}}
+
+# Global variables {{{
+
+WRONG_ARGUMENT=false
+PRINT_VERSION=false
+PRINT_HELP=false
+TOO_MANY=false
+KILL_BOTH=false
+FORCE_KILL_BOTH=false
+SESSION_NAME=""
+
+STATUS_LEFT_SSH="#[default,bg=colour237,fg=colour248] @#[default,bg=colour237,fg=colour159,bold]#H#[default,bg=colour237,fg=colour248]:#[default,bg=colour237,fg=colour15,bold] #S #[default,bg=colour234,fg=colour250] ###P "
+#}}}
+
+#}}}
+
+# {{{ Functions
+#------------------------------------------------------------------------------
+function check_args #{{{
+{
+    if [[ $# -lt 1 ]]; then
+        echo "$USAGE_STRING" 1>&2
+        WRONG_ARGUMENT=true
+    fi
+
+    # getopt or getopts ?! How about no ?
+    for ARG in $*; do
+        if [[ ${ARG:0:1} = "-" ]]; then
+            if [[ ${ARG:O:2} == "--" ]]; then
+                case ${ARG:2} in
+                    "version" ) PRINT_VERSION=true;;
+                    "help" ) PRINT_HELP=true;;
+                    "kill-both" ) KILL_BOTH=true;;
+                    "force-kill-both" ) FORCE_KILL_BOTH=true;;
+                    * ) echo "Wrong option: $ARG" 1>&2; WRONG_ARGUMENT=true;;
+                esac
+            else
+                for i in $(seq $((${#ARG} - 1))); do
+                    case ${ARG:$i:1} in
+                        "v" ) PRINT_VERSION=true;;
+                        "h" ) PRINT_HELP=true;;
+                        "k" ) KILL_BOTH=true;;
+                        "f" ) FORCE_KILL_BOTH=true;;
+                        * ) echo "Wrong option: $ARG" 1>&2; WRONG_ARGUMENT=true;;
+                    esac
+                done
+            fi
+        else
+            if [[ -z $SESSION_NAME ]]; then
+                SESSION_NAME=$ARG
+            else
+                if ! $TOO_MANY; then
+                    TOO_MANY=true
+                    echo "Too many session names provided." 1>&2
+                    WRONG_ARGUMENT=true
+                fi
+            fi
+        fi
+    done
+} #}}}
+
+function dup_tmux #{{{
+{
+    local NAME="$1"
+    local DUP_NAME="$NAME-$(($(tmux ls | grep $NAME | wc -l) + 1))"
+
+    if [[ -z $SSH_CONNECTION ]]; then
+        tmux -2 new -t "$NAME" -s "$DUP_NAME" \; set destroy-unattached
+    else
+        tmux -2 new -t "$NAME" -s "$DUP_NAME" \; set destroy-unattached \; set status-left "$STATUS_LEFT_SSH"
+    fi
+
+    if $KILL_BOTH; then
+        if $FORCE_KILL_BOTH; then
+            tmux kill-session -t "$NAME"
+        else
+            echo -ne "Are you sure you wish to kill both tmux sessions ? (y/N)\n? "
+            read yesno
+            case $yesno in
+                "y" | "Y" | "yes" | "Yes" | "YES" ) tmux kill-session -t "$NAME";;
+                * ) ;;
+            esac
+        fi
+    fi
+
+} #}}}
+
+#}}}
+
+# {{{ Script
+#------------------------------------------------------------------------------
+check_args $*
+
+if $TOO_MANY || $WRONG_ARGUMENT; then
+    exit 64
+fi
+
+if $PRINT_VERSION || $PRINT_HELP; then
+    if $PRINT_VERSION; then
+        echo "$VERSION_STRING"
+    fi
+
+    if $PRINT_HELP; then
+        echo "$HELP_STRING"
+    fi
+
+    exit 0
+fi
+
+tmux has-session -t $SESSION_NAME &> /dev/null
+if [[ $? -eq 0 ]]; then
+    dup_tmux "$SESSION_NAME"
+else
+    tmux -2 new -d -s "$SESSION_NAME"
+    dup_tmux "$SESSION_NAME"
+fi
+
+exit $?
+
+#}}}
+
+# Vim special config
+# vim:ft=sh:fdm=marker:ff=unix:foldopen=all:foldclose=all
