@@ -8,6 +8,9 @@ function fish_prompt --description 'Write out the prompt'
     if not set -q __prompt_extra_small
         set -g __prompt_extra_small "false"
     end
+    if not set -q __prompt_show_jobs
+        set -g __prompt_show_jobs "true"
+    end
 
     set -l __delim "$__low_color"">""$__normal_color"
 
@@ -20,7 +23,8 @@ function fish_prompt --description 'Write out the prompt'
         set -g __low_color (set_color 898989)
         set -g __directory_color (set_color afd75f)
         set -g __directory_color_bold (set_color -o afd75f)
-        set -g __error_status_color (set_color -o d70000)
+        set -g __error_status_color (set_color d70000)
+        set -g __error_status_color_bold (set_color -o d70000)
         set -g __user_color (set_color -o ffd7d7)
         set -g __hostname_color (set_color -o ffaf00)
         set -g __jobs_color (set_color d7d75f)
@@ -49,7 +53,7 @@ function fish_prompt --description 'Write out the prompt'
 
     # Host name
     set -l __hostname
-    if [ (env | grep SSH_CONNECTION) ]
+    if [ -n "$SSH_CONNECTION" -o -n "$__user" ]
         set __hostname "$__hostname_color"(hostname -s)"$__normal_color"
     end
 
@@ -75,12 +79,12 @@ function fish_prompt --description 'Write out the prompt'
 
             set -l __git_stats
             if [ $__git_untracked -ne 0 ]
-                set __git_stats "$__low_color""(""$__normal_color"
-                set __git_stats "$__git_stats""$__git_untracked_color_bold""$__git_untracked""$__normal_color""$__git_untracked_color""u""$__git_color"
+                set __git_stats "$__low_color""("
+                set __git_stats "$__git_stats""$__git_untracked_color_bold""$__git_untracked""$__normal_color""$__git_untracked_color""u"
                 if [ $__git_changed -ne 0 ]
-                    set __git_stats "$__git_stats""$__low_color""/""$__normal_color"
+                    set __git_stats "$__git_stats""$__low_color""/"
                 else
-                    set __git_stats "$__git_stats""$__low_color"") ""$__normal_color"
+                    set __git_stats "$__git_stats""$__low_color"") "
                     set __delim "$__git_color""?""$__normal_color"
                 end
             end
@@ -93,59 +97,61 @@ function fish_prompt --description 'Write out the prompt'
                 set __delim "$__git_color""±""$__normal_color"
 
                 if [ $__git_untracked -eq 0 ]
-                    set __git_stats "$__low_color""(""$__normal_color"
+                    set __git_stats "$__low_color""("
                 end
                 if [ $__git_changed -ne 0 ]
-                    set __git_stats "$__git_stats""$__git_changed_color_bold""$__git_changed""$__normal_color""$__git_changed_color""c""$__git_color"
-
-                    set __git_stats "$__git_stats""$__low_color""/""$__normal_color"
+                    set __git_stats "$__git_stats""$__git_changed_color_bold""$__git_changed""$__normal_color""$__git_changed_color""c"
+                    set __git_stats "$__git_stats""$__low_color""/"
                 end
                 if [ $__git_insertions -ne 0 ]
-                    set __git_stats "$__git_stats""$__git_insertions_color_bold""$__git_insertions""$__normal_color""$__git_insertions_color""+""$__git_color"
+                    set __git_stats "$__git_stats""$__git_insertions_color_bold""$__git_insertions""$__normal_color""$__git_insertions_color""+"
                     if [ $__git_deletions -ne 0 ]
                         set __delim "$__git_color""±""$__normal_color"
-                        set __git_stats "$__git_stats""$__low_color""/""$__normal_color"
+                        set __git_stats "$__git_stats""$__low_color""/"
                     else
                         set __delim "$__git_color""+""$__normal_color"
                     end
                 end
                 if [ $__git_deletions -ne 0 ]
-                    set __git_stats "$__git_stats""$__git_deletions_color_bold""$__git_deletions""$__normal_color""$__git_deletions_color""-""$__git_color"
+                    set __git_stats "$__git_stats""$__git_deletions_color_bold""$__git_deletions""$__normal_color""$__git_deletions_color""-"
                     if [ $__git_insertions -eq 0 ]
                         set __delim "$__git_color""-""$__normal_color"
                     end
                 end
-                set __git_stats "$__git_stats""$__low_color"") ""$__normal_color"
+                set __git_stats "$__git_stats""$__low_color"") "
             end
-            set __git_info "$__git_color"(__fish_git_prompt | tr -d '[() ]')" ""$__git_stats""$__normal_color"
+            set __git_info "$__git_color"(__fish_git_prompt | tr -d '[() ]')"$__git_stats""$__normal_color"
         end
     end
 
     # Jobs
-    set -l __jobs_number (jobs | wc -l)
-    set -l __jobs_stopped (jobs | grep "arrêtée" | wc -l)
-    set -l __jobs_bg (math $__jobs_number - $__jobs_stopped)
     set -l __fish_jobs
-    if [ $__jobs_number -ne 0 ]
-        if [ $__jobs_stopped -ne 0 ]
-            set __fish_jobs "$__fish_jobs""$__jobs_color_bold""$__jobs_stopped""$__jobs_color""z"
-            if [ $__jobs_bg -ne 0 ]
-                set __fish_jobs "$__fish_jobs""$__low_color""/""$__jobs_color"
+    if [ "$__prompt_show_jobs" = "true" ]
+        set -l __jobs_number (jobs | wc -l)
+        set -l __jobs_stopped (jobs | grep "arrêtée" | wc -l)
+        set -l __jobs_bg (math $__jobs_number - $__jobs_stopped)
+
+        if [ $__jobs_number -ne 0 ]
+            if [ $__jobs_stopped -ne 0 ]
+                set __fish_jobs "$__fish_jobs""$__jobs_color_bold""$__jobs_stopped""$__jobs_color""z"
+                if [ $__jobs_bg -ne 0 ]
+                    set __fish_jobs "$__fish_jobs""$__low_color""/""$__jobs_color"
+                end
             end
-        end
-        if [ $__jobs_bg -ne 0 ]
-            set __fish_jobs "$__fish_jobs""$__jobs_color_bold""$__jobs_bg""$__jobs_color""&"
-        end
-        set __fish_jobs "$__fish_jobs""$__normal_color"" "
-        if [ $__delim = "$__low_color"">""$__normal_color" ]
-            set __delim "$__jobs_color""»""$__normal_color"
+            if [ $__jobs_bg -ne 0 ]
+                set __fish_jobs "$__fish_jobs""$__jobs_color_bold""$__jobs_bg""$__jobs_color""&"
+            end
+            set __fish_jobs "$__fish_jobs""$__normal_color"" "
+            if [ $__delim = "$__low_color"">""$__normal_color" ]
+                set __delim "$__jobs_color""»""$__normal_color"
+            end
         end
     end
 
     # Status
     set -l __error_status
     if [ $last_status -ne 0 ]
-        set __error_status "$__error_status_color""[$last_status]""$__normal_color"" "
+        set __error_status "$__error_status_color""[""$__error_status_color_bold""$last_status""$__normal_color""$__error_status_color""]""$__normal_color"" "
         set __delim "$__error_status_color""!""$__normal_color"
     end
 
@@ -171,4 +177,12 @@ end
 
 function fish_prompt_hide_git --description 'Hide git info on the prompt'
     set -g __prompt_show_git "false"
+end
+
+function fish_prompt_show_jobs --description 'Show jobs info on the prompt'
+    set -g __prompt_show_jobs "true"
+end
+
+function fish_hide_show_jobs --description 'Hide jobs info on the prompt'
+    set -g __prompt_show_jobs "false"
 end
