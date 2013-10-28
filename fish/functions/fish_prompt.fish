@@ -40,8 +40,10 @@ function fish_prompt --description 'Write out the prompt'
 
     # User name
     set -l __user
-    if [ $LOGNAME != $USER ]
-        set __user "$__user_color""$USER""$__normal_color""@"
+    if set -q USERNAME
+        if [ $USERNAME != $USER ]
+            set __user "$__user_color""$USER""$__normal_color""@"
+        end
     end
 
     # Host name
