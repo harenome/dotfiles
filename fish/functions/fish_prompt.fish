@@ -137,7 +137,7 @@ function fish_prompt --description 'Write out the prompt'
             set __fish_jobs "$__fish_jobs""$__jobs_bg""&"
         end
         set __fish_jobs "$__fish_jobs""$__normal_color"" "
-        if [ $__delim = ">" ]
+        if [ $__delim = "$__low_color"">""$__normal_color" ]
             set __delim "$__jobs_color""»""$__normal_color"
         end
     end
