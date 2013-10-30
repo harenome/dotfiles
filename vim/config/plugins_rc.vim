@@ -1,10 +1,9 @@
 "==============================================================================
 " HarnoRanaivo's .vim/config/plugins_rc file
 " Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
-" Last Change: May 10th 2013
+" Last Change: October 30th 2013
 "==============================================================================
 
-"" Plugins {{{
 " I use separate files so that I can easily add/remove and enable/disable
 " options and plugin. It's very useful as I am sometimes on computers that
 " do not support the features needed for some of them.
@@ -88,6 +87,10 @@ source ~/.vim/config/nerdtree_rc.vim
 source ~/.vim/config/neatfoldtext_rc.vim
 "}}}
 
+"" Fish shell {{{
+" Not really a plugin...but since I manage my fish utilities for vim as a
+" plugin...
+source ~/.vim/config/vim-fish_rc.vim
 "}}}
 
 "" Special settings for this file.
