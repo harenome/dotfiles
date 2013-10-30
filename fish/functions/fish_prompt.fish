@@ -77,7 +77,7 @@ function fish_prompt --description 'Write out the prompt'
             set -l __git_untracked (echo "$__git_files" | grep -o "??" | wc -w)
             set -l __git_changed (echo "$__git_files" | grep -o "M" | wc -w)
 
-            set -l __git_stats
+            set -l __git_stats " "
             if [ $__git_untracked -ne 0 ]
                 set __git_stats "$__low_color""("
                 set __git_stats "$__git_stats""$__git_untracked_color_bold""$__git_untracked""$__normal_color""$__git_untracked_color""u"
