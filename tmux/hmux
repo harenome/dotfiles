@@ -8,11 +8,7 @@ WORKDIR="~/Code"
 function launchMainSession
 {
     tmux -2 new -d -s "main" -n "admin"
-    tmux new-window -n "work" -c $WORKDIR
-    tmux split-window -h -c $WORKDIR
-    tmux select-pane -t 1
-    tmux split-window -v -c $WORKDIR
-    tmux split-window -v "htop"
+    tmux new-window -t "main" -n "work" -c $WORKDIR
     tmux new-window -t "main" -n "dotfiles" -c "~/.dotfiles"
     tmux new-window -t "main" -n "monitoring" "htop"
     tmux split-window -v "watch --color -d -n 600 \"cdf -h -t ext4\""
