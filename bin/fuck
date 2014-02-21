@@ -1,0 +1,34 @@
+#!/bin/bash
+# FUCK YOU
+
+function flip
+{
+    if command -v flip-text > /dev/null 2>&1; then
+        echo -e "\n (╯°□°）╯︵$(echo $1 | flip-text &2> /dev/null)\n"
+    else
+        echo -e "\n (╯°□°）╯︵|__|\n"
+    fi
+}
+
+if [[ $# -ne 2 || ($1 != "you" && $1 != "YOU") ]]; then
+    if [[ $1 = "me" ]]; then
+        echo -e "\nO_O\n"
+        exit 71 # EX_OSERR
+    else
+        echo "Usage: $0 you <process>" >&2
+        exit 64 # EX_USAGE
+    fi
+else
+    if killall -9 $2; then
+        FLIPPED=$(flip $2)
+        if [[ $(basename $0) = "FUCK" && $1 = "YOU" ]]; then
+            for i in $(seq 8); do
+                echo $FLIPPED
+            done
+        else
+            echo $FLIPPED
+        fi
+    fi
+fi
+
+exit 0
