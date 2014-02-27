@@ -13,6 +13,11 @@
 # C
 *.[ao]
 *.lib
+*.ko
+*.dll
+*.so
+*.so.*
+*.dylib
 
 # Java
 *.class
@@ -32,3 +37,8 @@ doc/
 obj/
 bin/
 bytecode/
+
+# Executables
+*.exe
+*.out
+*.app
