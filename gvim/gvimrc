@@ -6,7 +6,7 @@
 
 "" General settings {{{
 set guioptions=aegT
-set guifont=Ubuntu\ Mono\ 10,Deja\ Vu\ Sans\ Mono\ 10,Monospace\ 10
+set guifont=Deja\ Vu\ Sans\ Mono\ 8,Monospace\ 8
 
 " Set the size of the window on opening.
 set lines=32

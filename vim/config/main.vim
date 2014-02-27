@@ -1,7 +1,7 @@
 "==============================================================================
 " HarnoRanaivo's .vimrc file
 " Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
-" Last Change: May 10th 2013
+" Last Change: February 27th 2014
 "==============================================================================
 
 " If something is not commented, try ':h option'.
@@ -164,9 +164,7 @@ autocmd Filetype c runtime! autoload/ccomplete.vim
 "}}}
 
 "" Highlight current line and column in Insert mode {{{
-autocmd InsertLeave * setlocal nocul nocuc
-autocmd InsertEnter * setlocal cul cuc
-" set cul
+set cul
 "}}}
 
 "" Highlight limit column {{{
@@ -181,6 +179,8 @@ vmap < <gv
 "" Paths {{{
 set path+=include/
 set path+=src/
+set path+=headers/
+set path+=sources/
 "}}}
 
 "" Swap and undo {{{

@@ -19,6 +19,10 @@ let g:miniBufExplMapCTabSwitchBufs = 1
 let g:statusLineText = "%= Buffer list"
 "}}}
 
+let g:miniBufExplVSplit = 20
+
+nnoremap <F2> :TMiniBufExplorer<CR>
+
 "" Force highlighting {{{
 " Sometimes, buffers loose their highlighting.
 " WARNING: If set, this option may cause some lags.

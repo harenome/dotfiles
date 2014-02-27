@@ -12,6 +12,7 @@
 " set lazyredraw
 
 "" MiniBufExpl {{{
+" Maps something to <F2> !
 source ~/.vim/config/minibufexpl_rc.vim
 "}}}
 
@@ -52,7 +53,7 @@ source ~/.vim/config/tagbar_rc.vim
 " Enable or disable numbers plugin.
 let g:enable_numbers = 0
 " Mapping to <F3> !
-nnoremap <F3> :NumbersToggle<CR>
+" nnoremap <F3> :NumbersToggle<CR>
 "}}}
 
 "" Alternate {{{
@@ -79,6 +80,7 @@ source ~/.vim/config/vimpanel_rc.vim
 
 "" NERDTree {{{
 " let loaded_nerd_tree = 1
+" Maps something to <F7> !
 source ~/.vim/config/nerdtree_rc.vim
 "}}}
 
