@@ -1,34 +1,171 @@
 #!/bin/bash
 # FUCK YOU
+# Version: 1.1.0
 
-function flip
+### Global variables {{{
+PROGRAM_NAME="FUCK"
+VERSION="1.1.0"
+AUTHORS="Harenome Ranaivoarivony Razanajato"
+ACKNOWLEDGEMENTS="Inspired by Louis \"namuol\" Acresti's rage-quit support for bash [1] and
+robotlolita's fuck-you [2].
+[1] <https://gist.github.com/namuol/9122237>
+[2] <https://github.com/robotlolita/fuck-you>
+"
+LICENCE_DISCLAIMER="This program is free software. It comes WITHOUT ANY WARRANTY, to
+the extent permitted by applicable law. You can redistribute it
+and/or modify it under the terms of the Do What The Fuck You Want
+To Public License, Version 2, as published by Sam Hocevar. See
+<http://www.wtfpl.net> for more details."
+
+VERSION_STRING="$PROGRAM_NAME, version $VERSION.
+
+$LICENCE_DISCLAIMER
+
+$ACKNOWLEDGEMENTS
+Written by $AUTHORS."
+
+LOWER_FLIPPER="(╯°□°）╯"
+LOWER_MOVE="︵"
+LOWER_SUCCESS_FLIPPER="(⌐■_■)"
+LOWER_FAIL_FLIPPER="( °0°)"
+UPPER_FLIPPER="(ノಠ益ಠ)ノ"
+UPPER_MOVE="彡"
+UPPER_SUCCESS_FLIPPER=$UPPER_FLIPPER
+UPPER_FAIL_FLIPPER="(；￣Д￣)"
+# " (ﾉಥ益ಥ）ﾉ "
+# "ヽ(\`Д´)ﾉ︵"
+### }}}
+
+### Functions {{{
+
+## Flip the name of a process
+## $1: process name
+## stdout: flipped name or |_|
+##
+## Superfluous arguments are ignored.
+## Thanks to this function, "flip-text" is an optionnal dependency.
+function flip_process
 {
-    if command -v flip-text > /dev/null 2>&1; then
-        echo -e "\n (╯°□°）╯︵$(echo $1 | flip-text &2> /dev/null)\n"
+    local FLIPPED_PROCESS="|_|"
+
+    if [[ $# -ge 1 ]] && command -v flip-text > /dev/null 2>&1; then
+        FLIPPED_PROCESS=$(echo $1 | flip-text &2> /dev/null)
     else
-        echo -e "\n (╯°□°）╯︵|__|\n"
+        echo "flip_process: Wrong number of arguments." 1>&2
+    fi
+
+    echo "$FLIPPED_PROCESS"
+}
+
+## Attempt to flip
+## $1: process
+## $2: UPPER_LOCK state
+function attempt_flip
+{
+    if [[ $# -ne 2 ]]; then
+        echo "attempt_flip: Wrong number of arguments." 1>&2
+    else
+        pkill -9 $1 > /dev/null 2>&1
+
+        local SUCCESS=$?
+        local FLIPPED_PROCESS=$(flip_process "$1")
+        local FLIPPER=$(choose_flipper "$2")
+        local MOVE=$(choose_move "$2")
+
+        print_flip "$FLIPPER" "$MOVE" "$1" "$FLIPPED_PROCESS" "$SUCCESS"
     fi
 }
 
-if [[ $# -ne 2 || ($1 != "you" && $1 != "YOU") ]]; then
+function choose
+{
+    [[ $1 = "true" ]] && echo "$2" || echo "$3"
+}
+
+function choose_flipper
+{
+    choose "$1" "$UPPER_FLIPPER" "$LOWER_FLIPPER"
+}
+
+function choose_move
+{
+    choose "$1" "$UPPER_MOVE" "$LOWER_MOVE"
+}
+
+function choose_success_flipper
+{
+    choose "$1" "$UPPER_SUCCESS_FLIPPER  " "$LOWER_SUCCESS_FLIPPER    "
+}
+
+function choose_fail_flipper
+{
+    choose "$1" "$UPPER_FAIL_FLIPPER   " "$LOWER_FAIL_FLIPPER    "
+}
+
+function print_flip
+{
+    local FLIPPED_PROCESS=$(flip_process "$1")
+    local FLIPPER=$(choose_flipper "$2")
+    local MOVE=$(choose_move "$2")
+
+    local FLIPPING_START=" $FLIPPER$MOVE$FLIPPED_PROCESS"
+    local FLIPPING_MIDDLE=" $FLIPPER  "
+    local FLIPPING_END
+
+    if [[ $3 -eq 0 ]]; then
+        local SUCCESS_FLIPPER=$(choose_success_flipper "$2")
+        FLIPPING_MIDDLE="$FLIPPING_MIDDLE$FLIPPED_PROCESS"
+        FLIPPING_END=" $SUCCESS_FLIPPER$FLIPPED_PROCESS"
+    else
+        local FAIL_FLIPPER=$(choose_fail_flipper "$2")
+        SHIFT="$(string_as_spaces "$1")"
+        FLIPPING_MIDDLE="$FLIPPING_MIDDLE$SHIFT$LOWER_MOVE$1"
+        FLIPPING_END=" $FAIL_FLIPPER$SHIFT  $1"
+    fi
+
+    echo -e "\n$FLIPPING_START\n\n$FLIPPING_MIDDLE\n\n$FLIPPING_END\n"
+}
+
+function spaces_n
+{
+    local SPACES
+
+    for i in $(seq $1); do
+        SPACES="$SPACES "
+    done
+
+    echo "$SPACES"
+}
+
+function string_as_spaces
+{
+    spaces_n ${#1}
+}
+
+function caps_lock_state
+{
+    [[ $(basename "$1") = "FUCK" && $2 = "YOU" ]] && echo "true" || echo "false"
+}
+### }}}
+
+### Main {{{
+if [[ $# -ne 2 || ("$1" != "you" && "$1" != "YOU") ]]; then
     if [[ $1 = "me" ]]; then
-        echo -e "\nO_O\n"
+        echo -e "\n $LOWER_FAIL_FLIPPER\n"
         exit 71 # EX_OSERR
+    elif [[ $1 = "--version" ]]; then
+        echo "$VERSION_STRING"
     else
         echo "Usage: $0 you <process>" >&2
         exit 64 # EX_USAGE
     fi
 else
-    if killall -9 $2; then
-        FLIPPED=$(flip $2)
-        if [[ $(basename $0) = "FUCK" && $1 = "YOU" ]]; then
-            for i in $(seq 8); do
-                echo $FLIPPED
-            done
-        else
-            echo $FLIPPED
-        fi
-    fi
-fi
+    pkill -9 "$2" > /dev/null 2>&1
+    SUCCESS=$?
 
-exit 0
+    print_flip "$2" $(caps_lock_state "$0" "$1") $SUCCESS
+
+    exit $SUCCESS
+fi
+### }}}
+
+# vim:fdm=marker:colorcolumn=80:foldopen=all:foldclose=all
