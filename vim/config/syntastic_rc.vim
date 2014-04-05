@@ -14,10 +14,8 @@ nnoremap <F6> :Errors<CR>
 let g:syntastic_mode_map = { "mode": "active", "active_filetypes": [], "passive_filetypes": ['java'] }
 " Check when buffers are first loaded
 let g:syntastic_check_on_open = 0
-" Auto jump to errors when saving or loading a file
-let g:syntastic_auto_jump = 1
-" Auto open and close the error window
-let g:syntastic_auto_loc_list = 1
+" Auto close the error window
+let g:syntastic_auto_loc_list = 2
 "}}}
 
 "" Appearance {{{

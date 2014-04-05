@@ -8,20 +8,28 @@
 let g:miniBufExplModSelTarget = 1
 "}}}
 
-"" Tab Switching {{{
-" <C-Tab> and <C-S-Tab> to navigate through tabs.
-let g:miniBufExplMapCTabSwitchBufs = 1
-"}}}
-
 "" Statusline {{{
 " I'd love to merely get rid of it but didn't find any way to do so
 " in the help nor the source code.
 let g:statusLineText = "%= Buffer list"
 "}}}
 
+"" Vertical mode {{{
 let g:miniBufExplVSplit = 20
+let g:miniBufExplMaxSize = 80
+let g:miniBufExplMinSize = 1
+"}}}
 
+"" Misc. {{{
+let g:miniBufExplorerMoreThanOne=0
+let g:miniBufExplCheckDupeBufs = 0
+let g:miniBufExplShowBufNumbers = 1
+let g:miniBufExplUseSingleClick = 1
+"}}}
+
+"" Shortcut key {{{
 nnoremap <F2> :TMiniBufExplorer<CR>
+"}}}
 
 "" Force highlighting {{{
 " Sometimes, buffers loose their highlighting.
