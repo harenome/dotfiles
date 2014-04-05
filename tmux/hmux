@@ -2,8 +2,8 @@
 # Command line to attach an unattached tmux session, or start a new one if
 # all currently running sessions are already attached.
 
-TMPDIR="~/tmp"
-WORKDIR="~/Code"
+TMPDIR="$HOME/tmp"
+WORKDIR="$HOME/Code"
 
 function launchMainSession
 {
