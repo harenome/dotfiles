@@ -185,8 +185,10 @@ set path+=sources/
 
 "" Swap and undo {{{
 set dir=~/.local/dotfiles/vim/swp
-set undodir=~/.local/dotfiles/vim/undo
-set undofile
+if version >= 703
+    set undodir=~/.local/dotfiles/vim/undo
+    set undofile
+endif
 "}}}
 
 "" Plugin configuration {{{
