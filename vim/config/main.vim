@@ -164,11 +164,15 @@ autocmd Filetype c runtime! autoload/ccomplete.vim
 "}}}
 
 "" Highlight current line and column in Insert mode {{{
-set cul
+set cul cuc
+"}}}
+
+"" Lazy redraw {{{
+set lazyredraw
 "}}}
 
 "" Highlight limit column {{{
-"set colorcolumn=80
+set colorcolumn=80
 "}}}
 
 "" Selection lasts after indenting {{{
