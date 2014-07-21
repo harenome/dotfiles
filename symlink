@@ -1,0 +1,82 @@
+#!/bin/sh
+#vim: tw=80 cc=80
+
+# Program: symlinks
+# Author: Harenome RANAIVOARIVONY RAZANAJATO
+# Version: 0.1
+# Date: July 22nd 2014
+# License: WTFPL v2
+#
+# This program is free software. It comes WITHOUT ANY WARRANTY, to
+# the extent permitted by applicable law. You can redistribute it
+# and/or modify it under the terms of the Do What The Fuck You Want
+# To Public License, Version 2, as published by Sam Hocevar. See
+# http://wtfpl.net/COPYING for more details.
+
+#
+################################################################################
+# Global variables
+################################################################################
+
+PWD=`pwd`
+YES_STRINGS="y Y yes YES"
+
+################################################################################
+# Functions
+################################################################################
+
+answer_is_yes ()
+{
+    for $YES in $YES_STRINGS; do
+        if [ "$1" = "$YES" ]; then
+            return 0;
+        fi
+    done
+    return 1;
+}
+
+ask_overwrite ()
+{
+    local ANSWER
+    echo -en "$1 already exists. Overwrite ? [y/N]\n> " 1>&2
+    read ANSWER
+    if answer_is_yes "$ANSWER"; then
+        if [ -d "$1" ]; then
+            rm -rf "$1"
+        else
+            rm -f "$1"
+        fi
+        LINK=0
+    fi
+}
+
+find_symlinks ()
+{
+    find . -name "*.symlink" | sed 's/^\.\///;s/\.symlink$//'
+}
+
+################################################################################
+# Main
+################################################################################
+
+for FILE in `find_symlinks`; do
+    DIRNAME=`dirname $FILE`
+    SOURCE="$PWD/$FILE.symlink"
+    DESTINATION="$HOME/$FILE"
+    LINK=0
+
+    if [ -L "$DESTINATION" ] && [ `readlink "$DESTINATION"` = "$SOURCE" ]; then
+        LINK=1
+    elif [ -e "$DESTINATION" ]; then
+        LINK=1
+        ask_overwrite "$DESTINATION"
+    elif [ "$DIRNAME" != "." ]; then
+        mkdir -p "$HOME/$DIRNAME"
+    fi
+
+    if [ $LINK -eq 0 ]; then
+        ln -sf "$SOURCE" "$DESTINATION"
+    fi
+done
+
+exit 0
