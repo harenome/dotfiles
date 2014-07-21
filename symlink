@@ -1,9 +1,8 @@
 #!/bin/sh
-#vim: tw=80 cc=80
 
 # Program: symlinks
 # Author: Harenome RANAIVOARIVONY RAZANAJATO
-# Version: 0.1
+# Version: 1.0
 # Date: July 22nd 2014
 # License: WTFPL v2
 #
@@ -21,13 +20,129 @@
 PWD=`pwd`
 YES_STRINGS="y Y yes YES"
 
+BACKUPDIR=backups
+CONFIGDIR=$HOME
+
+## Variables for version and help printing
+DATE="July 23rd 2014"
+VERSION="1.0"
+LICENCEDISCLAIMER="This program is free software. It comes WITHOUT ANY WARRANTY, to
+the extent permitted by applicable law. You can redistribute it
+and/or modify it under the terms of the Do What The Fuck You Want
+To Public License, Version 2, as published by Sam Hocevar. See
+http://www.wtfpl.net for more details."
+
+AUTHORS="Harenome Ranaivoarivony Razanajato"
+
+VERSIONSTRING="symlinks, version $VERSION ($DATE)
+
+$LICENCEDISCLAIMER
+
+Written by $AUTHORS."
+
+HELPSTRING="\e[1mNAME\e[0m
+\tsymlink - Link dotfiles
+
+\e[1mSYNOPSIS\e[0m
+\t\e[1m$0\e[0m [OPTIONS]...
+
+\e[1mOPTIONS\e[0m
+\t\e[1m--no-backup\e[0m
+\t\tdisable backups
+\t\e[1m-f, --force-overwrite\e[0m
+\t\tforce overwriting
+\t\e[1m--verbose\e[0m
+\t\tenable verbose mode
+\t\e[1m-h, --help\e[0m
+\t\tprint this help
+\t\e[1m-v, --version\e[0m
+\t\tprint the version
+"
+
+DOBACKUPS=true
+FORCEOVERWRITE=false
+VERBOSE=false
+WRONGARGUMENT=false
+
 ################################################################################
 # Functions
 ################################################################################
 
+message ()
+{
+    echo "$1" 1>&2
+}
+
+verbose ()
+{
+    if $VERBOSE; then
+        message "$1"
+    fi
+}
+
+raw_message ()
+{
+    echo -en "$1" 1>&2
+}
+
+
+raw_verbose ()
+{
+    if $VERBOSE; then
+        raw_message "$1"
+    fi
+}
+
+print_version ()
+{
+    echo -e "$VERSIONSTRING"
+}
+
+print_help ()
+{
+    echo -e "$HELPSTRING"
+}
+
+print_option ()
+{
+    raw_message "\t\e[1m$2\e[0m: "
+    if $1; then
+        raw_message "yes\n"
+    else
+        raw_message "no\n"
+    fi
+}
+
+wrong_option ()
+{
+    raw_message "\e[31merror: wrong option ($1)\e[0m\n"
+    WRONGARGUMENT=true
+
+}
+
+backup ()
+{
+    raw_verbose "\e[32mbackuping:\t$1\e[0m\n"
+    mkdir -p "$BACKUPDIR"
+    cp -r "$1" "$BACKUPDIR/"
+}
+
+remove ()
+{
+    if $DOBACKUPS; then
+        backup "$1"
+    fi
+    raw_verbose "\e[31mremoving:\t$1\e[0m\n"
+    if [ -d "$1" ]; then
+        rm -rf "$1"
+    else
+        rm -f "$1"
+    fi
+}
+
 answer_is_yes ()
 {
-    for $YES in $YES_STRINGS; do
+    for YES in $YES_STRINGS; do
         if [ "$1" = "$YES" ]; then
             return 0;
         fi
@@ -35,18 +150,31 @@ answer_is_yes ()
     return 1;
 }
 
-ask_overwrite ()
+create_link ()
 {
-    local ANSWER
-    echo -en "$1 already exists. Overwrite ? [y/N]\n> " 1>&2
+    raw_verbose "\e[34mlinking:\t$2 -> $1\e[0m\n"
+    if $LINK; then
+        ln -sf "$1" "$2"
+    fi
+}
+
+ask ()
+{
+    raw_message "$1 [y/\e[1mN\e[0m]\n"
+    raw_message "\e[1m>\e[0m "
     read ANSWER
     if answer_is_yes "$ANSWER"; then
-        if [ -d "$1" ]; then
-            rm -rf "$1"
-        else
-            rm -f "$1"
-        fi
-        LINK=0
+        return 0
+    else
+        return 1
+    fi
+}
+
+overwrite ()
+{
+    if $FORCEOVERWRITE || ask "\e[4m$1\e[0m already exists. Overwrite?"; then
+        remove "$1"
+        LINK=true
     fi
 }
 
@@ -59,23 +187,58 @@ find_symlinks ()
 # Main
 ################################################################################
 
+if [ $# -ne 0 ]; then
+    # getopt and getopts are a bit painful
+    for ARG in $*; do
+        if [[ ${ARG:0:1} = "-" ]] && [[ ${ARG:0:2} != "--" ]]; then
+            case $ARG in
+                "-f" ) FORCEOVERWRITE=true;;
+                "-v" ) print_version; exit 0;;
+                "-h" ) print_help; exit 0;;
+                * ) wrong_option "$ARG";;
+            esac
+        elif [[ ${ARG:0:2} = "--" ]]; then
+            case $ARG in
+                "--verbose" ) VERBOSE=true;;
+                "--no-backup" ) DOBACKUPS=false;;
+                "--force-overwrite" ) FORCEOVERWRITE=true;;
+                "--version" ) print_version; exit 0;;
+                "--help" ) print_help; exit 0;;
+                * ) wrong_option "$ARG";;
+            esac
+        fi
+    done
+
+    if $WRONGARGUMENT; then exit 64; fi
+fi
+
+if $VERBOSE; then
+    print_version
+    echo ""
+    raw_message "\e[4mOptions:\e[0m\n"
+    print_option $DOBACKUPS "backups"
+    print_option $FORCEOVERWRITE "force-overwrite"
+    echo ""
+fi
+
 for FILE in `find_symlinks`; do
     DIRNAME=`dirname $FILE`
     SOURCE="$PWD/$FILE.symlink"
     DESTINATION="$HOME/$FILE"
-    LINK=0
+    LINK=true
 
     if [ -L "$DESTINATION" ] && [ `readlink "$DESTINATION"` = "$SOURCE" ]; then
-        LINK=1
+        raw_verbose "\e[2mignoring:\t$DESTINATION\e[0m\n"
+        LINK=false
     elif [ -e "$DESTINATION" ]; then
-        LINK=1
-        ask_overwrite "$DESTINATION"
+        LINK=false
+        overwrite "$DESTINATION"
     elif [ "$DIRNAME" != "." ]; then
         mkdir -p "$HOME/$DIRNAME"
     fi
 
-    if [ $LINK -eq 0 ]; then
-        ln -sf "$SOURCE" "$DESTINATION"
+    if $LINK; then
+        create_link "$SOURCE" "$DESTINATION"
     fi
 done
 
