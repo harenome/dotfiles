@@ -48,9 +48,6 @@
 [submodule "vim-easytags"]
 	path = .vim.symlink/bundle/vim-easytags
 	url = git://github.com/xolox/vim-easytags.git
-[submodule "vim-detailed"]
-	path = .vim.symlink/bundle/vim-detailed
-	url = git@github.com:rking/vim-detailed.git
 [submodule "vim-expand-region"]
 	path = .vim.symlink/bundle/vim-expand-region
 	url = git://github.com/terryma/vim-expand-region.git
