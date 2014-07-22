@@ -1,28 +1,29 @@
-main : dotm | localdirs
-	echo "Dotm: done."
+main: submodules symlink | localdirs
 
-all : dotm main gnometerm
-	echo "Special commands: done."
+all: symlink main gnometerm
 
-localdirs :
-	mkdir -p ~/.local/dotfiles/bash
-	mkdir -p ~/.local/dotfiles/gvim
-	mkdir -p ~/.local/dotfiles/vim
-	mkdir -p ~/.local/dotfiles/vim/tags
-	mkdir -p ~/.local/dotfiles/vim/swp
-	mkdir -p ~/.local/dotfiles/vim/undo
-	mkdir -p ~/.local/dotfiles/vim/spell
-	ln -s ~/.local/dotfiles/vim/spell vim/spell
-	mkdir -p ~/.config
-	mkdir -p ~/.config/htop
-	mkdir -p ~/.config/fish
+localdirs:
+	@mkdir -p ~/.local/dotfiles/bash
+	@mkdir -p ~/.local/dotfiles/gvim
+	@mkdir -p ~/.local/dotfiles/vim
+	@mkdir -p ~/.local/dotfiles/vim/tags
+	@mkdir -p ~/.local/dotfiles/vim/swp
+	@mkdir -p ~/.local/dotfiles/vim/undo
+	@mkdir -p ~/.local/dotfiles/vim/spell
+	@rm -f .vim.symlink/spell
+	@ln -sf ~/.local/dotfiles/vim/spell .vim.symlink/spell
+	@mkdir -p ~/.config
+	@echo -e "\e[32mlocal dirs:\tdone\e[0m"
 
-dotm : localdirs
-	./dotm --verbose --force-overwrite
+symlink: localdirs
+	@./symlink --no-backup --force-overwrite
+	@echo -e "\e[32msymlink:\tdone\e[0m"
 
-gnometerm :
-	cat gnome-terminal/dump | dconf load /org/gnome/terminal/legacy/profiles:/
+gnometerm:
+	@cat gnome-terminal/dump | dconf load /org/gnome/terminal/legacy/profiles:/
+	@echo -e "\e[32mgnome-terminal:\tdone\e[0m"
 
-update :
-	git submodule init
-	git submodule update
+submodules:
+	@git submodule init
+	@git submodule update
+	@echo -e "\e[32msubmodules:\tdone\e[0m"
