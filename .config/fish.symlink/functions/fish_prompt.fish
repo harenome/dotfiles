@@ -41,7 +41,7 @@ function fish_prompt --description 'Write out the prompt'
     end
 
     # Time
-    set -l __time "$__time_color"(date "+%H:%M:%S")"$__normal_color"" "
+    set -l __time "$__time_color"(date "+%D %H:%M:%S")"$__normal_color"" "
 
     # User name
     set -l __user
@@ -159,7 +159,9 @@ function fish_prompt --description 'Write out the prompt'
     if [ $__prompt_extra_small = "true" ]
         echo -n -s "$__delim" " "
     else
-        echo -n -s "$__time" "$__low_color" "[" "$__normal_color" "$__user" "$__hostname" ":" "$__directory" "$__low_color" "] " "$__normal_color" "$__git_info" "$__fish_jobs" "$__error_status" "$__delim" " "
+        echo -e -n -s "$__time" "$__low_color" "[" "$__normal_color" "$__user" "$__hostname" ":" "$__directory" "$__low_color" "] " "$__normal_color" "$__git_info" "$__fish_jobs" "$__error_status"
+        echo
+        echo -n -s "$__delim" " "
     end
 end
 
