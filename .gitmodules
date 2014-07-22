@@ -19,7 +19,7 @@
 [submodule "numbers"]
 	path = .vim.symlink/bundle/numbers
 	url = git://github.com/myusuf3/numbers.vim.git
-[submodule ".liquidprompt.symlink/upstream"]
+[submodule "liquidprompt"]
 	path = .liquidprompt.symlink/upstream
 	url = git://github.com/nojhan/liquidprompt.git
 [submodule "vim-pasta"]
