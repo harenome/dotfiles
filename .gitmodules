@@ -80,3 +80,12 @@
 [submodule ".vim.symlink/bundle/vim-misc"]
 	path = .vim.symlink/bundle/vim-misc
 	url = https://github.com/xolox/vim-misc.git
+[submodule "vim-mipssyntax"]
+	path = .vim.symlink/bundle/vim-mipssyntax
+	url = https://github.com/Harenome/vim-mipssyntax.git
+[submodule "vim-neatfoldtext"]
+	path = .vim.symlink/bundle/vim-neatfoldtext
+	url = https://github.com/Harenome/vim-neatfoldtext.git
+[submodule "vim-colors-rhinestones"]
+	path = .vim.symlink/bundle/rhinestones-colors
+	url = https://github.com/Harenome/vim-colors-rhinestones.git
