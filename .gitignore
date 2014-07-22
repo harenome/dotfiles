@@ -4,3 +4,7 @@ backups/*
 ## Vim
 .vim.symlink/.netrwhist
 .vim.symlink/spell
+
+## Fish
+.config/fish.symlink/fish_history
+.config/fish.symlink/fishd*
