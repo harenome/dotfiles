@@ -19,10 +19,6 @@
 [submodule ".vim.symlink/bundle/numbers"]
 	path = .vim.symlink/bundle/numbers
 	url = git://github.com/myusuf3/numbers.vim.git
-[submodule ".vim.symlink/bundle/rhinestones-colors"]
-	path = .vim.symlink/bundle/rhinestones-colors
-	url = git@github.com:HarnoRanaivo/vim-colors-rhinestones.git
-    ignore = dirty
 [submodule ".liquidprompt.symlink/upstream"]
 	path = .liquidprompt.symlink/upstream
 	url = git://github.com/nojhan/liquidprompt.git
@@ -49,9 +45,6 @@
 	path = .vim.symlink/bundle/vimpanel
 	url = git://github.com/mihaifm/vimpanel.git
     ignore = dirty
-[submodule ".vim.symlink/bundle/vim-mipssyntax"]
-	path = .vim.symlink/bundle/vim-mipssyntax
-	url = git@github.com:HarnoRanaivo/vim-mipssyntax.git
 [submodule ".vim.symlink/bundle/vim-easytags"]
 	path = .vim.symlink/bundle/vim-easytags
 	url = git://github.com/xolox/vim-easytags.git
@@ -72,9 +65,6 @@
 [submodule ".vim.symlink/bundle/vim-startify"]
 	path = .vim.symlink/bundle/vim-startify
 	url = git://github.com/mhinz/vim-startify.git
-[submodule ".vim.symlink/bundle/vim-neatfoldtext"]
-	path = .vim.symlink/bundle/vim-neatfoldtext
-	url = git@github.com:HarnoRanaivo/vim-neatfoldtext.git
 [submodule ".vim.symlink/bundle/vim-css-color"]
 	path = .vim.symlink/bundle/vim-css-color
 	url = git://github.com/ap/vim-css-color.git
@@ -90,3 +80,12 @@
 [submodule ".vim.symlink/bundle/vim-misc"]
 	path = .vim.symlink/bundle/vim-misc
 	url = https://github.com/xolox/vim-misc.git
+[submodule "vim-mipssyntax"]
+	path = .vim.symlink/bundle/vim-mipssyntax
+	url = https://github.com/Harenome/vim-mipssyntax.git
+[submodule "vim-neatfoldtext"]
+	path = .vim.symlink/bundle/vim-neatfoldtext
+	url = https://github.com/Harenome/vim-neatfoldtext.git
+[submodule "vim-colors-rhinestones"]
+	path = .vim.symlink/bundle/rhinestones-colors
+	url = https://github.com/Harenome/vim-colors-rhinestones.git
