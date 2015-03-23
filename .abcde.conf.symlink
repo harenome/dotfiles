@@ -1,28 +1,32 @@
 # $HOME/.abcde.conf
 # ABCDE configuration file
 # Maintainer: Harenome Ranaivoarivony Razanajato
-# Version 0.1
+# Version 0.2
 
-# I use it to encode in FLAC only.
-# (Because I first manually check everything before I encode to mp3/ogg)
-# (I encode to FLAC first because I keep two copies.
-# FLAC for backup, and listening at home, MP3/OGG for phone, music player)
-FLACENCODERSYNTAX=flac
+# Flac
 FLAC=flac
-FLACOPTS='--verify --best'
-OUTPUTTYPE="flac"
+FLACENCODERSYNTAX=flac
+FLACOPTS='--verify --best --silent'
+
+# MP3
+LAME=lame
+MP3ENCODERSYNTAX=lame
+MP3ENCOPTS="-V 0"
+
+# Outputs
+OUTPUTTYPE="flac,mp3"
 
 # To store temporary wav files in /tmp.
 # Supposedly faster if tmp is mounted as a tmpfs.
 WAVOUTPUTDIR="/tmp"
 
 # Location of output files
-OUTPUTDIR="$HOME/tmp/musique_max"
+OUTPUTDIR="$HOME/tmp/"
 
 # I always manually check - and correct, if needed - the tags,
 # but this can speed things up.
-OUTPUTFORMAT='${ARTISTFILE}/${ALBUMFILE}/${TRACKNUM}.${TRACKFILE}'
-VAOUTPUTFORMAT='${OUTPUT}/Various Artists/${ALBUMFILE}/${TRACKNUM}.${TRACKFILE}'
+OUTPUTFORMAT='${OUTPUT}/${ARTISTFILE}/${ALBUMFILE}/${TRACKNUM} - ${TRACKFILE}'
+VAOUTPUTFORMAT='${OUTPUT}/Various Artists/${ALBUMFILE}/${TRACKNUM} - ${TRACKFILE}'
 
 # I never single-track encode and make playlists, but just in case...
 ONETRACKOUTPUTFORMAT='${ARTISTFILE}/${ALBUMFILE}/${ALBUMFILE}'
