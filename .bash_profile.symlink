@@ -1,12 +1,16 @@
-# Add personnal bin folder to PATH if exists
-if [[ -d "$HOME/bin" ]] ; then
-    PATH="$HOME/bin:$PATH"
-fi
+#===============================================================================
+# ~/.bash_profile configuration file.
+# See the bash(1) man page.
+#
+# Maintainer: Harenome RANAIVOARIVONY RAZANAJATO
+# License: WTFPLv2
+#
+# For the latest version (or any previous version) of this file,
+# see https://github.com/Harenome/dotfiles/blob/master/.bash_profile.symlink
+#===============================================================================
 
 # Load RVM into a shell session *as a function*
-[[ -s "$HOME/.rvm/scripts/rvm" ]] &&
-    source "$HOME/.rvm/scripts/rvm"
+[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
 
 # Source ~/.bashrc
-[[ -f ~/.bashrc ]] &&
-    source ~/.bashrc
+[[ -f ~/.bashrc ]] && source ~/.bashrc

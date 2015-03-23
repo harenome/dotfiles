@@ -1,29 +1,139 @@
-# ~/.bashrc: executed by bash(1) for non-login shells.
-# see /usr/share/doc/bash/examples/startup-files (in the package bash-doc)
-# for examples
+#===============================================================================
+# ~/.bashrc configuration file.
+# See the bash(1) man page.
+#
+# Maintainer: Harenome RANAIVOARIVONY RAZANAJATO
+# License: WTFPLv2
+#
+# For the latest version (or any previous version) of this file,
+# see https://github.com/Harenome/dotfiles/blob/master/.bashrc.symlink
+#===============================================================================
 
-# RVM.
-# Do this first, so that even non-interactive shells load it as well. 
-if [[ -d $HOME/.rvm/bin ]]; then
-    PATH=$PATH:$HOME/.rvm/bin # Add RVM to PATH for scripting
+################################################################################
+# Helper functions.
+################################################################################
+
+# Append directories to paths
+# $1: Environment variable
+# $2: Directory
+function __append_to_path
+{
+    [[ -z $(eval "echo \$$1") ]] && eval "export $1=$2" || eval "export $1=\$$1:$2"
+}
+
+################################################################################
+# $HOME/bin
+################################################################################
+
+HOME_BIN="$HOME/bin"
+[[ -d "$HOME_BIN" ]] && export PATH="$HOME_BIN:$PATH"
+
+################################################################################
+# RVM support.
+################################################################################
+
+# Do this first, so that even non-interactive shells load it as well.
+if [[ -d "$HOME/.rvm/bin" ]]; then
+    # Add RVM to PATH for scripting
+    export PATH="$PATH:$HOME/.rvm/bin"
     source $(rvm 1.9.3 do rvm env --path)
 fi
+
+################################################################################
+# /usr/local
+################################################################################
+
+USR_LOCAL="/usr/local"
+if [[ -d "$USR_LOCAL" ]]; then
+    # Compiler paths
+    [[ -d "$USR_LOCAL/lib" ]] && __append_to_path "LIBRARY_PATH" "$USR_LOCAL/lib"
+    [[ -d "$USR_LOCAL/lib64" ]] && __append_to_path "LIBRARY_PATH" "$USR_LOCAL/lib64"
+    [[ -d "$USR_LOCAL/include" ]] && __append_to_path "CPATH" "$USR_LOCAL/include"
+
+    # Runtime paths
+    [[ -d "$USR_LOCAL/bin" ]] && __append_to_path "PATH" "$USR_LOCAL/bin"
+    [[ -d "$USR_LOCAL/sbin" ]] && __append_to_path "PATH" "$USR_LOCAL/sbin"
+    [[ -d "$USR_LOCAL/man" ]] && __append_to_path "MANPATH" "$USR_LOCAL/man"
+    [[ -d "$USR_LOCAL/share/man" ]] && __append_to_path "MANPATH" "$USR_LOCAL/share/man"
+    [[ -d "$USR_LOCAL/lib" ]] && __append_to_path "LD_LIBRARY_PATH" "$USR_LOCAL/lib"
+    [[ -d "$USR_LOCAL/lib64" ]] && __append_to_path "LD_LIBRARY_PATH" "$USR_LOCAL/lib64"
+fi
+
+################################################################################
+# User opt directory
+################################################################################
+
+HOME_OPT="$HOME/.opt"
+if [[ -d "$HOME_OPT" ]]; then
+    # Compiler paths
+    [[ -d "$HOME_OPT/lib" ]] && __append_to_path "LIBRARY_PATH" "$HOME_OPT/lib"
+    [[ -d "$HOME_OPT/lib64" ]] && __append_to_path "LIBRARY_PATH" "$HOME_OPT/lib64"
+    [[ -d "$HOME_OPT/include" ]] && __append_to_path "CPATH" "$HOME_OPT/include"
+
+    # Runtime paths
+    [[ -d "$HOME_OPT/bin" ]] && __append_to_path "PATH" "$HOME_OPT/bin"
+    [[ -d "$HOME_OPT/sbin" ]] && __append_to_path "PATH" "$HOME_OPT/sbin"
+    [[ -d "$HOME_OPT/man" ]] && __append_to_path "MANPATH" "$HOME_OPT/man"
+    [[ -d "$HOME_OPT/share/man" ]] && __append_to_path "MANPATH" "$HOME_OPT/share/man"
+    [[ -d "$HOME_OPT/lib" ]] && __append_to_path "LD_LIBRARY_PATH" "$HOME_OPT/lib"
+    [[ -d "$HOME_OPT/lib64" ]] && __append_to_path "LD_LIBRARY_PATH" "$HOME_OPT/lib64"
+fi
+
+################################################################################
+# Local configurations.
+################################################################################
+
+# This file is shared between machines. Sometimes, a specific system needs
+# specific configuration.
+
+LOCAL_BASHRC="$HOME/.local/dotfiles/bash/bashrc"
+[[ -f "$LOCAL_BASHRC" ]] && source "$LOCAL_BASHRC"
+
+################################################################################
+# Interactive shell test.
+################################################################################
 
 # If not running interactively, don't do anything
 [[ -z "$PS1" ]] && return
 
-# don't put duplicate lines or lines starting with space in the history.
+################################################################################
+# Aliases.
+################################################################################
+
+BASH_ALIASES="$HOME/.bash_aliases"
+[[ -f "$BASH_ALIASES" ]] && source "$BASH_ALIASES"
+
+################################################################################
+# Bash completion
+################################################################################
+
+# Probably already enabled in /etc/bash.bashrc which itself is probably
+# already sourced by /etc/profile.
+BASH_COMPLETION="/etc/bash_completion"
+if [[ -f "$BASH_COMPLETION" ]] && ! shopt -oq posix; then
+    source "$BASH_COMPLETION"
+fi
+
+################################################################################
+# History.
+################################################################################
+
+# Don't put duplicate lines or lines starting with space in the history.
 # See bash(1) for more options
 HISTCONTROL=ignoreboth
 
-# append to the history file, don't overwrite it
+# Append to the history file, don't overwrite it
 shopt -s histappend
 
-# for setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+# For setting history length see HISTSIZE and HISTFILESIZE in bash(1)
 HISTSIZE=1000
 HISTFILESIZE=2000
 
-# check the window size after each command and, if necessary,
+################################################################################
+# Misceallenous.
+################################################################################
+
+# Check the window size after each command and, if necessary,
 # update the values of LINES and COLUMNS.
 shopt -s checkwinsize
 
@@ -31,89 +141,67 @@ shopt -s checkwinsize
 # match all files and zero or more directories and subdirectories.
 #shopt -s globstar
 
-# make less more friendly for non-text input files, see lesspipe(1)
-[[ -x /usr/bin/lesspipe ]] && eval "$(SHELL=/bin/sh lesspipe)"
+# Make less more friendly for non-text input files, see lesspipe(1)
+[[ -x "/usr/bin/lesspipe" ]] && eval "$(SHELL=/bin/sh lesspipe)"
 
-# set variable identifying the chroot you work in (used in the prompt below)
-if [[ -z "$debian_chroot" ]] && [[ -r /etc/debian_chroot ]]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-fi
+################################################################################
+# Prompt.
+################################################################################
 
-# set a fancy prompt (non-color, unless we know we "want" color)
-case "$TERM" in
-    xterm-color) color_prompt=yes;;
-esac
-
-# uncomment for a colored prompt, if the terminal has the capability; turned
-# off by default to not distract the user: the focus in a terminal window
-# should be on the output of commands, not on the prompt
-force_color_prompt=yes
-
-if [[ -n "$force_color_prompt" ]]; then
-    if [[ -x /usr/bin/tput ]] && tput setaf 1 >&/dev/null; then
-	# We have color support; assume it's compliant with Ecma-48
-	# (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-	# a case would tend to support setf rather than setaf.)
-	color_prompt=yes
-    else
-	color_prompt=
-    fi
-fi
-
-if [[ "$color_prompt" = yes ]]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+LIQUIDPROMPT="$HOME/.liquidprompt/liquidprompt"
+if [[ -f "$LIQUIDPROMPT" ]]; then
+    # Liquidprompt
+    source "$LIQUIDPROMPT"
 else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-fi
-unset color_prompt force_color_prompt
+    # This section comes from the default .bashrc provided on Ubuntu.
+    # (Ubuntu 6.10 ? I have been using some parts of this .bashrc for years...)
 
-# If this is an xterm set the title to user@host:dir
-case "$TERM" in
-xterm*|rxvt*)
-    PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1"
-    ;;
-*)
-    ;;
-esac
+    # Set variable identifying the chroot you work in (used in the prompt below)
+    if [[ -z "$debian_chroot" ]] && [[ -r /etc/debian_chroot ]]; then
+        debian_chroot=$(cat /etc/debian_chroot)
+    fi
 
-# enable color support of ls and also add handy aliases
-if [[ -x /usr/bin/dircolors ]]; then
-    test -r ~/.dircolors && eval "$(dircolors -b ~/.dircolors)" || eval "$(dircolors -b)"
-    alias ls='ls --color=auto'
-    #alias dir='dir --color=auto'
-    #alias vdir='vdir --color=auto'
+    # Set a fancy prompt (non-color, unless we know we "want" color)
+    case "$TERM" in
+        xterm-color) color_prompt=yes;;
+    esac
 
-    alias grep='grep --color=auto'
-    alias fgrep='fgrep --color=auto'
-    alias egrep='egrep --color=auto'
-fi
+    # Uncomment for a colored prompt, if the terminal has the capability; turned
+    # off by default to not distract the user: the focus in a terminal window
+    # should be on the output of commands, not on the prompt
+    force_color_prompt=yes
 
-# some more ls aliases
-alias ll='ls -alF'
-alias la='ls -A'
-alias l='ls -CF'
+    if [[ -n "$force_color_prompt" ]]; then
+        if [[ -x /usr/bin/tput ]] && tput setaf 1 >&/dev/null; then
+        # We have color support; assume it's compliant with Ecma-48
+        # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+        # a case would tend to support setf rather than setaf.)
+        color_prompt=yes
+        else
+        color_prompt=
+        fi
+    fi
 
-# Add an "alert" alias for long running commands.  Use like so:
-#   sleep 10; alert
-alias alert='notify-send --urgency=low -i "$([[ $? = 0 ]] && echo terminal || echo error)" "$(history|tail -n1|sed -e '\''s/^\s*[0-9]\+\s*//;s/[;&|]\s*alert$//'\'')"'
+    if [[ "$color_prompt" = yes ]]; then
+        PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+    else
+        PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+    fi
+    unset color_prompt force_color_prompt
 
-# Alias definitions.
-# You may want to put all your additions into a separate file like
-# ~/.bash_aliases, instead of adding them here directly.
-# See /usr/share/doc/bash-doc/examples in the bash-doc package.
-
-if [[ -f ~/.bash_aliases ]]; then
-    . ~/.bash_aliases
-fi
-
-# enable programmable completion features (you don't need to enable
-# this, if it's already enabled in /etc/bash.bashrc and /etc/profile
-# sources /etc/bash.bashrc).
-if [[ -f /etc/bash_completion ]] && ! shopt -oq posix; then
-    . /etc/bash_completion
+    # If this is an xterm set the title to user@host:dir
+    case "$TERM" in
+        xterm*|rxvt*)
+            PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1" ;;
+        *)
+            ;;
+    esac
 fi
 
-# Liquidprompt
-if [[ -f ~/.liquidprompt/liquidprompt ]]; then
-    source ~/.liquidprompt/liquidprompt
-fi
+################################################################################
+# Cleaning.
+################################################################################
+
+unset __append_to_path
+
+# vim:ft=sh
