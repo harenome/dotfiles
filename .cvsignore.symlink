@@ -19,6 +19,12 @@
 *.so.*
 *.dylib
 
+# Lex / Yacc
+lex.yy.c
+y.tab.c
+y.tab.h
+y.output
+
 # Java
 *.class
 *.jar
