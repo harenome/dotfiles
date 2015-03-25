@@ -31,7 +31,7 @@ set -g status-bg colour232
 set -g status-fg colour248
 set -g status-left-length 1024
 set -g status-left-length 1024
-set -g status-left '#[default,bg=colour237,fg=colour15,bold] #S #[default,bg=colour234,fg=colour250] ###P '
+set -g status-left '#[default,bg=colour237,fg=colour15,bold] #S #[default,bg=colour234,fg=colour250] #P '
 set -g status-right '#[default,bg=colour234,fg=colour240] sys #[default,bg=colour234,fg=colour250,bold]#(cat /proc/loadavg | cut -d " " -f 1) #[default,bg=colour234,fg=colour250]#(cat /proc/loadavg | cut -d " " -f 2-3) #[default,bg=colour237,fg=colour253] #(date "+%a %d %b") #[default,bg=colour237,fg=colour224,bold]#(date "+%k:%M") '
 
 # Window list
