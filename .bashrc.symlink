@@ -19,7 +19,7 @@
 function __append_to_path
 {
     if [[ -d "$2" ]]; then
-        if [[ -z $(eval "echo \$$1") ]] && eval "export $1=$2" || eval "export $1=\$$1:$2"
+        [[ -z $(eval "echo \$$1") ]] && eval "export $1=$2" || eval "export $1=\$$1:$2"
     fi
 }
 
