@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 
 # Program: symlinks
 # Author: Harenome RANAIVOARIVONY RAZANAJATO
@@ -12,7 +12,7 @@
 # To Public License, Version 2, as published by Sam Hocevar. See
 # http://wtfpl.net/COPYING for more details.
 
-#
+
 ################################################################################
 # Global variables
 ################################################################################
@@ -25,7 +25,7 @@ CONFIGDIR=$HOME
 
 ## Variables for version and help printing
 DATE="July 23rd 2014"
-VERSION="1.0"
+VERSION="1.1"
 LICENCEDISCLAIMER="This program is free software. It comes WITHOUT ANY WARRANTY, to
 the extent permitted by applicable law. You can redistribute it
 and/or modify it under the terms of the Do What The Fuck You Want
