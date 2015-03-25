@@ -13,12 +13,14 @@
 # Helper functions.
 ################################################################################
 
-# Append directories to paths
+# Append existing directories to paths
 # $1: Environment variable
 # $2: Directory
 function __append_to_path
 {
-    [[ -z $(eval "echo \$$1") ]] && eval "export $1=$2" || eval "export $1=\$$1:$2"
+    if [[ -d "$2" ]]; then
+        if [[ -z $(eval "echo \$$1") ]] && eval "export $1=$2" || eval "export $1=\$$1:$2"
+    fi
 }
 
 ################################################################################
@@ -46,17 +48,17 @@ fi
 USR_LOCAL="/usr/local"
 if [[ -d "$USR_LOCAL" ]]; then
     # Compiler paths
-    [[ -d "$USR_LOCAL/lib" ]] && __append_to_path "LIBRARY_PATH" "$USR_LOCAL/lib"
-    [[ -d "$USR_LOCAL/lib64" ]] && __append_to_path "LIBRARY_PATH" "$USR_LOCAL/lib64"
-    [[ -d "$USR_LOCAL/include" ]] && __append_to_path "CPATH" "$USR_LOCAL/include"
+    __append_to_path "LIBRARY_PATH" "$USR_LOCAL/lib"
+    __append_to_path "LIBRARY_PATH" "$USR_LOCAL/lib64"
+    __append_to_path "CPATH" "$USR_LOCAL/include"
 
     # Runtime paths
-    [[ -d "$USR_LOCAL/bin" ]] && __append_to_path "PATH" "$USR_LOCAL/bin"
-    [[ -d "$USR_LOCAL/sbin" ]] && __append_to_path "PATH" "$USR_LOCAL/sbin"
-    [[ -d "$USR_LOCAL/man" ]] && __append_to_path "MANPATH" "$USR_LOCAL/man"
-    [[ -d "$USR_LOCAL/share/man" ]] && __append_to_path "MANPATH" "$USR_LOCAL/share/man"
-    [[ -d "$USR_LOCAL/lib" ]] && __append_to_path "LD_LIBRARY_PATH" "$USR_LOCAL/lib"
-    [[ -d "$USR_LOCAL/lib64" ]] && __append_to_path "LD_LIBRARY_PATH" "$USR_LOCAL/lib64"
+    __append_to_path "PATH" "$USR_LOCAL/bin"
+    __append_to_path "PATH" "$USR_LOCAL/sbin"
+    __append_to_path "MANPATH" "$USR_LOCAL/man"
+    __append_to_path "MANPATH" "$USR_LOCAL/share/man"
+    __append_to_path "LD_LIBRARY_PATH" "$USR_LOCAL/lib"
+    __append_to_path "LD_LIBRARY_PATH" "$USR_LOCAL/lib64"
 fi
 
 ################################################################################
@@ -66,17 +68,17 @@ fi
 HOME_OPT="$HOME/.opt"
 if [[ -d "$HOME_OPT" ]]; then
     # Compiler paths
-    [[ -d "$HOME_OPT/lib" ]] && __append_to_path "LIBRARY_PATH" "$HOME_OPT/lib"
-    [[ -d "$HOME_OPT/lib64" ]] && __append_to_path "LIBRARY_PATH" "$HOME_OPT/lib64"
-    [[ -d "$HOME_OPT/include" ]] && __append_to_path "CPATH" "$HOME_OPT/include"
+    __append_to_path "LIBRARY_PATH" "$HOME_OPT/lib"
+    __append_to_path "LIBRARY_PATH" "$HOME_OPT/lib64"
+    __append_to_path "CPATH" "$HOME_OPT/include"
 
     # Runtime paths
-    [[ -d "$HOME_OPT/bin" ]] && __append_to_path "PATH" "$HOME_OPT/bin"
-    [[ -d "$HOME_OPT/sbin" ]] && __append_to_path "PATH" "$HOME_OPT/sbin"
-    [[ -d "$HOME_OPT/man" ]] && __append_to_path "MANPATH" "$HOME_OPT/man"
-    [[ -d "$HOME_OPT/share/man" ]] && __append_to_path "MANPATH" "$HOME_OPT/share/man"
-    [[ -d "$HOME_OPT/lib" ]] && __append_to_path "LD_LIBRARY_PATH" "$HOME_OPT/lib"
-    [[ -d "$HOME_OPT/lib64" ]] && __append_to_path "LD_LIBRARY_PATH" "$HOME_OPT/lib64"
+    __append_to_path "PATH" "$HOME_OPT/bin"
+    __append_to_path "PATH" "$HOME_OPT/sbin"
+    __append_to_path "MANPATH" "$HOME_OPT/man"
+    __append_to_path "MANPATH" "$HOME_OPT/share/man"
+    __append_to_path "LD_LIBRARY_PATH" "$HOME_OPT/lib"
+    __append_to_path "LD_LIBRARY_PATH" "$HOME_OPT/lib64"
 fi
 
 ################################################################################
