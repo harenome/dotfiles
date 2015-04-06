@@ -211,7 +211,7 @@ fi
 
 # This file is shared between machines. Sometimes, a specific system needs
 # specific configuration.
-# Any file in $HOME/.local.dotfiles/bash will be sourced.
+# Any file in $HOME/.local/dotfiles/bash will be sourced.
 LOCAL_BASH_CONFIG_FILES="$HOME/.local/dotfiles/bash"
 if [[ -d "$LOCAL_BASH_CONFIG_FILES" ]]; then
     for file in "$LOCAL_BASH_CONFIG_FILES/"*; do
