@@ -62,7 +62,10 @@ function fish_prompt --description 'Write out the prompt'
     set -l __dirname
     set -l __basename
     if [ $PWD != $HOME ]
-        set __dirname (dirname (prompt_pwd))"/"
+        set __dirname (dirname (prompt_pwd))
+        if [ $__dirname != "/" ]
+            set __dirname "$__dirname""/"
+        end
         set __basename (basename $PWD)
     else
         set __basename "~"
