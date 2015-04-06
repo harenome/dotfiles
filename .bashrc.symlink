@@ -42,6 +42,21 @@ if [[ -d "$HOME/.rvm/bin" ]]; then
 fi
 
 ################################################################################
+# MANPATH
+################################################################################
+
+# Sadly, if MANPATH is set, man ignores its "default" directories...
+# Unfortunately, since some packages or install scripts install their contents
+# in strange locations, it is sometimes necessary to set MANPATH...
+# (unless you are one of those who can easily remember that the manpage for
+# `super-amazing-tool-2015-edition` is located in:
+# `/usr/local/lib64/amazing-tools/super/2015-edition/doc/manpages/man/man1/`)
+
+# (These values were extracted from my `/etc/man_db.conf` file on a Fedora 21)
+export MANPATH="/usr/man:/usr/share/man:/usr/local/man:/usr/local/share/man"
+export MANPATH="$MANPATH:/usr/X11R6/man:/opt/man"
+
+################################################################################
 # /usr/local
 ################################################################################
 
