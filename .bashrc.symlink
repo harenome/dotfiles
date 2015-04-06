@@ -97,16 +97,6 @@ if [[ -d "$HOME_OPT" ]]; then
 fi
 
 ################################################################################
-# Local configurations.
-################################################################################
-
-# This file is shared between machines. Sometimes, a specific system needs
-# specific configuration.
-
-LOCAL_BASHRC="$HOME/.local/dotfiles/bash/bashrc"
-[[ -f "$LOCAL_BASHRC" ]] && source "$LOCAL_BASHRC"
-
-################################################################################
 # Interactive shell test.
 ################################################################################
 
@@ -213,6 +203,20 @@ else
         *)
             ;;
     esac
+fi
+
+################################################################################
+# Local configurations.
+################################################################################
+
+# This file is shared between machines. Sometimes, a specific system needs
+# specific configuration.
+# Any file in $HOME/.local.dotfiles/bash will be sourced.
+LOCAL_BASH_CONFIG_FILES="$HOME/.local/dotfiles/bash"
+if [[ -d "$LOCAL_BASH_CONFIG_FILES" ]]; then
+    for file in "$LOCAL_BASH_CONFIG_FILES/"*; do
+        source $file
+    done
 fi
 
 ################################################################################
