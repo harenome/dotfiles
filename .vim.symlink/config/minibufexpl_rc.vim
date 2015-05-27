@@ -16,7 +16,7 @@ let g:statusLineText = "%= Buffer list"
 
 "" Vertical mode {{{
 let g:miniBufExplVSplit = 20
-let g:miniBufExplMaxSize = 80
+let g:miniBufExplMaxSize = 30
 let g:miniBufExplMinSize = 1
 "}}}
 
