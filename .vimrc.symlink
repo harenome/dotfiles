@@ -134,6 +134,9 @@ nnoremap j gj
 nnoremap k gk
 "}}}
 
+inoremap <C-b> <BS>
+inoremap <C-c> <Esc>
+
 "" Listchars {{{
 set list lcs=trail:·,tab:»·
 "}}}
