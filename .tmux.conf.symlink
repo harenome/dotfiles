@@ -1,6 +1,7 @@
 # Convenient prefix
-set -g prefix2 C-q
-bind C-q send-keys C-q
+unbind C-b
+set -g prefix m-a
+bind m-a send-keys m-a
 bind a last-window
 
 # Vi style
