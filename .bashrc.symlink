@@ -57,6 +57,16 @@ export MANPATH="/usr/man:/usr/share/man:/usr/local/man:/usr/local/share/man"
 export MANPATH="$MANPATH:/usr/X11R6/man:/opt/man"
 
 ################################################################################
+# XDG directories
+################################################################################
+
+export XDG_DATA_HOME="$HOME/.local/share"
+export XDG_CONFIG_HOME="$HOME/.config"
+export XDG_DATA_DIRS="/usr/local/share/:/usr/share/"
+export XDG_CONFIG_DIRS="/etc/xdg"
+export XDG_CACHE_HOME="$HOME/.cache"
+
+################################################################################
 # /usr/local
 ################################################################################
 
@@ -218,6 +228,8 @@ if [[ -d "$LOCAL_BASH_CONFIG_FILES" ]]; then
         source $file
     done
 fi
+
+export JAVA_HOME = /etc/alternatives/java_sdk
 
 ################################################################################
 # Cleaning.
