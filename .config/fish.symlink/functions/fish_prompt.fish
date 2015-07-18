@@ -81,13 +81,17 @@ function fish_prompt --description 'Write out the prompt'
             set -l __git_changed (echo "$__git_files" | grep -o "M" | wc -w)
 
             set -l __git_stats " "
-            if [ $__git_untracked -ne 0 ]
+
+            # Open the brackets if there is relevant information.
+            if [ $__git_untracked -ne 0 -o $__git_changed -ne 0 ]
                 set __git_stats "$__low_color""("
+            end
+
+            if [ $__git_untracked -ne 0 ]
                 set __git_stats "$__git_stats""$__git_untracked_color_bold""$__git_untracked""$__normal_color""$__git_untracked_color""u"
                 if [ $__git_changed -ne 0 ]
                     set __git_stats "$__git_stats""$__low_color""/"
                 else
-                    set __git_stats "$__git_stats""$__low_color"") "
                     set __delim "$__git_color""?""$__normal_color"
                 end
             end
@@ -97,17 +101,15 @@ function fish_prompt --description 'Write out the prompt'
                 set -l __git_insertions (echo "$__git_shortstats" | cut -d ' ' -f 5)
                 set -l __git_deletions (echo "$__git_shortstats" | cut -d ' ' -f 7)
 
-                set __delim "$__git_color""±""$__normal_color"
+                set __delim "$__git_color""~""$__normal_color"
 
-                if [ $__git_untracked -eq 0 ]
-                    set __git_stats "$__low_color""("
-                end
                 if [ $__git_changed -ne 0 ]
                     set __git_stats "$__git_stats""$__git_changed_color_bold""$__git_changed""$__normal_color""$__git_changed_color""c"
                     if [ $__git_insertions -ne 0 -o $__git_deletions -ne 0 ]
                         set __git_stats "$__git_stats""$__low_color""/"
                     end
                 end
+
                 if [ $__git_insertions -ne 0 ]
                     set __git_stats "$__git_stats""$__git_insertions_color_bold""$__git_insertions""$__normal_color""$__git_insertions_color""+"
                     if [ $__git_deletions -ne 0 ]
@@ -117,14 +119,20 @@ function fish_prompt --description 'Write out the prompt'
                         set __delim "$__git_color""+""$__normal_color"
                     end
                 end
+
                 if [ $__git_deletions -ne 0 ]
                     set __git_stats "$__git_stats""$__git_deletions_color_bold""$__git_deletions""$__normal_color""$__git_deletions_color""-"
                     if [ $__git_insertions -eq 0 ]
                         set __delim "$__git_color""-""$__normal_color"
                     end
                 end
+            end
+
+            # Close the brackets if there is relevant information.
+            if [ $__git_stats != " " ]
                 set __git_stats "$__git_stats""$__low_color"") "
             end
+
             set __git_info "$__git_color"(__fish_git_prompt | tr -d '[() ]')"$__git_stats""$__normal_color"
         end
     end
