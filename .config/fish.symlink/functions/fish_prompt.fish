@@ -104,7 +104,9 @@ function fish_prompt --description 'Write out the prompt'
                 end
                 if [ $__git_changed -ne 0 ]
                     set __git_stats "$__git_stats""$__git_changed_color_bold""$__git_changed""$__normal_color""$__git_changed_color""c"
-                    set __git_stats "$__git_stats""$__low_color""/"
+                    if [ $__git_insertions -ne 0 -o $__git_deletions -ne 0 ]
+                        set __git_stats "$__git_stats""$__low_color""/"
+                    end
                 end
                 if [ $__git_insertions -ne 0 ]
                     set __git_stats "$__git_stats""$__git_insertions_color_bold""$__git_insertions""$__normal_color""$__git_insertions_color""+"
