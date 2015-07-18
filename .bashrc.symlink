@@ -227,7 +227,7 @@ fi
 # This file is shared between machines. Sometimes, a specific system needs
 # specific configuration.
 # Any file in $HOME/.local/dotfiles/bash will be sourced.
-LOCAL_BASH_CONFIG_FILES="$HOME/.local/dotfiles/bash"
+LOCAL_BASH_CONFIG_FILES="$XDG_CONFIG_HOME/dotfiles/bash"
 if [[ -d "$LOCAL_BASH_CONFIG_FILES" ]]; then
     for file in "$LOCAL_BASH_CONFIG_FILES/"*; do
         source $file
@@ -238,6 +238,6 @@ fi
 # Cleaning.
 ################################################################################
 
-unset __append_to_path
+#unset __append_to_path
 
 # vim:ft=sh

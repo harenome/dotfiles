@@ -115,7 +115,7 @@ set -x XDG_CACHE_HOME "$HOME/.cache"
 # This file is shared between machines. Sometimes, a specific system needs
 # specific configuration.
 # Any file in $HOME/.local/dotfiles/fish will be sourced.
-set LOCAL_FISH_CONFIG_FILES  $HOME/.local/dotfiles/fish
+set LOCAL_FISH_CONFIG_FILES $XDG_CONFIG_HOME/dotfiles/fish
 if [ -d $LOCAL_FISH_CONFIG_FILES ]
     for config_file in $LOCAL_FISH_CONFIG_FILES/*
         source $config_file
