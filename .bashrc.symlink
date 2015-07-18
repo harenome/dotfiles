@@ -27,6 +27,10 @@ function __append_to_path
 # $HOME/bin
 ################################################################################
 
+# Although I prefer to put "global" (shared between setups) scripts in
+# ~/.opt/sbin and specific (to a particular setup) scripts in ~/.opt/bin,
+# ~/bin is quite conventionnal. Thus, let's add it to $PATH. Just in case...
+
 HOME_BIN="$HOME/bin"
 [[ -d "$HOME_BIN" ]] && export PATH="$HOME_BIN:$PATH"
 
@@ -46,10 +50,11 @@ fi
 ################################################################################
 
 # Sadly, if MANPATH is set, man ignores its "default" directories...
+#
 # Unfortunately, since some packages or install scripts install their contents
-# in strange locations, it is sometimes necessary to set MANPATH...
-# (unless you are one of those who can easily remember that the manpage for
-# `super-amazing-tool-2015-edition` is located in:
+# in strange locations, it is sometimes necessary to set MANPATH... (unless you
+# are one of those who can easily remember that the manpage for the
+# `super-amazing-tool-2015-edition` you installed 42 months ago is located in:
 # `/usr/local/lib64/amazing-tools/super/2015-edition/doc/manpages/man/man1/`)
 
 # (These values were extracted from my `/etc/man_db.conf` file on a Fedora 21)
@@ -222,19 +227,17 @@ fi
 # This file is shared between machines. Sometimes, a specific system needs
 # specific configuration.
 # Any file in $HOME/.local/dotfiles/bash will be sourced.
-LOCAL_BASH_CONFIG_FILES="$HOME/.local/dotfiles/bash"
+LOCAL_BASH_CONFIG_FILES="$XDG_CONFIG_HOME/dotfiles/bash"
 if [[ -d "$LOCAL_BASH_CONFIG_FILES" ]]; then
     for file in "$LOCAL_BASH_CONFIG_FILES/"*; do
         source $file
     done
 fi
 
-export JAVA_HOME = /etc/alternatives/java_sdk
-
 ################################################################################
 # Cleaning.
 ################################################################################
 
-unset __append_to_path
+#unset __append_to_path
 
 # vim:ft=sh
