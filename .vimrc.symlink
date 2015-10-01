@@ -13,12 +13,47 @@
 set nocompatible
 "}}}
 
-"" Pathogen, plugin manager {{{
-" It apparently is better to load pathogen first.
-" And also have the filetype thing done after pathogen's loading.
-filetype off
-execute pathogen#infect('~/.vim/bundle-active/')
-Helptags
+"" Plugins {{{
+" vim-plug
+call plug#begin('~/.local/share/vim-plug')
+
+" Easier Vim
+Plug 'fholgado/minibufexpl.vim'
+Plug 'scrooloose/nerdtree'
+Plug 'kien/ctrlp.vim'
+Plug 'mbbill/undotree'
+Plug 'terryma/vim-expand-region'
+
+" Colorschemes
+Plug 'Harenome/vim-colors-rhinestones', { 'branch': 'newcolors' }
+
+" Git utilities
+Plug 'tpope/vim-fugitive'
+Plug 'airblade/vim-gitgutter'
+
+" Syntax files
+Plug 'Harenome/vim-mipssyntax'
+Plug 'dag/vim-fish'
+
+" Tmux
+Plug 'tpope/vim-tbone'
+
+" Misceallenous
+Plug 'xolox/vim-misc' | Plug 'xolox/vim-easytags'
+Plug 'Harenome/vim-neatfoldtext'
+Plug 'oblitum/rainbow'
+Plug 'tpope/vim-surround'
+Plug 'sickill/vim-pasta'
+Plug 'tpope/vim-repeat'
+Plug 'ap/vim-css-color'
+Plug 'ervandew/supertab'
+Plug 'majutsushi/tagbar'
+Plug 'vim-scripts/a.vim'
+Plug 'scrooloose/syntastic'
+Plug 'tpope/vim-commentary'
+Plug 'tpope/vim-dispatch'
+
+call plug#end()
 "}}}
 
 "" Shell {{{
