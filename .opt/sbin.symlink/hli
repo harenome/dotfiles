@@ -1,0 +1,27 @@
+#!/bin/sh
+
+readonly HL_ARGS=${HL_ARGS:-"-O xterm256 -s solarized-dark -J 85 -W -l --wrap-no-number"}
+
+usage()
+{
+  printf "Usage: \033[1m$0\033[0m [\033[4mFILE\033[0m]...\033[0m\n"
+  exit 64
+}
+
+hl_file()
+{
+  indent <"$1" | highlight ${HL_ARGS}
+}
+
+case $# in
+  0) usage ;;
+  1) hl_file "$1"; exit 0 ;;
+  *)
+     for x in "$@"; do
+        printf "\033[1m\033[7m $x \033[0m\n\n"
+        hl_file "$x"
+        printf "\n"
+     done ;;
+esac
+
+exit 0
