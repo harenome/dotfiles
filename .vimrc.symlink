@@ -1,7 +1,9 @@
 "==============================================================================
-" HarnoRanaivo's .vimrc file
+" Harenome's .vimrc file
 " Maintainer: Harenome Ranaivoarivony Razanajato <harno.ranaivo@gmail.com>
-" Last Change: February 27th 2014
+"
+" See 'https://github.com/harenome/dotfiles' for the latest version. (Well,
+" the last version I pushed...)
 "==============================================================================
 
 " If something is not commented, try ':h option'.
@@ -14,6 +16,9 @@
 "}}}
 
 "" Plugins {{{
+    " Install vim-plug (https://github.com/junegunn/vim-plug), then run
+    "     :PlugUpdate()
+
     " vim-plug
     call plug#begin('~/.local/share/vim/vim-plug')
 
@@ -122,7 +127,7 @@
     set laststatus=2
 
     " Source statusline config file
-    source ~/.vim/config/statusline_rc.vim
+    "source ~/.vim/config/statusline_rc.vim
 "}}}
 
 "" Indenting {{{
@@ -226,6 +231,7 @@
 "}}}
 
 "" Swap and undo {{{
+    " First ensure ~/.local/share/vim/{undo,swp} exist.
     set dir=~/.local/share/vim/swp
     if version >= 703
         set undodir=~/.local/share/vim/undo

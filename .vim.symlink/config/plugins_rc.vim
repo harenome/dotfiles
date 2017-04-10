@@ -197,6 +197,9 @@
 
         " Open new file in a new horizontal split
         let g:ctrlp_open_new_file = 'h'
+
+        " Set regexp search as the default
+        let g:ctrlp_regexp = 1
     "}}}
 
     "" Extensions {{{
