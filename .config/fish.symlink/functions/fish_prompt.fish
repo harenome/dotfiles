@@ -77,8 +77,8 @@ function fish_prompt --description 'Write out the prompt'
     if [ $__prompt_show_git = "true" ]
         if [ (__fish_git_prompt) ]
             set -l __git_files (git status --porcelain)
-            set -l __git_untracked (echo "$__git_files" | grep -o "??" | wc -w)
-            set -l __git_changed (echo "$__git_files" | grep -o "M" | wc -w)
+            set -l __git_untracked (echo "$__git_files" | grep -o "^??" | wc -w)
+            set -l __git_changed (echo "$__git_files" | grep -o "^ M" | wc -w)
 
             set -l __git_stats " "
 
@@ -98,33 +98,35 @@ function fish_prompt --description 'Write out the prompt'
 
             if [ $__git_changed -ne 0 ]
                 set -l __git_shortstats (git diff --shortstat)
-                set -l __git_insertions (echo "$__git_shortstats" | cut -d ' ' -f 5)
-                set -l __git_deletions (echo "$__git_shortstats" | cut -d ' ' -f 7)
+                if [ "x$__git_shortstats" != "x" ]
+                  set -l __git_insertions (echo "$__git_shortstats" | cut -d ' ' -f 5)
+                  set -l __git_deletions (echo "$__git_shortstats" | cut -d ' ' -f 7)
 
-                set __delim "$__git_color""~""$__normal_color"
+                  set __delim "$__git_color""~""$__normal_color"
 
-                if [ $__git_changed -ne 0 ]
-                    set __git_stats "$__git_stats""$__git_changed_color_bold""$__git_changed""$__normal_color""$__git_changed_color""c"
-                    if [ $__git_insertions -ne 0 -o $__git_deletions -ne 0 ]
-                        set __git_stats "$__git_stats""$__low_color""/"
-                    end
-                end
+                  if [ "x$__git_changed" != "x" -a $__git_changed -ne 0 ]
+                      set __git_stats "$__git_stats""$__git_changed_color_bold""$__git_changed""$__normal_color""$__git_changed_color""c"
+                      if [ $__git_insertions -ne 0 -o $__git_deletions -ne 0 ]
+                          set __git_stats "$__git_stats""$__low_color""/"
+                      end
+                  end
 
-                if [ $__git_insertions -ne 0 ]
-                    set __git_stats "$__git_stats""$__git_insertions_color_bold""$__git_insertions""$__normal_color""$__git_insertions_color""+"
-                    if [ $__git_deletions -ne 0 ]
-                        set __delim "$__git_color""±""$__normal_color"
-                        set __git_stats "$__git_stats""$__low_color""/"
-                    else
-                        set __delim "$__git_color""+""$__normal_color"
-                    end
-                end
+                  if [ "x$__git_insertions" != "x" -a $__git_insertions -ne 0 ]
+                      set __git_stats "$__git_stats""$__git_insertions_color_bold""$__git_insertions""$__normal_color""$__git_insertions_color""+"
+                      if [ "x$__git_deletions" != "x" -a $__git_deletions -ne 0 ]
+                          set __delim "$__git_color""±""$__normal_color"
+                          set __git_stats "$__git_stats""$__low_color""/"
+                      else
+                          set __delim "$__git_color""+""$__normal_color"
+                      end
+                  end
 
-                if [ $__git_deletions -ne 0 ]
-                    set __git_stats "$__git_stats""$__git_deletions_color_bold""$__git_deletions""$__normal_color""$__git_deletions_color""-"
-                    if [ $__git_insertions -eq 0 ]
-                        set __delim "$__git_color""-""$__normal_color"
-                    end
+                  if [ "x$__git_deletions" != "x" -a $__git_deletions -ne 0 ]
+                      set __git_stats "$__git_stats""$__git_deletions_color_bold""$__git_deletions""$__normal_color""$__git_deletions_color""-"
+                      if [ $__git_insertions -eq 0 ]
+                          set __delim "$__git_color""-""$__normal_color"
+                      end
+                  end
                 end
             end
 
