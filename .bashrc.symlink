@@ -18,9 +18,54 @@
 # $2: Directory
 function __append_to_path
 {
-    if [[ -d "$2" ]]; then
-        [[ -z $(eval "echo \$$1") ]] && eval "export $1=$2" || eval "export $1=\$$1:$2"
-    fi
+  if [[ -d "$2" ]]; then
+    [[ -z $(eval "echo \$$1") ]] && eval "export $1=$2" || eval "export $1=\$$1:$2"
+  fi
+}
+
+# Prepend existing directories to paths
+# $1: Environment variable
+# $2: Directory
+function __prepend_to_path
+{
+  if [[ -d "$2" ]]; then
+    [[ -z $(eval "echo \$$1") ]] && eval "export $1=$2" || eval "export $1=$2:\$$1"
+  fi
+}
+
+# Use a modifier function to modify standard paths
+# $1: Modifier function
+# $2: Directory
+function __modify_standard_paths
+{
+  if [[ -d "$2" ]]; then
+    # Compiler paths
+    "$1" "LIBRARY_PATH" "$2/lib"
+    "$1" "LIBRARY_PATH" "$2/lib64"
+    "$1" "CPATH" "$2/include"
+
+    # Runtime paths
+    "$1" "PATH" "$2/bin"
+    "$1" "PATH" "$2/sbin"
+    "$1" "MANPATH" "$2/man"
+    "$1" "MANPATH" "$2/share/man"
+    "$1" "LD_LIBRARY_PATH" "$2/lib"
+    "$1" "LD_LIBRARY_PATH" "$2/lib64"
+  fi
+}
+
+# Append a directory to standard paths
+# $1: Directory
+function __append_to_standard_paths
+{
+  __modify_standard_paths "__append_to_path" "$1"
+}
+
+# Prepend a directory to standard paths
+# $1: Directory
+function __prepend_to_standard_paths
+{
+  __modify_standard_paths "__prepend_to_path" "$1"
 }
 
 ################################################################################
@@ -40,76 +85,26 @@ HOME_BIN="$HOME/bin"
 
 # Do this first, so that even non-interactive shells load it as well.
 if [[ -d "$HOME/.rvm/bin" ]]; then
-    # Add RVM to PATH for scripting
-    export PATH="$PATH:$HOME/.rvm/bin"
-    source $(rvm 1.9.3 do rvm env --path)
+  # Add RVM to PATH for scripting
+  export PATH="$PATH:$HOME/.rvm/bin"
+  source $(rvm 1.9.3 do rvm env --path)
 fi
-
-################################################################################
-# MANPATH
-################################################################################
-
-# Sadly, if MANPATH is set, man ignores its "default" directories...
-#
-# Unfortunately, since some packages or install scripts install their contents
-# in strange locations, it is sometimes necessary to set MANPATH... (unless you
-# are one of those who can easily remember that the manpage for the
-# `super-amazing-tool-2015-edition` you installed 42 months ago is located in:
-# `/usr/local/lib64/amazing-tools/super/2015-edition/doc/manpages/man/man1/`)
-
-# (These values were extracted from my `/etc/man_db.conf` file on a Fedora 21)
-export MANPATH="/usr/man:/usr/share/man:/usr/local/man:/usr/local/share/man"
-export MANPATH="$MANPATH:/usr/X11R6/man:/opt/man"
 
 ################################################################################
 # XDG directories
 ################################################################################
 
-export XDG_DATA_HOME="$HOME/.local/share"
-export XDG_CONFIG_HOME="$HOME/.config"
-export XDG_DATA_DIRS="/usr/local/share/:/usr/share/"
-export XDG_CONFIG_DIRS="/etc/xdg"
-export XDG_CACHE_HOME="$HOME/.cache"
-
-################################################################################
-# /usr/local
-################################################################################
-
-USR_LOCAL="/usr/local"
-if [[ -d "$USR_LOCAL" ]]; then
-    # Compiler paths
-    __append_to_path "LIBRARY_PATH" "$USR_LOCAL/lib"
-    __append_to_path "LIBRARY_PATH" "$USR_LOCAL/lib64"
-    __append_to_path "CPATH" "$USR_LOCAL/include"
-
-    # Runtime paths
-    __append_to_path "PATH" "$USR_LOCAL/bin"
-    __append_to_path "PATH" "$USR_LOCAL/sbin"
-    __append_to_path "MANPATH" "$USR_LOCAL/man"
-    __append_to_path "MANPATH" "$USR_LOCAL/share/man"
-    __append_to_path "LD_LIBRARY_PATH" "$USR_LOCAL/lib"
-    __append_to_path "LD_LIBRARY_PATH" "$USR_LOCAL/lib64"
-fi
+#export XDG_DATA_HOME="$HOME/.local/share"
+#export XDG_CONFIG_HOME="$HOME/.config"
+#export XDG_DATA_DIRS="/usr/local/share/:/usr/share/"
+#export XDG_CONFIG_DIRS="/etc/xdg"
+#export XDG_CACHE_HOME="$HOME/.cache"
 
 ################################################################################
 # User opt directory
 ################################################################################
 
-HOME_OPT="$HOME/.opt"
-if [[ -d "$HOME_OPT" ]]; then
-    # Compiler paths
-    __append_to_path "LIBRARY_PATH" "$HOME_OPT/lib"
-    __append_to_path "LIBRARY_PATH" "$HOME_OPT/lib64"
-    __append_to_path "CPATH" "$HOME_OPT/include"
-
-    # Runtime paths
-    __append_to_path "PATH" "$HOME_OPT/bin"
-    __append_to_path "PATH" "$HOME_OPT/sbin"
-    __append_to_path "MANPATH" "$HOME_OPT/man"
-    __append_to_path "MANPATH" "$HOME_OPT/share/man"
-    __append_to_path "LD_LIBRARY_PATH" "$HOME_OPT/lib"
-    __append_to_path "LD_LIBRARY_PATH" "$HOME_OPT/lib64"
-fi
+__prepend_to_standard_paths "$HOME/.opt"
 
 ################################################################################
 # Interactive shell test.
@@ -133,7 +128,7 @@ BASH_ALIASES="$HOME/.bash_aliases"
 # already sourced by /etc/profile.
 BASH_COMPLETION="/etc/bash_completion"
 if [[ -f "$BASH_COMPLETION" ]] && ! shopt -oq posix; then
-    source "$BASH_COMPLETION"
+  source "$BASH_COMPLETION"
 fi
 
 ################################################################################
@@ -172,52 +167,52 @@ shopt -s checkwinsize
 
 LIQUIDPROMPT="$HOME/.liquidprompt/liquidprompt"
 if [[ -f "$LIQUIDPROMPT" ]]; then
-    # Liquidprompt
-    source "$LIQUIDPROMPT"
+  # Liquidprompt
+  source "$LIQUIDPROMPT"
 else
-    # This section comes from the default .bashrc provided on Ubuntu.
-    # (Ubuntu 6.10 ? I have been using some parts of this .bashrc for years...)
+  # This section comes from the default .bashrc provided on Ubuntu.
+  # (Ubuntu 6.10 ? I have been using some parts of this .bashrc for years...)
 
-    # Set variable identifying the chroot you work in (used in the prompt below)
-    if [[ -z "$debian_chroot" ]] && [[ -r /etc/debian_chroot ]]; then
-        debian_chroot=$(cat /etc/debian_chroot)
-    fi
+  # Set variable identifying the chroot you work in (used in the prompt below)
+  if [[ -z "$debian_chroot" ]] && [[ -r /etc/debian_chroot ]]; then
+    debian_chroot=$(cat /etc/debian_chroot)
+  fi
 
-    # Set a fancy prompt (non-color, unless we know we "want" color)
-    case "$TERM" in
-        xterm-color) color_prompt=yes;;
-    esac
+  # Set a fancy prompt (non-color, unless we know we "want" color)
+  case "$TERM" in
+    xterm-color) color_prompt=yes;;
+  esac
 
-    # Uncomment for a colored prompt, if the terminal has the capability; turned
-    # off by default to not distract the user: the focus in a terminal window
-    # should be on the output of commands, not on the prompt
-    force_color_prompt=yes
+  # Uncomment for a colored prompt, if the terminal has the capability; turned
+  # off by default to not distract the user: the focus in a terminal window
+  # should be on the output of commands, not on the prompt
+  force_color_prompt=yes
 
-    if [[ -n "$force_color_prompt" ]]; then
-        if [[ -x /usr/bin/tput ]] && tput setaf 1 >&/dev/null; then
-        # We have color support; assume it's compliant with Ecma-48
-        # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-        # a case would tend to support setf rather than setaf.)
-        color_prompt=yes
-        else
-        color_prompt=
-        fi
-    fi
-
-    if [[ "$color_prompt" = yes ]]; then
-        PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+  if [[ -n "$force_color_prompt" ]]; then
+    if [[ -x /usr/bin/tput ]] && tput setaf 1 >&/dev/null; then
+      # We have color support; assume it's compliant with Ecma-48
+      # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
+      # a case would tend to support setf rather than setaf.)
+      color_prompt=yes
     else
-        PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+      color_prompt=
     fi
-    unset color_prompt force_color_prompt
+  fi
 
-    # If this is an xterm set the title to user@host:dir
-    case "$TERM" in
-        xterm*|rxvt*)
-            PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1" ;;
-        *)
-            ;;
-    esac
+  if [[ "$color_prompt" = yes ]]; then
+    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
+  else
+    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
+  fi
+  unset color_prompt force_color_prompt
+
+  # If this is an xterm set the title to user@host:dir
+  case "$TERM" in
+    xterm*|rxvt*)
+      PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1" ;;
+    *)
+      ;;
+  esac
 fi
 
 ################################################################################
@@ -229,9 +224,9 @@ fi
 # Any file in $HOME/.local/dotfiles/bash will be sourced.
 LOCAL_BASH_CONFIG_FILES="$XDG_CONFIG_HOME/dotfiles/bash"
 if [[ -d "$LOCAL_BASH_CONFIG_FILES" ]]; then
-    for file in "$LOCAL_BASH_CONFIG_FILES/"*; do
-        source $file
-    done
+  for file in "$LOCAL_BASH_CONFIG_FILES/"*; do
+    source $file
+  done
 fi
 
 ################################################################################
