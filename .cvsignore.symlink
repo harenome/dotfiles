@@ -42,6 +42,7 @@ tags
 doc/
 obj/
 bin/
+build/
 bytecode/
 
 # Executables
