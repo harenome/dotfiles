@@ -60,13 +60,13 @@ end
 # Append a directory to standard paths
 # $argv[1]: Directory
 function __append_to_standard_paths
-  __modify_standard_paths "__append_to_path" "$1"
+  __modify_standard_paths "__append_to_global_list" "$argv[1]"
 end
 
 # Prepend a directory to standard paths
 # $argv[1]: Directory
 function __prepend_to_standard_paths
-  __modify_standard_paths "__prepend_to_path" "$1"
+  __modify_standard_paths "__prepend_to_global_list" "$argv[1]"
 end
 
 ################################################################################
