@@ -11,8 +11,7 @@ set lazyredraw
 set colorcolumn=80
 set shiftwidth=2
 
-set path+=include/
-set path+=build/include/
+set path+=./include,./build/include
 "let g:neomake_c_enable_markers=['clang']
 "let g:neomake_c_clang_args = ["-Iinclude -I../include -I../../include"]
 
