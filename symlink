@@ -92,18 +92,16 @@ message ()
 
 verbose ()
 {
-  if $VERBOSE; then
-    message "$*"
-  fi
+  "$VERBOSE" && message "$*"
 }
 
 verbose_command ()
 {
-  if $VERBOSE; then
-    message "$COLOR_DIM❯ $COLOR_BOLD$1$COLOR_NORMAL"
-    shift
-    [[ $# -ne 0 ]] && message " $*\n" || message "\n"
-  fi
+  "$VERBOSE" || return
+
+  message "$COLOR_DIM❯ $COLOR_BOLD$1$COLOR_NORMAL"
+  shift
+  [[ $# -ne 0 ]] && message " $*\n" || message "\n"
 }
 
 error ()
@@ -235,7 +233,7 @@ if [ $# -ne 0 ]; then
 fi
 
 # Print version, options, etc if the verbose is enabled.
-if $VERBOSE; then
+if "$VERBOSE"; then
   print_version
   echo "" 1>&2
   echo "" 1>&2
@@ -263,14 +261,14 @@ done
 $WRONG_ARGUMENT && exit 64
 
 # Linking.
-message "\n$COLOR_SECTION Dotfiles linking $COLOR_NORMAL\n\n"
+"$VERBOSE" && message "\n$COLOR_SECTION Dotfiles linking $COLOR_NORMAL\n\n"
 for FILE in ${SYMLINKS[@]}; do
   DIRNAME=`dirname $FILE`
   SOURCE="$PWD/$FILE.symlink"
   DESTINATION="$HOME/$FILE"
   LINK=true
 
-  [[ "$VERBOSE" = "true" ]] && message "$COLOR_BOLD$FILE$COLOR_NORMAL\n"
+  "$VERBOSE" && message "$COLOR_BOLD$FILE$COLOR_NORMAL\n"
   if [ -L "$DESTINATION" ] && [ `readlink "$DESTINATION"` = "$SOURCE" ]; then
     verbose_command "ignoring" "$FILE"
     LINK=false
