@@ -1,0 +1,38 @@
+# Git Config
+
+# Put the following lines in ~/.config/git/config instead of this file:
+# 	[user]
+# 		email = <email@provider.tld>
+# 		name = <Full name>
+
+[core]
+	editor = nvim
+	excludesfile = ~/.cvsignore
+
+[color]
+	ui = auto
+
+[alias]
+	co = checkout
+	ci = commit
+	br = branch
+	st = status -sb
+	rs = reset
+	cl = clean
+	ls = log --date=short \
+		--pretty=format:"%C(yellow)%h\\ %C(green)%ad\\ %C(reset)%s\\ %C(red)%d\\ %C(blue)[%cn]"
+	lg = !git ls --graph
+	la = !git lg --all
+	amend = commit --amend
+	wipe = "!git reset --hard; git clean -fxd"
+	subwipe = "submodule foreach --recursive \"git wipe; echo ''\""
+	mrproper = "!                                                       \
+	  printf \"\\033[1m\\033[7m TOP REPOSITORY \\033[0m\n\";          \
+	  git wipe;                                                       \
+	  echo \"\";                                                      \
+	                                                                  \
+	  printf \"\\033[1m\\033[7m   SUBMODULES   \\033[0m\n\";          \
+	  git subwipe;                                                    \
+	  git submodule update --init;                                    \
+	  printf \"\\033[1mMrProper wiped your repositories.\\033[0m\n\"; \
+	"
