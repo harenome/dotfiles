@@ -3,10 +3,6 @@
 # merely copied it into the root directory of the project without further
 # edition. Thus, please ignore irrelevant patterns.
 
-# Misc.
-*.old
-*~
-
 # Vim files
 *.swp
 
@@ -49,3 +45,8 @@ bytecode/
 *.exe
 *.out
 *.app
+
+# Misc.
+*.old
+*~
+vgcore.*
