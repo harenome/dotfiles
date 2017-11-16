@@ -106,12 +106,12 @@ verbose_command ()
 
 error ()
 {
-  message "$COLOR_ERROR  ERROR  $COLOR_NORMAL $1"
+  message "$COLOR_ERROR  ERROR  $COLOR_NORMAL $*"
 }
 
 warning ()
 {
-  message "$COLOR_WARNING WARNING $COLOR_NORMAL $1"
+  message "$COLOR_WARNING WARNING $COLOR_NORMAL $*"
 }
 
 print_version ()
@@ -154,9 +154,7 @@ backup ()
 
 remove ()
 {
-  if $DO_BACKUPS; then
-    backup "$1"
-  fi
+  "$DO_BACKUPS" && backup "$1"
   verbose_command "rm -rf" "$1"
   rm -rf "$1"
 }
@@ -164,7 +162,7 @@ remove ()
 answer_is_yes ()
 {
   for YES in $YES_STRINGS; do
-    if [ "$1" = "$YES" ]; then
+    if [ "x$1" = "x$YES" ]; then
       return 0;
     fi
   done
@@ -173,10 +171,9 @@ answer_is_yes ()
 
 create_link ()
 {
-  if $LINK; then
-    verbose_command "ln -sf" "$1" "$2"
-    ln -sf "$1" "$2"
-  fi
+  "$LINK" || return
+  verbose_command "ln -sf" "$1" "$2"
+  ln -sf "$1" "$2"
 }
 
 ask ()
@@ -193,7 +190,8 @@ ask ()
 
 overwrite ()
 {
-  if $FORCE_OVERWRITE || ask "$COLOR_UNDERLINED$1$COLOR_NORMAL already exists. Overwrite?"; then
+  local question="$COLOR_UNDERLINED$1$COLOR_NORMAL already exists. Overwrite?"
+  if "$FORCE_OVERWRITE" || ask "$question"; then
     remove "$1"
     LINK=true
   fi
@@ -235,15 +233,14 @@ fi
 # Print version, options, etc if the verbose is enabled.
 if "$VERBOSE"; then
   print_version
-  echo "" 1>&2
-  echo "" 1>&2
+  printf "\n" 1>&2
   message "$COLOR_SECTION Options $COLOR_NORMAL\n\n"
   print_option $VERBOSE "verbose"
   print_option $DO_BACKUPS "backups"
   print_option $FORCE_OVERWRITE "force-overwrite"
   print_var "BACKUP_DIR" "$BACKUP_DIR"
   print_var "CONFIG_DIR" "$CONFIG_DIR"
-  echo "" 1>&2
+  printf "\n" 1>&2
 fi
 
 # Find *.symlink files in the current directory.
@@ -258,7 +255,7 @@ for OPTION in ${WRONG_OPTIONS[@]}; do
   error "wrong option \"$OPTION\"\n"
 done
 
-$WRONG_ARGUMENT && exit 64
+"$WRONG_ARGUMENT" && exit 64
 
 # Linking.
 "$VERBOSE" && message "\n$COLOR_SECTION Dotfiles linking $COLOR_NORMAL\n\n"
@@ -275,13 +272,11 @@ for FILE in ${SYMLINKS[@]}; do
   elif [ -e "$DESTINATION" ]; then
     LINK=false
     overwrite "$DESTINATION"
-  elif [ "$DIRNAME" != "." ]; then
+  elif [ "x$DIRNAME" != "x." ]; then
     mkdir -p "$HOME/$DIRNAME"
   fi
 
-  if $LINK; then
-    create_link "$SOURCE" "$DESTINATION"
-  fi
+  "$LINK" && create_link "$SOURCE" "$DESTINATION"
 done
 
 exit 0
