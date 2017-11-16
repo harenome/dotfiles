@@ -2,8 +2,8 @@
 
 # Program: symlink
 # Author: Harenome RANAIVOARIVONY RAZANAJATO
-# Version: 1.2
-# Date: October 17th 2015
+# Version: 1.3
+# Date: November 16th 2017
 # License: WTFPL v2
 
 # This program is free software. It comes WITHOUT ANY WARRANTY, to
@@ -37,8 +37,8 @@ COLOR_DISABLED="$COLOR_BOLD\x1b[31m"
 
 ## Variables for version and help printing
 PROGRAM_NAME="symlink"
-DATE="October 17th 2015"
-VERSION="1.2"
+DATE="November 16th 2017"
+VERSION="1.3"
 LICENCE="This program is free software. It comes WITHOUT ANY WARRANTY, to
 the extent permitted by applicable law. You can redistribute it
 and/or modify it under the terms of the Do What The Fuck You Want
