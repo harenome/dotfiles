@@ -55,24 +55,24 @@ Written by $AUTHORS."
 
 HELP_STRING="\e[1m\e[7m NAME \e[0m
 
-    $PROGRAM_NAME — Link *.symlink dotfiles
+\t$PROGRAM_NAME — Link *.symlink dotfiles
 
 \e[1m\e[7m SYNOPSIS \e[0m
 
-    \e[1m$0\e[0m [OPTIONS]...
+\t\e[1m$0\e[0m [OPTIONS]...
 
 \e[1m\e[7m OPTIONS \e[0m
 
-    \e[1m--no-backup\e[0m
-        disable backups
-    \e[1m-f\e[0m,\e[1m --force-overwrite\e[0m
-        force overwriting
-    \e[1m--verbose\e[0m
-        enable verbose mode
-    \e[1m-h\e[0m,\e[1m --help\e[0m
-        print this help
-    \e[1m-v\e[0m,\e[1m --version\e[0m
-        print the version
+\t\e[1m--no-backup\e[0m
+\t\tdisable backups
+\t\e[1m-f\e[0m,\e[1m --force-overwrite\e[0m
+\t\tforce overwriting
+\t\e[1m--verbose\e[0m
+\t\tenable verbose mode
+\t\e[1m-h\e[0m,\e[1m --help\e[0m
+\t\tprint this help
+\t\e[1m-v\e[0m,\e[1m --version\e[0m
+\t\tprint the version
 "
 
 DO_BACKUPS=true
@@ -86,124 +86,124 @@ WRONG_ARGUMENT=false
 
 message ()
 {
-    echo -en "$1" 1>&2
+  echo -en "$1" 1>&2
 }
 
 
 verbose ()
 {
-    if $VERBOSE; then
-        message "$*"
-    fi
+  if $VERBOSE; then
+    message "$*"
+  fi
 }
 
 verbose_command ()
 {
-    if $VERBOSE; then
-        message "$COLOR_DIM❯ $COLOR_BOLD$1$COLOR_NORMAL"
-        shift
-        [[ $# -ne 0 ]] && message " $*\n" || message "\n"
-    fi
+  if $VERBOSE; then
+    message "$COLOR_DIM❯ $COLOR_BOLD$1$COLOR_NORMAL"
+    shift
+    [[ $# -ne 0 ]] && message " $*\n" || message "\n"
+  fi
 }
 
 error ()
 {
-    message "$COLOR_ERROR  ERROR  $COLOR_NORMAL $1"
+  message "$COLOR_ERROR  ERROR  $COLOR_NORMAL $1"
 }
 
 warning ()
 {
-    message "$COLOR_WARNING WARNING $COLOR_NORMAL $1"
+  message "$COLOR_WARNING WARNING $COLOR_NORMAL $1"
 }
 
 print_version ()
 {
-    echo -e "$VERSION_STRING" 1>&2
+  echo -e "$VERSION_STRING" 1>&2
 }
 
 print_help ()
 {
-    echo -e "$HELP_STRING"
+  echo -e "$HELP_STRING"
 }
 
 print_option ()
 {
-    if $1; then
-        message "    $COLOR_ENABLED✔$COLOR_NORMAL $2\n"
-    else
-        message "    $COLOR_DISABLED✗$COLOR_NORMAL $2\n"
-    fi
+  if $1; then
+    message "\t$COLOR_ENABLED✔$COLOR_NORMAL $2\n"
+  else
+    message "\t$COLOR_DISABLED✗$COLOR_NORMAL $2\n"
+  fi
 }
 
 print_var ()
 {
-    message "    $COLOR_BOLD●$COLOR_NORMAL $1: $2\n"
+  message "\t$COLOR_BOLD●$COLOR_NORMAL $1: $2\n"
 }
 
 wrong_option ()
 {
-    WRONG_OPTIONS=( ${WRONG_OPTIONS[@]} "$1" )
-    WRONG_ARGUMENT=true
+  WRONG_OPTIONS=( ${WRONG_OPTIONS[@]} "$1" )
+  WRONG_ARGUMENT=true
 }
 
 backup ()
 {
-    verbose_command "mkdir -p" "$BACKUP_DIR"
-    mkdir -p "$BACKUP_DIR"
-    verbose_command "cp -r" "$1" "$BACKUP_DIR/"
-    cp -r "$1" "$BACKUP_DIR/"
+  verbose_command "mkdir -p" "$BACKUP_DIR"
+  mkdir -p "$BACKUP_DIR"
+  verbose_command "cp -r" "$1" "$BACKUP_DIR/"
+  cp -r "$1" "$BACKUP_DIR/"
 }
 
 remove ()
 {
-    if $DO_BACKUPS; then
-        backup "$1"
-    fi
-    verbose_command "rm -rf" "$1"
-    rm -rf "$1"
+  if $DO_BACKUPS; then
+    backup "$1"
+  fi
+  verbose_command "rm -rf" "$1"
+  rm -rf "$1"
 }
 
 answer_is_yes ()
 {
-    for YES in $YES_STRINGS; do
-        if [ "$1" = "$YES" ]; then
-            return 0;
-        fi
-    done
-    return 1;
+  for YES in $YES_STRINGS; do
+    if [ "$1" = "$YES" ]; then
+      return 0;
+    fi
+  done
+  return 1;
 }
 
 create_link ()
 {
-    if $LINK; then
-        verbose_command "ln -sf" "$1" "$2"
-        ln -sf "$1" "$2"
-    fi
+  if $LINK; then
+    verbose_command "ln -sf" "$1" "$2"
+    ln -sf "$1" "$2"
+  fi
 }
 
 ask ()
 {
-    message "$1 [y/${COLOR_BOLD}N${COLOR_NORMAL}]\n"
-    message "$COLOR_BOLD>$COLOR_NORMAL "
-    read ANSWER
-    if answer_is_yes "$ANSWER"; then
-        return 0
-    else
-        return 1
-    fi
+  message "$1 [y/${COLOR_BOLD}N${COLOR_NORMAL}]\n"
+  message "$COLOR_BOLD>$COLOR_NORMAL "
+  read ANSWER
+  if answer_is_yes "$ANSWER"; then
+    return 0
+  else
+    return 1
+  fi
 }
 
 overwrite ()
 {
-    if $FORCE_OVERWRITE || ask "$COLOR_UNDERLINED$1$COLOR_NORMAL already exists. Overwrite?"; then
-        remove "$1"
-        LINK=true
-    fi
+  if $FORCE_OVERWRITE || ask "$COLOR_UNDERLINED$1$COLOR_NORMAL already exists. Overwrite?"; then
+    remove "$1"
+    LINK=true
+  fi
 }
 
 find_symlinks ()
 {
-    find . -name "*.symlink" | sed 's/^\.\///;s/\.symlink$//' | sort
+  find . -name "*.symlink" | sed 's/^\.\///;s/\.symlink$//' | sort
 }
 
 ################################################################################
@@ -212,40 +212,40 @@ find_symlinks ()
 
 # Process command line arguments, if any.
 if [ $# -ne 0 ]; then
-    # getopt and getopts are a bit painful
-    for ARG in $*; do
-        if [[ ${ARG:0:1} = "-" ]] && [[ ${ARG:0:2} != "--" ]]; then
-            case $ARG in
-                "-f" ) FORCE_OVERWRITE=true;;
-                "-v" ) print_version; exit 0;;
-                "-h" ) print_help; exit 0;;
-                * ) wrong_option "$ARG";;
-            esac
-        elif [[ ${ARG:0:2} = "--" ]]; then
-            case $ARG in
-                "--verbose" ) VERBOSE=true;;
-                "--no-backup" ) DO_BACKUPS=false;;
-                "--force-overwrite" ) FORCE_OVERWRITE=true;;
-                "--version" ) print_version; exit 0;;
-                "--help" ) print_help; exit 0;;
-                * ) wrong_option "$ARG";;
-            esac
-        fi
-    done
+  # getopt and getopts are a bit painful
+  for ARG in $*; do
+    if [[ ${ARG:0:1} = "-" ]] && [[ ${ARG:0:2} != "--" ]]; then
+      case $ARG in
+        "-f" ) FORCE_OVERWRITE=true;;
+        "-v" ) print_version; exit 0;;
+        "-h" ) print_help; exit 0;;
+        * ) wrong_option "$ARG";;
+      esac
+    elif [[ ${ARG:0:2} = "--" ]]; then
+      case $ARG in
+        "--verbose" ) VERBOSE=true;;
+        "--no-backup" ) DO_BACKUPS=false;;
+        "--force-overwrite" ) FORCE_OVERWRITE=true;;
+        "--version" ) print_version; exit 0;;
+        "--help" ) print_help; exit 0;;
+        * ) wrong_option "$ARG";;
+      esac
+    fi
+  done
 fi
 
 # Print version, options, etc if the verbose is enabled.
 if $VERBOSE; then
-    print_version
-    echo "" 1>&2
-    echo "" 1>&2
-    message "$COLOR_SECTION Options $COLOR_NORMAL\n\n"
-    print_option $VERBOSE "verbose"
-    print_option $DO_BACKUPS "backups"
-    print_option $FORCE_OVERWRITE "force-overwrite"
-    print_var "BACKUP_DIR" "$BACKUP_DIR"
-    print_var "CONFIG_DIR" "$CONFIG_DIR"
-    echo "" 1>&2
+  print_version
+  echo "" 1>&2
+  echo "" 1>&2
+  message "$COLOR_SECTION Options $COLOR_NORMAL\n\n"
+  print_option $VERBOSE "verbose"
+  print_option $DO_BACKUPS "backups"
+  print_option $FORCE_OVERWRITE "force-overwrite"
+  print_var "BACKUP_DIR" "$BACKUP_DIR"
+  print_var "CONFIG_DIR" "$CONFIG_DIR"
+  echo "" 1>&2
 fi
 
 # Find *.symlink files in the current directory.
@@ -254,10 +254,10 @@ SYMLINKS=$(find_symlinks)
 # Various warnings and errors.
 [[ -z ${SYMLINKS[@]} ]] && warning "no symlinks found\n"
 [[ "$FORCE_OVERWRITE" = "true" ]] && [[ "$DO_BACKUPS" = "false" ]] &&
-    warning "backups disabled and force-overwrite enabled\n"
+  warning "backups disabled and force-overwrite enabled\n"
 
 for OPTION in ${WRONG_OPTIONS[@]}; do
-    error "wrong option \"$OPTION\"\n"
+  error "wrong option \"$OPTION\"\n"
 done
 
 $WRONG_ARGUMENT && exit 64
@@ -265,25 +265,25 @@ $WRONG_ARGUMENT && exit 64
 # Linking.
 message "\n$COLOR_SECTION Dotfiles linking $COLOR_NORMAL\n\n"
 for FILE in ${SYMLINKS[@]}; do
-    DIRNAME=`dirname $FILE`
-    SOURCE="$PWD/$FILE.symlink"
-    DESTINATION="$HOME/$FILE"
-    LINK=true
+  DIRNAME=`dirname $FILE`
+  SOURCE="$PWD/$FILE.symlink"
+  DESTINATION="$HOME/$FILE"
+  LINK=true
 
-    [[ "$VERBOSE" = "true" ]] && message "$COLOR_BOLD$FILE$COLOR_NORMAL\n"
-    if [ -L "$DESTINATION" ] && [ `readlink "$DESTINATION"` = "$SOURCE" ]; then
-        verbose_command "ignoring" "$FILE"
-        LINK=false
-    elif [ -e "$DESTINATION" ]; then
-        LINK=false
-        overwrite "$DESTINATION"
-    elif [ "$DIRNAME" != "." ]; then
-        mkdir -p "$HOME/$DIRNAME"
-    fi
+  [[ "$VERBOSE" = "true" ]] && message "$COLOR_BOLD$FILE$COLOR_NORMAL\n"
+  if [ -L "$DESTINATION" ] && [ `readlink "$DESTINATION"` = "$SOURCE" ]; then
+    verbose_command "ignoring" "$FILE"
+    LINK=false
+  elif [ -e "$DESTINATION" ]; then
+    LINK=false
+    overwrite "$DESTINATION"
+  elif [ "$DIRNAME" != "." ]; then
+    mkdir -p "$HOME/$DIRNAME"
+  fi
 
-    if $LINK; then
-        create_link "$SOURCE" "$DESTINATION"
-    fi
+  if $LINK; then
+    create_link "$SOURCE" "$DESTINATION"
+  fi
 done
 
 exit 0
