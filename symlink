@@ -183,7 +183,7 @@ create_link ()
 
 ask ()
 {
-    message "$1 [y/$COLOR_BOLDN$COLOR_NORMAL]\n"
+    message "$1 [y/${COLOR_BOLD}N${COLOR_NORMAL}]\n"
     message "$COLOR_BOLD>$COLOR_NORMAL "
     read ANSWER
     if answer_is_yes "$ANSWER"; then
