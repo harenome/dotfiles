@@ -19,3 +19,7 @@ set path+=./include,./build/include
 " Cancel some allegedly good (but actually very bothersome) overrides:
 nunmap q
 let g:tex_conceal = ""
+
+let g:spacevim_custom_plugins = [
+\   ['harenome/vim-mipssyntax'],
+\ ]
