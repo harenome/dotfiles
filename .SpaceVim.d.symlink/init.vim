@@ -27,3 +27,5 @@ let g:spacevim_disabled_plugins = ['vim-rooter']
 let g:spacevim_custom_plugins = [
 \   ['harenome/vim-mipssyntax'],
 \ ]
+
+let g:spacevim_statusline_separator = 'slant'
