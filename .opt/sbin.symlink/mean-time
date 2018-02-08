@@ -1,0 +1,18 @@
+#!/bin/sh
+
+mean()
+{
+  printf "($* 0)/$#\n" | tr ' ' '+' | bc -l
+}
+
+run()
+{
+  for i in $(seq 5); do time -p $1 2>&1 | grep real | awk '{print $2}'; done
+}
+
+export LANG=C
+for arg in $*; do
+  printf "%s: %.2f\n" $arg $(mean $(run $arg))
+done
+
+exit 0

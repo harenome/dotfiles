@@ -1,0 +1,6 @@
+#!/bin/sh
+
+# printf "e(l($* 1)/$#)\n" | tr -s ' ' '*' | bc -l
+echo $(printf "($* 1)\n" | tr -s ' ' '*' | bc -l) "$#" | awk '{print $1^(1/$2)}'
+
+exit 0

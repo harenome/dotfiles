@@ -1,0 +1,5 @@
+#!/bin/sh
+
+printf "($* 0)/$#\n" | tr -s ' ' '+' | bc -l
+
+exit 0
