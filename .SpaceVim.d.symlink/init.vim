@@ -30,3 +30,4 @@ let g:spacevim_custom_plugins = [
 
 " SpaceVim Cosmetics
 let g:spacevim_statusline_separator = 'slant'
+autocmd Filetype c RainbowParentheses
