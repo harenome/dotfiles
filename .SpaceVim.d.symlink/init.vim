@@ -5,9 +5,6 @@ let g:maplocalleader="ù"
 
 set tags+=tags,.tags
 
-let g:spacevim_enable_neomake = 0
-let g:spacevim_snippet_engine = 'ultisnips'
-
 set lazyredraw
 set colorcolumn=80
 set shiftwidth=2
@@ -23,9 +20,13 @@ nunmap q
 nunmap <C-x>
 let g:tex_conceal = ""
 let g:spacevim_disabled_plugins = ['vim-rooter']
+let g:spacevim_enable_neomake = 0
+let g:spacevim_snippet_engine = 'ultisnips'
 
+" Add plugins
 let g:spacevim_custom_plugins = [
 \   ['harenome/vim-mipssyntax'],
 \ ]
 
+" SpaceVim Cosmetics
 let g:spacevim_statusline_separator = 'slant'
