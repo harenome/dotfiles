@@ -8,6 +8,8 @@ set tags+=tags,.tags
 set lazyredraw
 set colorcolumn=80
 set shiftwidth=2
+set tabstop=2
+set softtabstop=2
 
 set foldmethod=syntax
 
