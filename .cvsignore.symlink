@@ -30,6 +30,10 @@ y.output
 # Python
 *.pyc
 
+# *tex related files
+*.aux
+*.log
+
 # Tags
 tags
 .tags
