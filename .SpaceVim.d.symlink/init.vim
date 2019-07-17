@@ -16,6 +16,7 @@ set foldmethod=syntax
 set path+=./include,./build/include
 "let g:neomake_c_enable_markers=['clang']
 "let g:neomake_c_clang_args = ["-Iinclude -I../include -I../../include"]
+set list lcs=trail:·,tab:»·
 
 " Cancel some allegedly good (but actually very bothersome) SpaceVim defaults:
 nunmap q
