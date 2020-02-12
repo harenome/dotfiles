@@ -8,3 +8,4 @@ backups/*
 ## Fish
 .config/fish.symlink/fish_history
 .config/fish.symlink/fishd*
+.config/fish_variables
