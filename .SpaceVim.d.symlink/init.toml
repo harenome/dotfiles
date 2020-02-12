@@ -8,6 +8,7 @@
     vimcompatible = true
     statusline_separator = 'slant'
     enable_statusline_bfpath = true
+    bootstrap_after = "basevim#after"
 
 [[custom_plugins]]
     name = "harenome/vim-mipssyntax"
@@ -15,4 +16,8 @@
 
 [[layers]]
     name = "autocomplete"
+    enable = false
+
+[[layers]]
+    name = "VersionControl"
     enable = false
