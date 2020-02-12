@@ -1,0 +1,18 @@
+[options]
+    default_indent = 2
+    enable_neomake = false
+    windows_smartclose = ""
+    tex_conceal = ""
+    snippet_engine = 'ultisnips'
+    disabled_plugins = ["vim-rooter"]
+    vimcompatible = true
+    statusline_separator = 'slant'
+    enable_statusline_bfpath = true
+
+[[custom_plugins]]
+    name = "harenome/vim-mipssyntax"
+    merged = false
+
+[[layers]]
+    name = "autocomplete"
+    enable = false
