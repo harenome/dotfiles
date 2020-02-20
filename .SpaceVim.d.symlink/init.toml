@@ -15,9 +15,13 @@
     merged = false
 
 [[layers]]
+    name = "VersionControl"
+    enable = false
+
+[[layers]]
     name = "autocomplete"
     enable = false
 
 [[layers]]
-    name = "VersionControl"
+    name = "lang#c"
     enable = false
