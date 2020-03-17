@@ -5,6 +5,9 @@ backups/*
 .vim.symlink/.netrwhist
 .vim.symlink/spell
 
+## Spacevim
+.SpaceVim.d.symlink/.netrwhist
+
 ## Fish
 .config/fish.symlink/fish_history
 .config/fish.symlink/fishd*
