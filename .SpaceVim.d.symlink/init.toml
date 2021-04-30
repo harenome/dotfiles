@@ -2,16 +2,21 @@
     # VIM
     vimcompatible = true
     default_indent = 2
-    enable_neomake = false
     tex_conceal = ""
-    snippet_engine = 'ultisnips'
-    disabled_plugins = ["vim-rooter"]
-    vimcompatible = true
+    bootstrap_before = "basevim#before"
     bootstrap_after = "basevim#after"
+
     # Status line configuration
     statusline_separator = 'slant'
     enable_statusline_mode = true
     enable_statusline_bfpath = true
+
+    # Checkers
+    enable_neomake = false
+
+    # Annoying project rooter
+    disabled_plugins = ["vim-rooter"]
+    project_rooter_automatically = 0
 
 [[custom_plugins]]
     name = "harenome/vim-mipssyntax"
@@ -26,5 +31,13 @@
     enable = false
 
 [[layers]]
-    name = "lang#c"
+    name = "checkers"
     enable = false
+
+[[layers]]
+    name = "lang#c"
+    enable = true
+
+[[layers]]
+    name = "tools"
+    enable = true
