@@ -54,3 +54,8 @@ bytecode/
 *.old
 *~
 vgcore.*
+tmp
+
+# Tests
+test/
+tests/
