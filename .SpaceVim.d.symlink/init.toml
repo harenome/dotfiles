@@ -15,8 +15,9 @@
     enable_neomake = false
 
     # Annoying project rooter
-    disabled_plugins = ["vim-rooter"]
+    disabled_plugins = ["vim-rooter" "projectmanager.vim"]
     project_rooter_automatically = 0
+    project_auto_root = false
 
 [[custom_plugins]]
     name = "harenome/vim-mipssyntax"
