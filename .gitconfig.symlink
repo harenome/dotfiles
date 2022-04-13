@@ -36,3 +36,19 @@
 	  git submodule update --init;                                    \
 	  printf \"\\033[1mMrProper wiped your repositories.\\033[0m\n\"; \
 	"
+[filter "lfs"]
+	process = git-lfs filter-process
+	required = true
+	clean = git-lfs clean -- %f
+	smudge = git-lfs smudge -- %f
+[push]
+	default = simple
+[pull]
+	rebase = true
+[diff]
+	colorMoved = zebra
+	wsErrorHighlight = all
+[rebase]
+	autoStash = true
+[rerere]
+	enabled = true
