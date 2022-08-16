@@ -52,3 +52,24 @@
 	autoStash = true
 [rerere]
 	enabled = true
+
+# As delta may not always be available on the various machines where these
+# dotfiles are used, the following lines should not be added in this file
+# but in $HOME/.config/git/config:
+#
+#     [core]
+#       pager = delta
+#     [interactive]
+#         diffFilter = delta --color-only --features=interactive
+[delta]
+    features = decorations
+[delta "interactive"]
+    keep-plus-minus-markers = false
+[delta "decorations"]
+    commit-decoration-style = blue ol
+    commit-style = raw
+    file-style = omit
+    hunk-header-decoration-style = blue box
+    hunk-header-file-style = red
+    hunk-header-line-number-style = "#067a00"
+    hunk-header-style = file line-number syntax
