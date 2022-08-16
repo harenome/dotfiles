@@ -1,5 +1,5 @@
 function! basevim#before() abort
-  autocmd Filetype * RainbowParentheses
+  " autocmd Filetype * RainbowParentheses
 endfunction
 
 function! basevim#after() abort
