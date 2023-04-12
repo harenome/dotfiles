@@ -17,7 +17,10 @@
     # Annoying project rooter
     disabled_plugins = ["vim-rooter" "projectmanager.vim"]
     project_rooter_automatically = 0
+    enable_projects_cache = false
     project_auto_root = false
+    project_rooter_outermost = false
+    project_rooter_patterns = []
 
 [[custom_plugins]]
     name = "harenome/vim-mipssyntax"
