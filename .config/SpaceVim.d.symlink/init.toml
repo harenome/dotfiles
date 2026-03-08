@@ -14,8 +14,9 @@
     # Checkers
     enable_neomake = false
 
+    disabled_plugins = ["vim-rooter", "vim-signify"]
+
     # Annoying project rooter
-    disabled_plugins = ["vim-rooter"]
     project_rooter_automatically = 0
     enable_projects_cache = false
     project_auto_root = 0
@@ -42,13 +43,6 @@
 
 [[layers]]
     name = "checkers"
-
-[[layers]]
-    name = "incsearch"
-
-[[layers]]
-    name = "gtags"
-    gtagslabel = "pygments"
 
 [[layers]]
     name = "treesitter"
