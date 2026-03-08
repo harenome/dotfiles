@@ -8,6 +8,10 @@ backups/*
 ## Spacevim
 .SpaceVim.d.symlink/.netrwhist
 
+## LazyVim
+.config/LazyVimStarter/lazy-lock.json
+.config/LazyVimStarter/lazyvim.json
+
 ## Fish
 .config/fish.symlink/fish_history
 .config/fish.symlink/fishd*
