@@ -3,11 +3,20 @@
   "lines": [
     [
       {
+        "id": "743b2dc1-2896-450d-8dbf-58257894792c",
+        "type": "custom-command",
+        "commandPath": "hostname"
+      },
+      {
+        "id": "c7c685a4-24ae-4646-8dae-0982bf2851ad",
+        "type": "separator"
+      },
+      {
         "id": "abe992c1-1265-4c6a-b54a-8586a029cc4f",
         "type": "current-working-dir"
       },
       {
-        "id": "c7c685a4-24ae-4646-8dae-0982bf2851ad",
+        "id": "284d7894-0df5-4d7a-bdd6-b50aed100f75",
         "type": "separator"
       },
       {
