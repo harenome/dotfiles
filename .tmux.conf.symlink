@@ -41,3 +41,4 @@ set -g window-status-current-format '#[fg=colour246]#I:#[fg=colour250]#W#[fg=col
 
 # Misc.
 set -g escape-time 0
+set -g history-limit 32768
