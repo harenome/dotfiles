@@ -19,6 +19,10 @@ bind l select-pane -R
 # Mouse
 setw -g mouse on
 
+# Clipboard
+set -g set-clipboard external
+bind-key -T copy-mode-vi MouseDragEnd1Pane send-keys -X copy-pipe-and-cancel "wl-copy"
+
 # Name
 set -g default-terminal "screen-256color"
 
