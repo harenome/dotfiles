@@ -2,237 +2,57 @@
 # ~/.bashrc configuration file.
 # See the bash(1) man page.
 #
-# Maintainer: Harenome RANAIVOARIVONY RAZANAJATO
+# Maintainer: Harenome Ranaivoarivony-Razanajato
 # License: WTFPLv2
 #
-# For the latest version (or any previous version) of this file,
-# see https://github.com/Harenome/dotfiles/blob/master/.bashrc.symlink
+# See https://github.com/harenome/dotfiles/blob/master/.bashrc.symlink
 #===============================================================================
 
-################################################################################
-# Helper functions.
-################################################################################
-
-# Append existing directories to paths
-# $1: Environment variable
-# $2: Directory
-function __append_to_path
-{
-  if [[ -d "$2" ]]; then
-    [[ -z $(eval "echo \$$1") ]] && eval "export $1=$2" || eval "export $1=\$$1:$2"
-  fi
-}
-
-# Prepend existing directories to paths
-# $1: Environment variable
-# $2: Directory
-function __prepend_to_path
-{
-  if [[ -d "$2" ]]; then
-    [[ -z $(eval "echo \$$1") ]] && eval "export $1=$2" || eval "export $1=$2:\$$1"
-  fi
-}
-
-# Use a modifier function to modify standard paths
-# $1: Modifier function
-# $2: Directory
-function __modify_standard_paths
-{
-  if [[ -d "$2" ]]; then
-    # Compiler paths
-    "$1" "LIBRARY_PATH" "$2/lib"
-    "$1" "LIBRARY_PATH" "$2/lib64"
-    "$1" "CPATH" "$2/include"
-
-    # Runtime paths
-    "$1" "PATH" "$2/bin"
-    "$1" "PATH" "$2/sbin"
-    "$1" "MANPATH" "$2/man"
-    "$1" "MANPATH" "$2/share/man"
-    "$1" "LD_LIBRARY_PATH" "$2/lib"
-    "$1" "LD_LIBRARY_PATH" "$2/lib64"
-  fi
-}
-
-# Append a directory to standard paths
-# $1: Directory
-function __append_to_standard_paths
-{
-  __modify_standard_paths "__append_to_path" "$1"
-}
-
-# Prepend a directory to standard paths
-# $1: Directory
-function __prepend_to_standard_paths
-{
-  __modify_standard_paths "__prepend_to_path" "$1"
-}
-
-################################################################################
-# $HOME/bin
-################################################################################
-
-# Although I prefer to put "global" (shared between setups) scripts in
-# ~/.opt/sbin and specific (to a particular setup) scripts in ~/.opt/bin,
-# ~/bin is quite conventionnal. Thus, let's add it to $PATH. Just in case...
-
-HOME_BIN="$HOME/bin"
-[[ -d "$HOME_BIN" ]] && export PATH="$HOME_BIN:$PATH"
-
-################################################################################
-# RVM support.
-################################################################################
-
-# Do this first, so that even non-interactive shells load it as well.
-if [[ -d "$HOME/.rvm/bin" ]]; then
-  # Add RVM to PATH for scripting
-  export PATH="$PATH:$HOME/.rvm/bin"
-  source $(rvm 1.9.3 do rvm env --path)
-fi
-
-################################################################################
-# XDG directories
-################################################################################
-
-#export XDG_DATA_HOME="$HOME/.local/share"
-#export XDG_CONFIG_HOME="$HOME/.config"
-#export XDG_DATA_DIRS="/usr/local/share/:/usr/share/"
-#export XDG_CONFIG_DIRS="/etc/xdg"
-#export XDG_CACHE_HOME="$HOME/.cache"
-
-################################################################################
-# User opt directory
-################################################################################
-
-__prepend_to_standard_paths "$HOME/.opt"
-
-################################################################################
-# Interactive shell test.
-################################################################################
-
 # If not running interactively, don't do anything
-[[ -z "$PS1" ]] && return
-
-################################################################################
-# Aliases.
-################################################################################
-
-BASH_ALIASES="$HOME/.bash_aliases"
-[[ -f "$BASH_ALIASES" ]] && source "$BASH_ALIASES"
-
-################################################################################
-# Bash completion
-################################################################################
-
-# Probably already enabled in /etc/bash.bashrc which itself is probably
-# already sourced by /etc/profile.
-BASH_COMPLETION="/etc/bash_completion"
-if [[ -f "$BASH_COMPLETION" ]] && ! shopt -oq posix; then
-  source "$BASH_COMPLETION"
-fi
-
-################################################################################
-# History.
-################################################################################
-
-# Don't put duplicate lines or lines starting with space in the history.
-# See bash(1) for more options
-HISTCONTROL=ignoreboth
+[[ $- != *i* ]] && return
 
 # Append to the history file, don't overwrite it
 shopt -s histappend
 
-# For setting history length see HISTSIZE and HISTFILESIZE in bash(1)
+# No duplicates nor lines starting with spaces
+HISTCONTROL=ignoreboth
+
 HISTSIZE=1000
 HISTFILESIZE=2000
 
-################################################################################
-# Misceallenous.
-################################################################################
-
-# Check the window size after each command and, if necessary,
-# update the values of LINES and COLUMNS.
+# Check window size after each command
 shopt -s checkwinsize
 
-# If set, the pattern "**" used in a pathname expansion context will
-# match all files and zero or more directories and subdirectories.
-#shopt -s globstar
+# Some distributions support "$HOME/.bash_aliases" in their default `.bashrc`.
+[[ -f "${HOME}/.bash_aliases" ]] && source "${HOME}/.bash_aliases"
 
-# Make less more friendly for non-text input files, see lesspipe(1)
-[[ -x "/usr/bin/lesspipe" ]] && eval "$(SHELL=/bin/sh lesspipe)"
-
-################################################################################
-# Prompt.
-################################################################################
-
-LIQUIDPROMPT="$HOME/.liquidprompt/liquidprompt"
-if [[ -f "$LIQUIDPROMPT" ]]; then
-  # Liquidprompt
-  source "$LIQUIDPROMPT"
-else
-  # This section comes from the default .bashrc provided on Ubuntu.
-  # (Ubuntu 6.10 ? I have been using some parts of this .bashrc for years...)
-
-  # Set variable identifying the chroot you work in (used in the prompt below)
-  if [[ -z "$debian_chroot" ]] && [[ -r /etc/debian_chroot ]]; then
-    debian_chroot=$(cat /etc/debian_chroot)
-  fi
-
-  # Set a fancy prompt (non-color, unless we know we "want" color)
-  case "$TERM" in
-    xterm-color) color_prompt=yes;;
-  esac
-
-  # Uncomment for a colored prompt, if the terminal has the capability; turned
-  # off by default to not distract the user: the focus in a terminal window
-  # should be on the output of commands, not on the prompt
-  force_color_prompt=yes
-
-  if [[ -n "$force_color_prompt" ]]; then
-    if [[ -x /usr/bin/tput ]] && tput setaf 1 >&/dev/null; then
-      # We have color support; assume it's compliant with Ecma-48
-      # (ISO/IEC-6429). (Lack of such support is extremely rare, and such
-      # a case would tend to support setf rather than setaf.)
-      color_prompt=yes
-    else
-      color_prompt=
-    fi
-  fi
-
-  if [[ "$color_prompt" = yes ]]; then
-    PS1='${debian_chroot:+($debian_chroot)}\[\033[01;32m\]\u@\h\[\033[00m\]:\[\033[01;34m\]\w\[\033[00m\]\$ '
-  else
-    PS1='${debian_chroot:+($debian_chroot)}\u@\h:\w\$ '
-  fi
-  unset color_prompt force_color_prompt
-
-  # If this is an xterm set the title to user@host:dir
-  case "$TERM" in
-    xterm*|rxvt*)
-      PS1="\[\e]0;${debian_chroot:+($debian_chroot)}\u@\h: \w\a\]$PS1" ;;
-    *)
-      ;;
-  esac
+# Some distributions support "$HOME/.bashrc.d" in their default `.bashrc`.
+# See also `$HOME/.profile` and `$HOME/.profile.d/*.sh`:
+# - `$HOME/.profile.d/` is for POSIX-compatible `.sh` files
+# - `$HOME/.bashrc.d/` is for Bash-sepcific `.bash` files
+if [[ -d "${HOME}"/.bashrc.d ]]; then
+    for f in "${HOME}"/.bashrc.d/*.bash; do
+        [[ -r "${f}" ]] && . "${f}"
+    done
+    unset f
 fi
 
-################################################################################
-# Local configurations.
-################################################################################
+# Colours for the prompt
+reset_colour="\033[0m"
+cwd_colour="\033[34m"
+at_colour="\033[2m"
+sep_colour="\033[1;2m"
+[[ "$(id -u)" -eq 0 ]] && user_colour="\033[1;31m" || user_colour="\033[1;32m"
+[[ -n "${SSH_CONNECTION}" ]] && host_colour="\033[1;33m" || host_colour=""
 
-# This file is shared between machines. Sometimes, a specific system needs
-# specific configuration.
-# Any file in $HOME/.local/dotfiles/bash will be sourced.
-LOCAL_BASH_CONFIG_FILES="$XDG_CONFIG_HOME/dotfiles/bash"
-if [[ -d "$LOCAL_BASH_CONFIG_FILES" ]]; then
-  for file in "$LOCAL_BASH_CONFIG_FILES/"*; do
-    source $file
-  done
-fi
+# Simple, lightweight, prompt
+PS1=""
+PS1="${PS1}${user_colour}\u${reset_colour}"
+PS1="${PS1}${at_colour}@${reset_colour}"
+PS1="${PS1}${host_colour}\h${reset_colour}"
+PS1="${PS1}${cwd_colour} \w ${reset_colour}"
+PS1="${PS1}${sep_colour}\\$ ${reset_colour}"
 
-################################################################################
-# Cleaning.
-################################################################################
+unset reset_colour cwd_colour user_colour host_colour at_colour sep_colour
 
-#unset __append_to_path
-
-# vim:ft=sh
+# vim:ft=bash

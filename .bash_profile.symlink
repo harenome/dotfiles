@@ -2,15 +2,24 @@
 # ~/.bash_profile configuration file.
 # See the bash(1) man page.
 #
-# Maintainer: Harenome RANAIVOARIVONY RAZANAJATO
+# Maintainer: Harenome Ranaivoarivony-Razanajato
 # License: WTFPLv2
 #
-# For the latest version (or any previous version) of this file,
-# see https://github.com/Harenome/dotfiles/blob/master/.bash_profile.symlink
+# See https://github.com/harenome/dotfiles/blob/master/.bash_profile.symlink
 #===============================================================================
 
-# Load RVM into a shell session *as a function*
-[[ -s "$HOME/.rvm/scripts/rvm" ]] && source "$HOME/.rvm/scripts/rvm"
+# Source the shared POSIX-compatible `.profile`
+if [[ -r "$HOME/.profile" ]]; then
+  source "$HOME/.profile"
+fi
 
-# Source ~/.bashrc
-[[ -f ~/.bashrc ]] && source ~/.bashrc
+#
+# Add Bash-specifc environment setup here
+#
+
+# Login shells might not source `.bashrc` on their own!
+if [[ -r "$HOME/.bashrc" ]]; then
+  source "$HOME/.bashrc"
+fi
+
+# vim:ft=bash
