@@ -1,3 +1,0 @@
-[submodule "liquidprompt"]
-	path = .liquidprompt.symlink/upstream
-	url = https://github.com/nojhan/liquidprompt.git
