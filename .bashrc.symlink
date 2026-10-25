@@ -37,22 +37,37 @@ if [[ -d "${HOME}"/.bashrc.d ]]; then
     unset f
 fi
 
-# Colours for the prompt
-reset_colour="\033[0m"
-cwd_colour="\033[34m"
-at_colour="\033[2m"
-sep_colour="\033[1;2m"
-[[ "$(id -u)" -eq 0 ]] && user_colour="\033[1;31m" || user_colour="\033[1;32m"
-[[ -n "${SSH_CONNECTION}" ]] && host_colour="\033[1;33m" || host_colour=""
-
 # Simple, lightweight, prompt
-PS1=""
-PS1="${PS1}${user_colour}\u${reset_colour}"
-PS1="${PS1}${at_colour}@${reset_colour}"
-PS1="${PS1}${host_colour}\h${reset_colour}"
-PS1="${PS1}${cwd_colour} \w ${reset_colour}"
-PS1="${PS1}${sep_colour}\\$ ${reset_colour}"
+__prompt() {
+  # Must be captured first
+  local -a ps=( "${PIPESTATUS[@]}" )
 
-unset reset_colour cwd_colour user_colour host_colour at_colour sep_colour
+  local s status
+  local reset_color cwd_color at_color sep_color u_color h_color
+
+  # colors for the prompt
+  reset_color="\[\e[0m\]"
+  cwd_color="\[\e[34m\]"
+  at_color="\[\e[2m\]"
+  sep_color="\[\e[1;2m\]"
+  [[ "$(id -u)" -eq 0 ]] && u_color="\[\e[1;31m\]" || u_color="\[\e[1;32m\]"
+  [[ -n "${SSH_CONNECTION}" ]] && h_color="\[\e[1;33m\]" || h_color=""
+
+  for s in "${ps[@]}"; do
+    (( s == 0 )) && continue
+    local IFS='|'
+    status="\[\e[31m\][${ps[*]}]\[\e[0m\]"
+  done
+
+  PS1=""
+  PS1="${PS1}${u_color}\u${reset_color}"
+  PS1="${PS1}${at_color}@${reset_color}"
+  PS1="${PS1}${h_color}\h${reset_color}"
+  PS1="${PS1}${cwd_color} \w ${reset_color}"
+  PS1="${PS1}${status}"
+  PS1="${PS1}${sep_color}\\$ ${reset_color}"
+}
+
+PROMPT_COMMAND=(__prompt "${PROMPT_COMMAND[@]}")
 
 # vim:ft=bash
