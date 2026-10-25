@@ -1,0 +1,21 @@
+#===============================================================================
+# ~/.profile file
+#
+# Should be POSIX-compatible.
+# Otherwise, write it in shell-specific profiles such as `.bash_profile`.
+#
+# Maintainer: Harenome Ranaivoarivony-Razanajato
+# License: WTFPLv2
+# See https://github.com/harenome/dotfiles/blob/master/.profile.symlink
+#===============================================================================
+
+# Similar to what some distributions do for `$HOME/.bashrc.d` in their default
+# `.bashrc` files, but in `$HOME/.profile.d` for POSIX-compatible filees.
+if [ -d "${HOME}/.profile.d" ]; then
+    for f in "${HOME}"/.profile.d/*.sh; do
+        [ -r "${f}" ] && . "${f}"
+    done
+    unset f
+fi
+
+# vim:ft=sh
