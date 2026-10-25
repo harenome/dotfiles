@@ -1,0 +1,38 @@
+{
+  "theme": "dark",
+  "feedbackDrafts": "off",
+  "statusLine": {
+    "type": "command",
+    "command": "bunx -y ccstatusline@latest",
+    "padding": 0,
+    "refreshInterval": 10
+  },
+  "enabledPlugins": {
+    "cc-plugin-telemetry@builtin": false,
+    "cc-plugin-you-should-know@builtin": true,
+    "ponytail@ponytail": true,
+    "impeccable@impeccable": true,
+    "diagram-design@diagram-design": true,
+    "taste-skill@taste-skill": true,
+    "humanizer@humanizer": true,
+    "terminal@gfargo-skills": true
+  },
+  "extraKnownMarketplaces": {
+    "ponytail": { "source": { "source": "github", "repo": "DietrichGebert/ponytail" } },
+    "impeccable": { "source": { "source": "github", "repo": "pbakaus/impeccable" } },
+    "humanizer": { "source": { "source": "github", "repo": "blader/humanizer" } },
+    "gfargo-skills": { "source": { "source": "github", "repo": "gfargo/skills" } },
+    "typesafe-ai": { "source": { "source": "github", "repo": "typesafe-ai/skills" } },
+    "i-have-adhd": { "source": { "source": "github", "repo": "ayghri/i-have-adhd" } },
+    "diagram-design": { "source": { "source": "github", "repo": "cathrynlavery/diagram-design" } },
+    "taste-skill": { "source": { "source": "github", "repo": "Leonxlnx/taste-skill" } }
+  },
+  "pluginConfigs": {
+    "ponytail@ponytail": {
+      "options": {
+        "ledger": true,
+        "sendNames": false
+      }
+    }
+  }
+}
