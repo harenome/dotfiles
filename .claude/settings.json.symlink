@@ -1,6 +1,4 @@
 {
-  "theme": "dark",
-  "feedbackDrafts": "off",
   "statusLine": {
     "type": "command",
     "command": "bunx -y ccstatusline@latest",
@@ -18,15 +16,16 @@
     "terminal@gfargo-skills": true
   },
   "extraKnownMarketplaces": {
-    "ponytail": { "source": { "source": "github", "repo": "DietrichGebert/ponytail" } },
-    "impeccable": { "source": { "source": "github", "repo": "pbakaus/impeccable" } },
-    "humanizer": { "source": { "source": "github", "repo": "blader/humanizer" } },
-    "gfargo-skills": { "source": { "source": "github", "repo": "gfargo/skills" } },
-    "typesafe-ai": { "source": { "source": "github", "repo": "typesafe-ai/skills" } },
-    "i-have-adhd": { "source": { "source": "github", "repo": "ayghri/i-have-adhd" } },
-    "diagram-design": { "source": { "source": "github", "repo": "cathrynlavery/diagram-design" } },
-    "taste-skill": { "source": { "source": "github", "repo": "Leonxlnx/taste-skill" } }
+    "ponytail": { "source": { "source": "github", "repo": "DietrichGebert/ponytail" }, "autoUpdate": true },
+    "impeccable": { "source": { "source": "github", "repo": "pbakaus/impeccable" }, "autoUpdate": true },
+    "humanizer": { "source": { "source": "github", "repo": "blader/humanizer" }, "autoUpdate": true },
+    "gfargo-skills": { "source": { "source": "github", "repo": "gfargo/skills" }, "autoUpdate": true },
+    "typesafe-ai": { "source": { "source": "github", "repo": "typesafe-ai/skills" }, "autoUpdate": true },
+    "i-have-adhd": { "source": { "source": "github", "repo": "ayghri/i-have-adhd" }, "autoUpdate": true },
+    "diagram-design": { "source": { "source": "github", "repo": "cathrynlavery/diagram-design" }, "autoUpdate": true },
+    "taste-skill": { "source": { "source": "github", "repo": "Leonxlnx/taste-skill" }, "autoUpdate": true }
   },
+  "feedbackDrafts": "off",
   "pluginConfigs": {
     "ponytail@ponytail": {
       "options": {
@@ -34,5 +33,8 @@
         "sendNames": false
       }
     }
-  }
+  },
+  "theme": "dark",
+  "inputNeededNotifEnabled": true,
+  "agentPushNotifEnabled": true
 }
