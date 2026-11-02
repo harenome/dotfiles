@@ -1,0 +1,156 @@
+// Prefix layer: alt-a opens this popup, the next key runs one action and closes it.
+// Keys live in keys.json under mod:prefix. Each binding is "prefix.<action>", which the
+// app sends here: a command (name or name:value) or a CUSTOM name. Other keys just close.
+
+import { View, div } from "gpui-kit";
+import { h_flex, v_flex } from "gpui-base";
+import { agents, closeOverlay, commands, focused, hc, keys, nextCommand, notify, openOverlay, panes, props, run, theme } from "herdr";
+
+const SECTION = "mod:prefix";
+const COLUMNS = ["Panes", "Tabs", "Spaces", "App"];
+const COLUMN_OF = { pane: "Panes", tab: "Tabs", space: "Spaces" };
+const PADDING = 14;
+const HEADING = 20;
+const GAP = 10;
+const CHROME = PADDING + HEADING + GAP + PADDING;
+const TALL = 4000;
+
+function cyclePane(step) {
+  const f = focused();
+  const list = panes().filter((p) => p.tab === f?.tab);
+  const i = list.findIndex((p) => p.pane === f?.pane);
+  if (i >= 0 && list.length > 1) run("pane.focus", { pane: list[(i + step + list.length) % list.length].pane });
+}
+
+// Blocked agents first, then finished ones.
+function openAttention() {
+  const all = agents();
+  const a = all.find((x) => x.status === "blocked") ?? all.find((x) => x.status === "done");
+  if (a) run("agent.focus", { terminal: a.address });
+}
+
+function newTab() {
+  openOverlay({ mod: "prompt", kind: "dialog", width: 420, props: { title: "new tab", command: { name: "tab.new" } } });
+}
+
+function newWorktree() {
+  const f = focused();
+  openOverlay({ mod: "worktree", kind: "dialog", width: 460, height: 280, props: { space: f?.space, folder: f?.cwd, action: "new" } });
+}
+
+function sendPrefix() {
+  const terminal = focused()?.terminal;
+  return terminal && hc(["keys", terminal, "alt+a"]);
+}
+
+const CUSTOM = {
+  next_pane: { column: "Panes", label: "next pane", run: () => cyclePane(1) },
+  prev_pane: { column: "Panes", label: "previous pane", run: () => cyclePane(-1) },
+  new_tab: { column: "Tabs", label: "new tab", run: newTab },
+  new_worktree: { column: "Spaces", label: "new worktree", run: newWorktree },
+  open_attention: { column: "App", label: "open waiting agent", run: openAttention },
+  literal: { column: "App", label: "send alt-a", run: sendPrefix },
+};
+
+function parse(action) {
+  const i = action.indexOf(":");
+  return i < 0 ? [action] : [action.slice(0, i), action.slice(i + 1)];
+}
+
+const isNumber = (value) => /^\d+$/.test(value);
+
+// As in keys.json, the value fills the command's first argument. The app doesn't
+// validate prefix.* bindings and run() ignores unknown names, so a typo is caught here.
+function perform(action) {
+  const [name, value] = parse(action);
+  const command = commands().find((c) => c.name === name);
+  if (!command) return notify({ title: "Unknown prefix command", body: action, level: "error" });
+  const arg = value && command.args[0]?.name;
+  run(name, arg && { [arg]: isNumber(value) ? Number(value) : value });
+}
+
+function describe(action) {
+  if (CUSTOM[action]) return CUSTOM[action];
+  const [name, value] = parse(action);
+  const [noun, verb = noun] = name.split(".");
+  const column = COLUMN_OF[noun] ?? "App";
+  const word = verb.replaceAll("_", " ");
+  if (isNumber(value)) return { column, label: word };
+  if (value) return { column, label: `${word} ${value}` };
+  return { column, label: column === "App" && noun !== "app" ? `${word} ${noun}` : word };
+}
+
+// One row per action; numbered actions of one command share a row.
+function rows() {
+  const all = new Map();
+  for (const { section, keys: key, action: bound } of keys()) {
+    if (section !== SECTION) continue;
+    const action = bound.replace(/^prefix\./, "");
+    const [name, value] = parse(action);
+    const id = isNumber(value) ? name : action;
+    if (!all.has(id)) all.set(id, { ...describe(action), keys: [] });
+    all.get(id).keys.push(key);
+  }
+  return [...all.values()].sort((a, b) => a.label.localeCompare(b.label));
+}
+
+// keys() returns keys sorted, so a run of numbers is in order.
+function keyLabel(list) {
+  const isRun = list.length > 2 && list.every(isNumber) && list.at(-1) - list[0] === list.length - 1;
+  return isRun ? `${list[0]}-${list.at(-1)}` : list.join(" ");
+}
+
+export default class Prefix extends View {
+  init(_props, cx) {
+    this.limit = null;
+    this.content = TALL;
+    this.handle = cx.focus_handle();
+    this.handle.focus();
+    cx.spawn(async () => {
+      for (;;) {
+        const action = await nextCommand();
+        const act = () => (CUSTOM[action]?.run ?? perform)(action);
+        // Closing cancels pending work, so alt-a goes out first.
+        if (action === "literal") await act();
+        this.close();
+        if (action !== "literal") act();
+      }
+    });
+  }
+
+  close() {
+    closeOverlay(props().overlay);
+  }
+
+  row(t, { keys: list, label }) {
+    return h_flex().gap(8).h(22).items_center()
+      .child(div().w(62).flex_none().text_color(t.accent).font_medium().child(keyLabel(list)))
+      .child(div().truncate().text_color(t.muted).child(label));
+  }
+
+  column(t, name, list) {
+    return v_flex().flex_none().w(190)
+      .child(div().pb(4).text_size(11.5).text_color(t.dim).child(name))
+      .children(list.map((r) => this.row(t, r)));
+  }
+
+  render() {
+    const t = theme();
+    const all = rows();
+    const body = h_flex().flex_wrap().gap(18).justify_between().items_start()
+      .children(COLUMNS.filter((name) => all.some((r) => r.column === name))
+        .map((name) => this.column(t, name, all.filter((r) => r.column === name))));
+    // A scroll area has no height of its own, and a popup only grows to mod.json's
+    // height. The first pass asks for too much to learn that limit; later passes fit the rows.
+    const room = this.limit === null ? TALL : this.limit - CHROME;
+    return v_flex().id("prefix").track_focus(this.handle)
+      .on_key_down((_e, cx) => { cx.stop_propagation(); this.close(); })
+      .on_size_change((size, cx) => { if (this.limit === null) { this.limit = size.height; cx.notify(); } })
+      .size_full().p(PADDING).gap(GAP).bg(t.popover).text_color(t.foreground).text_size(12.5)
+      .child(div().flex_none().h(HEADING).font_semibold().child("Prefix"))
+      .child(v_flex().id("prefix-body").flex_none().h(Math.min(room, this.content)).overflow_y_scrollbar()
+        .child(div().id("prefix-rows").w_full()
+          .on_size_change((size, cx) => { this.content = size.height; cx.notify(); })
+          .child(body)));
+  }
+}
