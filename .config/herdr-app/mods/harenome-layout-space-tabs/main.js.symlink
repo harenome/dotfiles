@@ -1,0 +1,102 @@
+// A space's tabs and agents, opened from its chevron in the title bar. Without a space prop,
+// every agent, opened from the title bar's agents box.
+// shortcut: no scrolling, add it if a space ever has more tabs than the window is tall.
+
+import { View, div, image, svg } from "gpui-kit";
+import { h_flex, v_flex } from "gpui-base";
+import { agents, closeOverlay, panes, props, run, setShared, spaces, theme } from "herdr";
+
+const close = () => {
+  setShared("titlebar.listed", null);
+  closeOverlay(props().overlay);
+};
+
+function duration(ms) {
+  const m = Math.floor(ms / 60000);
+  if (m < 1) return "<1m";
+  if (m < 60) return `${m}m`;
+  const h = Math.floor(m / 60);
+  return h < 24 ? `${h}h` : `${Math.floor(h / 24)}d`;
+}
+
+// When the agent's tab last changed state: agents have no time of their own.
+const changedAt = (agent) => spaces().flatMap((s) => s.tabs).find((tab) => tab.id === agent.tab)?.changed_at;
+
+export default class SpaceTabs extends View {
+  init(_props, cx) {
+    this.handle = cx.focus_handle();
+    this.handle.focus();
+    setShared("titlebar.listed", props()?.space);
+  }
+
+  icon(t, id, icon, action) {
+    return div().id(id).size(22).flex_none().flex().items_center().justify_center().rounded(5).text_color(t.dim)
+      .hover((s) => s.bg(t.raised).text_color(t.foreground))
+      .on_click((_e, cx) => { cx.stop_propagation(); action(); })
+      .child(svg(icon).size(13));
+  }
+
+  heading(t, text) {
+    return div().px(8).pt(4).pb(2).text_size(11.5).text_color(t.dim).child(text);
+  }
+
+  // What tab and agent rows share: program icon, name, status.
+  row(t, id, program, name, status) {
+    return h_flex().id(id).h(28).pl(8).pr(3).gap(6).items_center().rounded(6).cursor_pointer()
+      .hover((s) => s.bg(t.hover))
+      .when(Boolean(program?.icon), (el) => el.child(program.tint ? svg(program.icon).size(14).flex_none().text_color(t.muted) : image(program.icon).size(14).flex_none()))
+      .child(div().flex_1().min_w(0).truncate().child(name))
+      .when(status === "working", (el) => el.child(svg("mods/workspace-chrome/spinner.svg").size(12).flex_none().text_color(t.working).spin(900)))
+      .when(status === "blocked" || status === "done", (el) => el.child(div().size(6).rounded(3).bg(t[status])));
+  }
+
+  tabRow(t, space, tab) {
+    const own = panes().filter((p) => p.tab === tab.id);
+    const program = (own.find((p) => p.program?.agent) ?? own[0])?.program;
+    return this.row(t, `tab-${tab.id}`, program, tab.name, tab.status)
+      .when(space.active && tab.active, (el) => el.bg(t.selected))
+      .on_click(() => { close(); run("space.select", { id: space.id }); run("tab.select", { id: tab.id }); })
+      .child(this.icon(t, `rename-${tab.id}`, "mods/workspace-chrome/square-pen.svg", () => { close(); run("tab.rename", { id: tab.id }); }))
+      .child(this.icon(t, `close-${tab.id}`, "mods/pane/close.svg", () => run("tab.close", { id: tab.id })));
+  }
+
+  agentStatus(t, status) {
+    if (status === "working") return svg("mods/workspace-chrome/spinner.svg").size(12).mx(1).flex_none().text_color(t.working).spin(900);
+    if (status === "blocked") return div().flex_none().px(6).h(18).rounded(5).bg(t.blocked + "26").text_size(10.5).font_semibold().text_color(t.blocked).flex().items_center().child("Needs you");
+    if (status === "done") return div().size(7).mx(3).flex_none().rounded(4).bg(t.done);
+    return div().size(7).mx(3).flex_none().rounded(4).border(1.5).border_color(t.idle ?? t.dim);
+  }
+
+  agentRow(t, agent) {
+    // An agent on another machine has its address as `machine/terminal`.
+    const machine = agent.address.includes("/") ? agent.address.split("/")[0] : "localhost";
+    const at = changedAt(agent);
+    return this.row(t, `agent-${agent.address}`, agent.program, agent.title || agent.program?.name, null)
+      .pr(8)
+      .when(agent.focused, (el) => el.bg(t.selected))
+      .on_click(() => { close(); run("agent.focus", { terminal: agent.address }); })
+      .child(div().flex_none().text_size(10).text_color(t.dim).child(machine))
+      .when(Boolean(at), (el) => el.child(div().flex_none().text_size(11).text_color(t.dim).child(duration(Date.now() - at))))
+      .child(this.agentStatus(t, agent.status));
+  }
+
+  render() {
+    const t = theme();
+    const id = props()?.space;
+    const space = spaces().find((s) => s.id === id);
+    if (id && !space) return div();
+    const own = agents().filter((a) => !space || a.space === space.id);
+    return v_flex().id("space-tabs").track_focus(this.handle).w_full().p(6).gap(2).bg(t.popover).text_color(t.foreground).text_size(12.5)
+      .on_key_down((e) => { if (e.key === "escape") close(); })
+      .on_mouse_down_out(() => { setShared("titlebar.listed", null); setShared("titlebar.list-closed", Date.now()); })
+      .when(own.length > 0, (el) => el.child(this.heading(t, "Agents")).children(own.map((a) => this.agentRow(t, a))))
+      .when(Boolean(space), (el) => el
+        .child(this.heading(t, "Tabs"))
+        .children(space.tabs.map((tab) => this.tabRow(t, space, tab)))
+        .child(h_flex().id("new-tab").h(28).px(8).gap(6).items_center().rounded(6).cursor_pointer().text_color(t.muted)
+          .hover((s) => s.bg(t.hover).text_color(t.foreground))
+          .on_click(() => { close(); run("tab.new", { space: space.id }); })
+          .child(svg("mods/workspace-chrome/plus.svg").size(13))
+          .child("New tab")));
+  }
+}

@@ -1,0 +1,109 @@
+// Full-width title bar: logo, sidebar, new menu, spaces, settings, close.
+// Dragging and double-click maximize come from window_drag on this block in the layout.
+// Each space's chevron opens the list of its tabs and agents.
+
+import { View, div, svg, image } from "gpui-kit";
+import { h_flex } from "gpui-base";
+import { agents, openOverlay, run, setShared, shared, spaces, theme } from "herdr";
+
+const MIN_LIST_WIDTH = 260;
+const BAR_HEIGHT = 46;
+const ALL_AGENTS = "agents";
+
+const stop = (_e, cx) => cx.stop_propagation();
+
+export default class Titlebar extends View {
+  init() {
+    this.pressed = null;
+    this.pressedAt = 0;
+    this.barWidth = 0;
+    this.anchors = {};
+    setShared("titlebar.listed", null);
+  }
+
+  // A press outside closes the list before its release gets here, so that press mustn't reopen it.
+  toggleList(key) {
+    if (Math.abs((shared("titlebar.list-closed") ?? 0) - this.pressedAt) >= 100) this.openList(key);
+  }
+
+  openList(key) {
+    const anchor = this.anchors[key];
+    if (!anchor) return;
+    const width = Math.max(anchor.width, MIN_LIST_WIDTH);
+    const x = Math.max(0, Math.min(anchor.x, this.barWidth - width - 8));
+    openOverlay({ mod: "harenome-layout-space-tabs", kind: "popup", width, height: 0.8, at: { x, y: BAR_HEIGHT }, props: { space: key === ALL_AGENTS ? null : key } });
+  }
+
+  button(t, id, icon, action) {
+    return div().id(id).size(26).flex_none().flex().items_center().justify_center().rounded(6).text_color(t.dim)
+      .hover((s) => s.bg(t.hover).text_color(t.foreground))
+      .on_mouse_down("left", stop).on_mouse_down("right", stop).on_click(action)
+      .child(svg(icon).size(14));
+  }
+
+  count(t, icon, n) {
+    return h_flex().flex_none().gap(3).items_center().text_size(11.5).text_color(t.dim).child(svg(icon).size(12)).child(String(n));
+  }
+
+  space(t, list, s, i) {
+    const agentCount = agents().filter((a) => a.space === s.id).length;
+    return h_flex().id(`space-${s.id}`).relative().h(29).px(26).gap(7).rounded(7).items_center().justify_center().flex_1().min_w(120).text_size(12.8)
+      .bg(s.active ? t.raised : t.chrome).text_color(s.active ? t.foreground : t.muted)
+      .hover((el) => el.bg(t.hover))
+      .on_mouse_move((e) => { this.anchors[s.id] = { x: e.position.x - e.local_position.x, width: e.bounds.width }; })
+      .on_mouse_down("left", (e, cx) => {
+        cx.stop_propagation();
+        this.pressedAt = Date.now();
+        this.pressed = e.click_count === 2 ? null : i;
+        if (e.click_count === 2) run("space.rename", { id: s.id });
+      })
+      .on_mouse_up("left", () => {
+        const from = this.pressed;
+        this.pressed = null;
+        if (from === i && s.active) this.toggleList(s.id);
+        else if (from === i) run("space.select", { id: s.id });
+        else if (from !== null && list[from].machine === s.machine) run("space.move", { id: list[from].id, index: i + 1 });
+      })
+      .on_mouse_down("right", (_e, cx) => { cx.stop_propagation(); openOverlay({ mod: "menu", kind: "popup", width: 200, height: 260, props: { tab: "space", target: { id: s.id } } }); })
+      .child(div().id(`list-${s.id}`).absolute().left(8).h_full().flex().items_center().text_color(t.dim).hover((el) => el.text_color(t.foreground))
+        .on_mouse_down("left", (_e, cx) => { cx.stop_propagation(); this.pressedAt = Date.now(); })
+        .on_click((_e, cx) => { cx.stop_propagation(); this.toggleList(s.id); })
+        .child(svg(`mods/workspace-chrome/chevron-${shared("titlebar.listed") === s.id ? "down" : "right"}.svg`).size(13)))
+      .child(svg(`mods/workspace-chrome/${s.machine ? "server" : "monitor"}.svg`).size(13).flex_none().text_color(t.dim))
+      .child(div().min_w(0).truncate().child(s.name))
+      .when(agentCount > 0, (el) => el.child(this.count(t, "icons/agent.svg", agentCount)))
+      .when(s.tabs.length > 1, (el) => el.child(this.count(t, "mods/workspace-chrome/layers.svg", s.tabs.length)))
+      .when(s.status === "working", (el) => el.child(svg("mods/workspace-chrome/spinner.svg").size(12).flex_none().text_color(t.working).spin(900)))
+      .when(s.status === "blocked" || s.status === "done", (el) => el.child(div().size(6).rounded(3).bg(t[s.status])))
+      .when(s.active, (el) => el.child(div().id(`close-${s.id}`).absolute().right(8).h_full().flex().items_center().text_color(t.dim).on_mouse_down("left", stop).on_click((_e, cx) => { cx.stop_propagation(); run("space.close", { id: s.id }); }).child(svg("mods/pane/close.svg").size(12))));
+  }
+
+  agentsBox(t, list) {
+    return h_flex().id("agents-box").h(29).px(8).gap(6).flex_none().items_center().rounded(7).bg(t.raised).cursor_pointer()
+      .hover((el) => el.bg(t.hover))
+      .on_mouse_move((e) => { this.anchors[ALL_AGENTS] = { x: e.position.x - e.local_position.x, width: e.bounds.width }; })
+      .on_mouse_down("left", (_e, cx) => { cx.stop_propagation(); this.pressedAt = Date.now(); })
+      .on_mouse_down("right", stop)
+      .on_click(() => this.toggleList(ALL_AGENTS))
+      .children(list.map(({ program, status }) => (program.tint ? svg(program.icon).size(14).flex_none().text_color(t.muted) : image(program.icon).size(14).flex_none())
+        .when(status === "idle", (el) => el.opacity(0.4))));
+  }
+
+  render() {
+    const t = theme();
+    const list = spaces();
+    const running = agents().filter((a) => a.program?.icon);
+    return h_flex().size_full().min_w(0).px(10).gap(6).items_center().bg(t.chrome).border_b(1).border_color(t.border)
+      .on_mouse_up("left", () => { this.pressed = null; })
+      .on_mouse_move((e) => { this.barWidth = e.bounds.width; })
+      .on_scroll_wheel((e) => { if (Math.abs(e.delta.y) >= 1) run(e.delta.y > 0 ? "space.prev" : "space.next"); })
+      .child(image("frame/welcome/herdr.png").size(20).rounded(5).flex_none())
+      .child(this.button(t, "sidebar", "mods/workspace-chrome/sidebar.svg", () => run("layout.toggle", { id: "sidebar" })))
+      .child(this.button(t, "new", "mods/workspace-chrome/plus.svg", () => openOverlay({ mod: "new-menu", kind: "popup", width: 250, height: 512 })))
+      .child(h_flex().id("titlebar-spaces").flex_1().min_w(0).h_full().items_center().gap(3).overflow_x_scrollbar()
+        .children(list.map((s, i) => this.space(t, list, s, i))))
+      .when(running.length > 0, (el) => el.child(this.agentsBox(t, running)))
+      .child(this.button(t, "settings", "mods/workspace-chrome/settings.svg", () => run("app.settings")))
+      .child(this.button(t, "close-window", "mods/pane/close.svg", () => run("window.close")));
+  }
+}
