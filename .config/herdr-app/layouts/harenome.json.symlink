@@ -26,6 +26,19 @@
           "type": "column",
           "children": [
             {
+              "id": "sidebar-shadow",
+              "type": "block",
+              "content": {
+                "mod": "harenome-layout-shadow",
+                "props": {
+                  "base": "chrome"
+                }
+              },
+              "size": {
+                "px": 4
+              }
+            },
+            {
               "id": "sidebar-lists",
               "type": "column",
               "children": [
@@ -44,7 +57,18 @@
                   "id": "agents",
                   "type": "block",
                   "content": {
-                    "mod": "agents"
+                    "mod": "harenome-layout-agents"
+                  },
+                  "size": {
+                    "weight": 1
+                  },
+                  "min": 90
+                },
+                {
+                  "id": "tabs",
+                  "type": "block",
+                  "content": {
+                    "mod": "harenome-layout-tabs"
                   },
                   "size": {
                     "weight": 1
@@ -77,6 +101,19 @@
           "type": "column",
           "children": [
             {
+              "id": "work-shadow",
+              "type": "block",
+              "content": {
+                "mod": "harenome-layout-shadow",
+                "props": {
+                  "base": "canvas"
+                }
+              },
+              "size": {
+                "px": 4
+              }
+            },
+            {
               "id": "work-body",
               "type": "row",
               "children": [
@@ -97,14 +134,14 @@
                       "background": "background",
                       "border": {
                         "width": 1,
-                        "color": "border"
+                        "color": "canvas"
                       },
                       "focus": {
                         "width": 1,
-                        "color": "accent"
+                        "color": "border"
                       },
                       "radius": 0,
-                      "gap": 0,
+                      "gap": 4,
                       "lone": true
                     }
                   }
@@ -143,20 +180,20 @@
                   "hidden": true
                 }
               ],
-              "padding": 0,
+              "padding": 4,
               "gap": 8
             }
           ],
           "resizable": false
         }
-      ],
-      "divider": {
-        "width": 1,
-        "color": "border"
-      }
+      ]
     }
   ],
   "background": "canvas",
+  "theme": {
+    "light": "paper",
+    "dark": "ghostty"
+  },
   "terminal_padding": [
     0,
     0

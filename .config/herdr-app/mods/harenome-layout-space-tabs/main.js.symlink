@@ -6,6 +6,15 @@ import { View, div, image, svg } from "gpui-kit";
 import { h_flex, v_flex } from "gpui-base";
 import { agents, closeOverlay, panes, props, run, setShared, spaces, theme } from "herdr";
 
+// agent.focus shows the agent's tab but leaves another pane zoomed over it: unzoom that first.
+function focusAgent(agent) {
+  const zoomed = panes().find((p) => p.tab === agent.tab && p.zoomed && p.pane !== agent.pane);
+  if (zoomed) run("pane.zoom", { pane: zoomed.pane });
+  run("agent.focus", { terminal: agent.address });
+}
+
+const MOTION = { duration: 120, easing: "ease-out" };
+
 const close = () => {
   setShared("titlebar.listed", null);
   closeOverlay(props().overlay);
@@ -27,6 +36,9 @@ export default class SpaceTabs extends View {
     this.handle = cx.focus_handle();
     this.handle.focus();
     setShared("titlebar.listed", props()?.space);
+    // A transition only plays on a change, so the first frame is hidden and this shows it.
+    this.shown = false;
+    cx.timer.after(16, (cx) => { this.shown = true; cx.notify(); });
   }
 
   icon(t, id, icon, action) {
@@ -74,7 +86,7 @@ export default class SpaceTabs extends View {
     return this.row(t, `agent-${agent.address}`, agent.program, agent.title || agent.program?.name, null)
       .pr(8)
       .when(agent.focused, (el) => el.bg(t.selected))
-      .on_click(() => { close(); run("agent.focus", { terminal: agent.address }); })
+      .on_click(() => { close(); focusAgent(agent); })
       .child(div().flex_none().text_size(10).text_color(t.dim).child(machine))
       .when(Boolean(at), (el) => el.child(div().flex_none().text_size(11).text_color(t.dim).child(duration(Date.now() - at))))
       .child(this.agentStatus(t, agent.status));
@@ -86,7 +98,10 @@ export default class SpaceTabs extends View {
     const space = spaces().find((s) => s.id === id);
     if (id && !space) return div();
     const own = agents().filter((a) => !space || a.space === space.id);
-    return v_flex().id("space-tabs").track_focus(this.handle).w_full().p(6).gap(2).bg(t.popover).text_color(t.foreground).text_size(12.5)
+    return v_flex().id("space-tabs").track_focus(this.handle).w_full().p(6).gap(2).bg(t.popover)
+      // Fade and drop in; the title bar opens this with frame "none" so the frame moves too.
+      .relative().top(this.shown ? 0 : -6).transition("top", MOTION).opacity(this.shown ? 1 : 0).transition("opacity", MOTION)
+      .rounded(10).shadow_lg().text_color(t.foreground).text_size(12.5)
       .on_key_down((e) => { if (e.key === "escape") close(); })
       .on_mouse_down_out(() => { setShared("titlebar.listed", null); setShared("titlebar.list-closed", Date.now()); })
       .when(own.length > 0, (el) => el.child(this.heading(t, "Agents")).children(own.map((a) => this.agentRow(t, a))))

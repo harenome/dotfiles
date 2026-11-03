@@ -12,6 +12,18 @@ const ALL_AGENTS = "agents";
 
 const stop = (_e, cx) => cx.stop_propagation();
 
+// The theme's colours plus the bar's own. Like a GNOME window with a sidebar, the bar takes the
+// window colour when the theme names one (the Adwaita ones do), else chrome. Lifted items (active
+// space, agents box) fall back to `selected` when `raised` would barely show on the bar.
+const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
+const close = (a, b) => rgb(a).reduce((sum, v, i) => sum + Math.abs(v - rgb(b)[i]), 0) < 24;
+
+function colors() {
+  const t = theme();
+  const bar = t.window_bg ?? t.chrome;
+  return { ...t, bar, bar_line: t.shade ?? t.border, lift: close(t.raised, bar) ? t.selected : t.raised };
+}
+
 export default class Titlebar extends View {
   init() {
     this.pressed = null;
@@ -31,7 +43,7 @@ export default class Titlebar extends View {
     if (!anchor) return;
     const width = Math.max(anchor.width, MIN_LIST_WIDTH);
     const x = Math.max(0, Math.min(anchor.x, this.barWidth - width - 8));
-    openOverlay({ mod: "harenome-layout-space-tabs", kind: "popup", width, height: 0.8, at: { x, y: BAR_HEIGHT }, props: { space: key === ALL_AGENTS ? null : key } });
+    openOverlay({ mod: "harenome-layout-space-tabs", kind: "popup", frame: "none", width, height: 0.8, at: { x, y: BAR_HEIGHT }, props: { space: key === ALL_AGENTS ? null : key } });
   }
 
   button(t, id, icon, action) {
@@ -48,7 +60,7 @@ export default class Titlebar extends View {
   space(t, list, s, i) {
     const agentCount = agents().filter((a) => a.space === s.id).length;
     return h_flex().id(`space-${s.id}`).relative().h(29).px(26).gap(7).rounded(7).items_center().justify_center().flex_1().min_w(120).text_size(12.8)
-      .bg(s.active ? t.raised : t.chrome).text_color(s.active ? t.foreground : t.muted)
+      .bg(s.active ? t.lift : t.bar).text_color(s.active ? t.foreground : t.muted)
       .hover((el) => el.bg(t.hover))
       .on_mouse_move((e) => { this.anchors[s.id] = { x: e.position.x - e.local_position.x, width: e.bounds.width }; })
       .on_mouse_down("left", (e, cx) => {
@@ -79,7 +91,7 @@ export default class Titlebar extends View {
   }
 
   agentsBox(t, list) {
-    return h_flex().id("agents-box").h(29).px(8).gap(6).flex_none().items_center().rounded(7).bg(t.raised).cursor_pointer()
+    return h_flex().id("agents-box").h(29).px(8).gap(6).flex_none().items_center().rounded(7).bg(t.lift).cursor_pointer()
       .hover((el) => el.bg(t.hover))
       .on_mouse_move((e) => { this.anchors[ALL_AGENTS] = { x: e.position.x - e.local_position.x, width: e.bounds.width }; })
       .on_mouse_down("left", (_e, cx) => { cx.stop_propagation(); this.pressedAt = Date.now(); })
@@ -90,10 +102,10 @@ export default class Titlebar extends View {
   }
 
   render() {
-    const t = theme();
+    const t = colors();
     const list = spaces();
     const running = agents().filter((a) => a.program?.icon);
-    return h_flex().size_full().min_w(0).px(10).gap(6).items_center().bg(t.chrome).border_b(1).border_color(t.border)
+    return h_flex().size_full().min_w(0).px(10).gap(6).items_center().bg(t.bar).border_b(1).border_color(t.bar_line)
       .on_mouse_up("left", () => { this.pressed = null; })
       .on_mouse_move((e) => { this.barWidth = e.bounds.width; })
       .on_scroll_wheel((e) => { if (Math.abs(e.delta.y) >= 1) run(e.delta.y > 0 ? "space.prev" : "space.next"); })

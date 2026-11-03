@@ -14,6 +14,9 @@ const HEADING = 20;
 const GAP = 10;
 const CHROME = PADDING + HEADING + GAP + PADDING;
 const TALL = 4000;
+// The popup stays invisible this long, so a known shortcut never flashes it; keys work at once.
+const DELAY = 200;
+const MOTION = { duration: 120, easing: "ease-out" };
 
 function cyclePane(step) {
   const f = focused();
@@ -22,11 +25,18 @@ function cyclePane(step) {
   if (i >= 0 && list.length > 1) run("pane.focus", { pane: list[(i + step + list.length) % list.length].pane });
 }
 
+// agent.focus shows the agent's tab but leaves another pane zoomed over it: unzoom that first.
+function focusAgent(agent) {
+  const zoomed = panes().find((p) => p.tab === agent.tab && p.zoomed && p.pane !== agent.pane);
+  if (zoomed) run("pane.zoom", { pane: zoomed.pane });
+  run("agent.focus", { terminal: agent.address });
+}
+
 // Blocked agents first, then finished ones.
 function openAttention() {
   const all = agents();
   const a = all.find((x) => x.status === "blocked") ?? all.find((x) => x.status === "done");
-  if (a) run("agent.focus", { terminal: a.address });
+  if (a) focusAgent(a);
 }
 
 function newTab() {
@@ -104,6 +114,8 @@ export default class Prefix extends View {
   init(_props, cx) {
     this.limit = null;
     this.content = TALL;
+    this.shown = false;
+    cx.timer.after(DELAY, (cx) => { this.shown = true; cx.notify(); });
     this.handle = cx.focus_handle();
     this.handle.focus();
     cx.spawn(async () => {
@@ -146,6 +158,8 @@ export default class Prefix extends View {
     return v_flex().id("prefix").track_focus(this.handle)
       .on_key_down((_e, cx) => { cx.stop_propagation(); this.close(); })
       .on_size_change((size, cx) => { if (this.limit === null) { this.limit = size.height; cx.notify(); } })
+      // mod.json's frame "none" drops the app's frame, so it can hide with the content.
+      .relative().top(this.shown ? 0 : -6).transition("top", MOTION).opacity(this.shown ? 1 : 0).transition("opacity", MOTION).rounded(10).border_1().border_color(t.border).shadow_lg()
       .size_full().p(PADDING).gap(GAP).bg(t.popover).text_color(t.foreground).text_size(12.5)
       .child(div().flex_none().h(HEADING).font_semibold().child("Prefix"))
       .child(v_flex().id("prefix-body").flex_none().h(Math.min(room, this.content)).overflow_y_scrollbar()

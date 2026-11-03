@@ -26,13 +26,13 @@ export default class Pane extends View {
     return panes().find((p) => p.pane === props()?.pane);
   }
 
-  button(t, id, icon, command, args) {
+  button(c, id, icon, command, args) {
     return div()
       .id(id)
       .p(3)
       .rounded(4)
-      .text_color(t.dim)
-      .hover((s) => s.bg(t.hover).text_color(t.foreground))
+      .text_color(c.soft)
+      .hover((s) => s.bg(c.hover).text_color(c.text))
       .on_click((_e, cx) => {
         cx.stop_propagation();
         run(command, args);
@@ -45,7 +45,11 @@ export default class Pane extends View {
     const p = this.me();
     if (!p) return div();
     const name = ((p.program?.agent || p.program?.shell) && p.program.name) || p.title || p.program?.name || "shell";
-    const pic = icon(p.program, 14, t.dim);
+    // The focused pane's header is lifted with the selection grey (instead of an accent frame).
+    const c = p.focused
+      ? { bg: t.selected, text: t.foreground, soft: t.muted, hover: t.hover, working: t.working, done: t.done }
+      : { bg: t.background, text: t.foreground, soft: t.dim, hover: t.hover, working: t.working, done: t.done };
+    const pic = icon(p.program, 14, c.soft);
     const st = p.status;
     const pane = p.pane;
     const dimmed = (el) => (p.focused ? el : el.opacity(0.5));
@@ -55,22 +59,22 @@ export default class Pane extends View {
       .px(10)
       .gap(8)
       .items_center()
-      .bg(t.background)
+      .bg(c.bg)
       .border_b(1)
       .border_color(t.border)
       .text_size(12)
       .on_hover((hovered, cx) => { this.hovered = hovered; cx.notify(); })
       .on_click(() => run("pane.focus", { pane }))
       .when(Boolean(pic), (el) => el.child(dimmed(pic)))
-      .child(dimmed(div().flex_none().truncate().max_w(260).font_medium().text_color(t.foreground).child(name)))
-      .child(dimmed(div().flex_1().truncate().text_color(t.dim).child(folder(p.cwd))))
-      .when(st === "working", el => el.child(dimmed(svg("mods/workspace-chrome/spinner.svg").size(12).flex_none().text_color(t.working).spin(900))))
+      .child(dimmed(div().flex_none().truncate().max_w(260).font_medium().text_color(c.text).child(name)))
+      .child(dimmed(div().flex_1().truncate().text_color(c.soft).child(folder(p.cwd))))
+      .when(st === "working", el => el.child(dimmed(svg("mods/workspace-chrome/spinner.svg").size(12).flex_none().text_color(c.working).spin(900))))
       .when(st === "blocked", el => el.child(div().flex_none().px(6).h(18).flex().items_center().rounded(5).bg(t.blocked + "26").text_size(10.5).font_semibold().text_color(t.blocked).child("Needs you")))
-      .when(st === "done", el => el.child(dimmed(div().size(7).flex_none().rounded(4).bg(t.done))))
+      .when(st === "done", el => el.child(dimmed(div().size(7).flex_none().rounded(4).bg(c.done))))
       .when(this.hovered, el => el
-        .child(this.button(t, `ph-r-${pane}`, "split-right", "pane.split", { direction: "right", pane }))
-        .child(this.button(t, `ph-d-${pane}`, "split-down", "pane.split", { direction: "down", pane }))
-        .child(this.button(t, `ph-z-${pane}`, p.zoomed ? "unzoom" : "zoom", "pane.zoom", { pane }))
-        .child(this.button(t, `ph-x-${pane}`, "close", "pane.close", { pane })));
+        .child(this.button(c, `ph-r-${pane}`, "split-right", "pane.split", { direction: "right", pane }))
+        .child(this.button(c, `ph-d-${pane}`, "split-down", "pane.split", { direction: "down", pane }))
+        .child(this.button(c, `ph-z-${pane}`, p.zoomed ? "unzoom" : "zoom", "pane.zoom", { pane }))
+        .child(this.button(c, `ph-x-${pane}`, "close", "pane.close", { pane })));
   }
 }

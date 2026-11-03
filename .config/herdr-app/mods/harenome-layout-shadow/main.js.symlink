@@ -1,0 +1,24 @@
+// A soft shadow under the title bar: the layout can't draw one over the body, so a thin block at
+// the top of each column steps from darker back to that column's colour (props.base, a theme name).
+
+import { View, div } from "gpui-kit";
+import { v_flex } from "gpui-base";
+import { props, theme } from "herdr";
+
+const STEPS = [0.18, 0.10, 0.05, 0.02]; // how much black, row by row (1px each)
+
+// `#rrggbb` mixed with black by `k`.
+function darken(hex, k) {
+  const n = parseInt(hex.slice(1, 7), 16);
+  const c = [16, 8, 0].map((s) => Math.round(((n >> s) & 255) * (1 - k)));
+  return "#" + c.map((v) => v.toString(16).padStart(2, "0")).join("");
+}
+
+export default class Shadow extends View {
+  render() {
+    const t = theme();
+    const base = t[props()?.base] ?? t.chrome;
+    return v_flex().size_full().bg(base)
+      .children(STEPS.map((k) => div().h(1).w_full().flex_none().bg(darken(base, k))));
+  }
+}

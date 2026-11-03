@@ -1,1 +1,1 @@
-{ "place": "none", "title": "Space tabs" }
+{ "place": "none", "title": "Space tabs", "overlay": { "kind": "popup", "frame": "none" } }

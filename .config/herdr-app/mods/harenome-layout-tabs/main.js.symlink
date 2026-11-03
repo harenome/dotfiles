@@ -1,0 +1,79 @@
+// Every tab of every space, grouped by space, for the sidebar. Tabs are rare here, so
+// everything is clickable: row selects, double-click or pen renames, × closes, + adds.
+// A space's heading folds its tabs; folded, it shows how many and the most urgent state.
+
+import { View, div, image, svg } from "gpui-kit";
+import { h_flex, v_flex } from "gpui-base";
+import { panes, run, spaces, theme } from "herdr";
+
+const RANK = { blocked: 4, done: 3, working: 2, idle: 1 };
+const FOLDED = "tabs.folded";
+
+export default class Tabs extends View {
+  init() {
+    this.hovered = null;
+    this.folded = new Set(JSON.parse(localStorage.getItem(FOLDED) ?? "[]"));
+  }
+
+  toggle(id, cx) {
+    this.folded.has(id) ? this.folded.delete(id) : this.folded.add(id);
+    localStorage.setItem(FOLDED, JSON.stringify([...this.folded]));
+    cx.notify();
+  }
+
+  status(t, status) {
+    if (status === "working") return svg("mods/workspace-chrome/spinner.svg").size(12).flex_none().text_color(t.working).spin(900);
+    if (status === "blocked" || status === "done") return div().size(6).mx(2).flex_none().rounded(3).bg(t[status]);
+    return null;
+  }
+
+  icon(t, id, icon, tooltip, action) {
+    return div().id(id).size(22).flex_none().flex().items_center().justify_center().rounded(5).text_color(t.dim)
+      .hover((s) => s.bg(t.raised).text_color(t.foreground))
+      .tooltip(tooltip)
+      .on_click((_e, cx) => { cx.stop_propagation(); action(); })
+      .child(svg(icon).size(13));
+  }
+
+  heading(t, space) {
+    const folded = this.folded.has(space.id);
+    const top = space.tabs.reduce((m, tab) => ((RANK[tab.status] ?? 0) > (RANK[m] ?? 0) ? tab.status : m), null);
+    const urgent = folded && this.status(t, top);
+    return h_flex().id(`space-${space.id}`).h(26).pl(8).pr(3).gap(6).items_center().rounded(6).text_size(11).text_color(t.dim)
+      .cursor_pointer().hover((s) => s.bg(t.hover))
+      .on_click((_e, cx) => this.toggle(space.id, cx))
+      .child(svg(`mods/workspace-chrome/${space.machine ? "server" : "monitor"}.svg`).size(12).flex_none())
+      .child(div().flex_1().min_w(0).truncate().child(space.name))
+      .when(folded, (el) => el.child(div().flex_none().child(String(space.tabs.length))))
+      .when(Boolean(urgent), (el) => el.child(urgent))
+      .child(this.icon(t, `new-${space.id}`, "mods/workspace-chrome/plus.svg", "New tab", () => run("tab.new", { space: space.id })))
+      .child(svg(`mods/workspace-chrome/chevron-${folded ? "right" : "down"}.svg`).size(11).mr(5).flex_none());
+  }
+
+  row(t, space, tab) {
+    const own = panes().filter((p) => p.tab === tab.id);
+    const program = (own.find((p) => p.program?.agent) ?? own[0])?.program;
+    const current = space.active && tab.active;
+    const select = () => { run("space.select", { id: space.id }); run("tab.select", { id: tab.id }); };
+    return h_flex().id(`tab-${tab.id}`).h(28).pl(8).pr(3).gap(6).items_center().rounded(6).cursor_pointer()
+      .text_color(current ? t.foreground : t.muted)
+      .when(current, (el) => el.bg(t.selected))
+      .hover((s) => s.bg(t.hover))
+      .on_hover((on, cx) => { this.hovered = on ? tab.id : this.hovered === tab.id ? null : this.hovered; cx.notify(); })
+      .on_click((e) => (e.click_count === 2 ? run("tab.rename", { id: tab.id }) : select()))
+      .when(Boolean(program?.icon), (el) => el.child(program.tint ? svg(program.icon).size(14).flex_none().text_color(t.muted) : image(program.icon).size(14).flex_none()))
+      .child(div().flex_1().min_w(0).truncate().child(tab.name))
+      .when(Boolean(this.status(t, tab.status)), (el) => el.child(this.status(t, tab.status)))
+      .when(this.hovered === tab.id, (el) => el
+        .child(this.icon(t, `rename-${tab.id}`, "mods/workspace-chrome/square-pen.svg", "Rename tab", () => run("tab.rename", { id: tab.id })))
+        .child(this.icon(t, `close-${tab.id}`, "mods/pane/close.svg", "Close tab", () => run("tab.close", { id: tab.id }))));
+  }
+
+  render() {
+    const t = theme();
+    return v_flex().size_full().min_h(0).bg(t.chrome).text_size(13).border_t(1).border_color(t.border)
+      .child(h_flex().h(31).flex_none().pl(16).pr(10).items_center().text_size(11.5).font_medium().text_color(t.dim).child("Tabs"))
+      .child(v_flex().id("tab-list").flex_1().min_h(0).px(8).pb(8).gap(1).overflow_y_scrollbar()
+        .children(spaces().flatMap((s) => [this.heading(t, s), ...(this.folded.has(s.id) ? [] : s.tabs.map((tab) => this.row(t, s, tab)))])));
+  }
+}
