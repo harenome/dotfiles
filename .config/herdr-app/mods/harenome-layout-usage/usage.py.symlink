@@ -1,0 +1,182 @@
+"""Prints this machine's Claude, Codex, Cursor and opencode usage as JSON for the Usage section.
+
+Credentials: the tokens are read here, sent only to their own service in a request header, and
+never printed, logged, put on a command line or in the environment. The output holds only the
+whitelisted numbers each parse_* picks out, and errors are short fixed strings, never a response.
+Tokens are never refreshed here: rotating a refresh token would sign the harness itself out.
+
+Run: python3 -I usage.py   (--check runs the parsers on sample data)
+"""
+
+import json
+import os
+import subprocess
+import sys
+import time
+import urllib.error
+import urllib.request
+from concurrent.futures import ThreadPoolExecutor
+from datetime import datetime
+
+HOME = os.path.expanduser("~")
+TIMEOUT = 10  # s per service; the app gives the whole script 30
+
+
+class Failure(Exception):
+    """A short message safe to show."""
+
+
+def read_json(path):
+    try:
+        with open(os.path.join(HOME, path)) as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise Failure("not logged in")
+    except (OSError, ValueError):
+        raise Failure("unreadable login")
+
+
+def request(url, token, body=None, headers=()):  # GET without a body, else POST
+    req = urllib.request.Request(url, data=None if body is None else json.dumps(body).encode(),
+                                 headers={"Authorization": f"Bearer {token}", "Content-Type": "application/json", **dict(headers)})
+    try:
+        with urllib.request.urlopen(req, timeout=TIMEOUT) as r:
+            return json.load(r)
+    except urllib.error.HTTPError as e:
+        raise Failure("login expired" if e.code in (401, 403) else f"HTTP {e.code}")
+    except (urllib.error.URLError, TimeoutError, OSError):
+        raise Failure("offline")
+    except ValueError:
+        raise Failure("bad answer")
+
+
+def window(label, percent, resets_ms):
+    return {"label": label, "percent": round(float(percent), 1), "resets": resets_ms}
+
+
+def iso_ms(text):
+    return int(datetime.fromisoformat(text).timestamp() * 1000) if text else None
+
+
+# --- Claude: the subscription's usage windows, as ccstatusline reads them.
+
+def parse_claude(d):
+    names = {"five_hour": "5 hours", "seven_day": "week", "seven_day_opus": "week · Opus", "seven_day_sonnet": "week · Sonnet"}
+    return [window(label, d[k]["utilization"], iso_ms(d[k].get("resets_at"))) for k, label in names.items()
+            if isinstance(d.get(k), dict) and d[k].get("utilization") is not None]
+
+
+def claude():
+    auth = read_json(".claude/.credentials.json").get("claudeAiOauth") or {}
+    if not auth.get("accessToken"):
+        raise Failure("not logged in")
+    if auth.get("expiresAt", 0) < time.time() * 1000:
+        raise Failure("login expired, open Claude Code")
+    return parse_claude(request("https://api.anthropic.com/api/oauth/usage", auth["accessToken"], headers={"anthropic-beta": "oauth-2025-04-20"}))
+
+
+# --- Codex: asked of its own app-server, which uses its own login.
+
+def parse_codex(result):
+    limits = result.get("rateLimits") or {}
+    out = []
+    for k in ("primary", "secondary"):
+        w = limits.get(k)
+        if isinstance(w, dict) and w.get("usedPercent") is not None:
+            mins = w.get("windowDurationMins") or 0
+            label = "week" if mins == 10080 else "5 hours" if mins == 300 else f"{mins // 60} hours"
+            out.append(window(label, w["usedPercent"], w["resetsAt"] * 1000 if w.get("resetsAt") else None))
+    return out
+
+
+def codex():
+    lines = [{"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"clientInfo": {"name": "herdr-usage", "version": "1"}}},
+             {"jsonrpc": "2.0", "method": "initialized"},
+             {"jsonrpc": "2.0", "id": 2, "method": "account/rateLimits/read"}]
+    try:
+        p = subprocess.Popen(["codex", "app-server"], stdin=subprocess.PIPE, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL, text=True)
+    except FileNotFoundError:
+        raise Failure("not installed")
+    try:
+        p.stdin.write("".join(json.dumps(m) + "\n" for m in lines))
+        p.stdin.flush()
+        deadline = time.time() + TIMEOUT
+        # shortcut: a blocking readline can outlast the deadline if codex hangs silently; the app's 30 s limit still ends it.
+        for line in p.stdout:
+            try:
+                msg = json.loads(line)
+            except ValueError:
+                continue
+            if msg.get("id") == 2:
+                if "result" not in msg:
+                    raise Failure("not logged in")
+                return parse_codex(msg["result"])
+            if time.time() > deadline:
+                break
+        raise Failure("no answer")
+    finally:
+        p.kill()
+        p.wait()
+
+
+# --- Cursor: the current billing cycle, as the Cursor CLI asks for it.
+
+def parse_cursor(d):
+    plan = d.get("planUsage") or {}
+    ends = int(d["billingCycleEnd"]) if d.get("billingCycleEnd") else None
+    names = {"totalPercentUsed": "total", "autoPercentUsed": "Auto", "apiPercentUsed": "API"}
+    return [window(label, plan[k], ends) for k, label in names.items() if plan.get(k) is not None]
+
+
+def cursor():
+    token = read_json(".config/cursor/auth.json").get("accessToken")
+    if not token:
+        raise Failure("not logged in")
+    return parse_cursor(request("https://api2.cursor.sh/aiserver.v1.DashboardService/GetCurrentPeriodUsage", token, {},
+                             {"Connect-Protocol-Version": "1"}))
+
+
+# --- opencode: what it recorded spending itself, from its local database.
+
+def opencode():
+    try:
+        r = subprocess.run(["opencode", "stats", "--days", "7", "--json"], capture_output=True, text=True, timeout=TIMEOUT)
+    except FileNotFoundError:
+        raise Failure("not installed")
+    except subprocess.TimeoutExpired:
+        raise Failure("no answer")
+    try:
+        return [{"label": "7 days", "cost": round(float(json.loads(r.stdout)["cost"]), 2)}]
+    except (ValueError, KeyError, TypeError):
+        raise Failure("bad answer")
+
+
+SOURCES = {"Claude": claude, "Codex": codex, "Cursor": cursor, "opencode": opencode}
+
+
+def run(name, fn):
+    try:
+        return {"name": name, "rows": fn()}
+    except Failure as e:
+        return {"name": name, "error": str(e)}
+    except Exception:  # never let a traceback (and whatever it holds) reach the output
+        return {"name": name, "error": "failed"}
+
+
+def check():
+    assert parse_claude({"five_hour": {"utilization": 0.0, "resets_at": "2026-11-04T17:40:01+00:00"}, "seven_day": {"utilization": 10.0, "resets_at": None},
+                         "seven_day_opus": None}) == [window("5 hours", 0, 1793814001000), window("week", 10, None)]
+    assert parse_codex({"rateLimits": {"primary": {"usedPercent": 3, "windowDurationMins": 10080, "resetsAt": 1794400860}, "secondary": None}}) \
+        == [window("week", 3, 1794400860000)]
+    assert parse_cursor({"billingCycleEnd": "1794147046000", "planUsage": {"totalPercentUsed": 30.19, "apiPercentUsed": 60.7}}) \
+        == [window("total", 30.2, 1794147046000), window("API", 60.7, 1794147046000)]
+    assert run("x", lambda: 1 / 0) == {"name": "x", "error": "failed"}
+    print("ok")
+
+
+if __name__ == "__main__":
+    if sys.argv[1:] == ["--check"]:
+        check()
+    else:
+        with ThreadPoolExecutor(len(SOURCES)) as pool:
+            print(json.dumps(list(pool.map(lambda kv: run(*kv), SOURCES.items()))))

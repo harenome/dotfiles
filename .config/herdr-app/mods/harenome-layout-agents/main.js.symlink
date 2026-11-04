@@ -14,6 +14,20 @@ function find(node, id) {
   return null;
 }
 
+// The section folds to its header: its block shrinks to `px`, and unfolds to the share it had.
+const FOLD = { id: "agents", px: 42 };
+function toggleSection() {
+  const size = find(layout(), FOLD.id)?.size;
+  if (size?.px !== undefined) return run("layout.resize", { id: FOLD.id, weight: Number(localStorage.getItem("section.weight")) || 1 });
+  localStorage.setItem("section.weight", String(size?.weight ?? 1));
+  run("layout.resize", { id: FOLD.id, px: FOLD.px });
+}
+const sectionTitle = (t, label) => h_flex().id("section-fold").gap(4).items_center().cursor_pointer()
+  .text_size(11.5).font_medium().text_color(t.dim).hover((s) => s.text_color(t.foreground))
+  .on_click(toggleSection)
+  .child(label)
+  .child(svg(`mods/workspace-chrome/chevron-${find(layout(), FOLD.id)?.size?.px !== undefined ? "right" : "down"}.svg`).size(12));
+
 // pane.focus shows the agent's tab but leaves another pane zoomed over it: unzoom that first.
 function focusAgent(a) {
   const zoomed = panes().find((p) => p.tab === a.tab && p.zoomed && p.pane !== a.pane);
@@ -424,7 +438,7 @@ export default class Agents extends View {
             .flex_none()
             .items_center()
             .justify_between()
-            .child(div().text_size(11.5).font_medium().text_color(t.dim).child("Agents"))
+            .child(sectionTitle(t, "Agents"))
             .child(
               div()
                 .id("ag-sort")

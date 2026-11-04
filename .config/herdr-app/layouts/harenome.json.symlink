@@ -46,12 +46,12 @@
                   "id": "spaces",
                   "type": "block",
                   "content": {
-                    "mod": "spaces"
+                    "mod": "harenome-layout-spaces"
                   },
                   "size": {
                     "weight": 1
                   },
-                  "min": 90
+                  "min": 31
                 },
                 {
                   "id": "agents",
@@ -62,7 +62,7 @@
                   "size": {
                     "weight": 1
                   },
-                  "min": 90
+                  "min": 42
                 },
                 {
                   "id": "tabs",
@@ -73,7 +73,18 @@
                   "size": {
                     "weight": 1
                   },
-                  "min": 90
+                  "min": 32
+                },
+                {
+                  "id": "usage",
+                  "type": "block",
+                  "size": {
+                    "weight": 1
+                  },
+                  "min": 32,
+                  "content": {
+                    "mod": "harenome-layout-usage"
+                  }
                 }
               ]
             },
@@ -187,6 +198,16 @@
           "resizable": false
         }
       ]
+    },
+    {
+      "id": "status",
+      "type": "block",
+      "size": {
+        "px": 28
+      },
+      "content": {
+        "mod": "harenome-layout-status"
+      }
     }
   ],
   "background": "canvas",

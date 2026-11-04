@@ -1,0 +1,122 @@
+// Sidebar section: how much of each harness's limits this machine's logins have used.
+// usage.py does the asking (and holds the tokens); this only shows the numbers it prints.
+
+import { View, div, svg } from "gpui-kit";
+import { h_flex, v_flex } from "gpui-base";
+import { appHome, exec, layout, run, theme } from "herdr";
+
+function find(node, id) {
+  if (node?.id === id) return node;
+  for (const child of node?.children ?? []) {
+    const found = find(child, id);
+    if (found) return found;
+  }
+  return null;
+}
+
+// The section folds to its header: its block shrinks to `px`, and unfolds to the share it had.
+const FOLD = { id: "usage", px: 32 };
+function toggleSection() {
+  const size = find(layout(), FOLD.id)?.size;
+  if (size?.px !== undefined) return run("layout.resize", { id: FOLD.id, weight: Number(localStorage.getItem("section.weight")) || 1 });
+  localStorage.setItem("section.weight", String(size?.weight ?? 1));
+  run("layout.resize", { id: FOLD.id, px: FOLD.px });
+}
+const sectionTitle = (t, label) => h_flex().id("section-fold").gap(4).items_center().cursor_pointer()
+  .text_size(11.5).font_medium().text_color(t.dim).hover((s) => s.text_color(t.foreground))
+  .on_click(toggleSection)
+  .child(label)
+  .child(svg(`mods/workspace-chrome/chevron-${find(layout(), FOLD.id)?.size?.px !== undefined ? "right" : "down"}.svg`).size(12));
+
+// How full a limit is, by colour: calm, then warning, orange, error. Themes without Adwaita's
+// names fall back to `blocked` for all three. null: below 60%, the plain accent.
+function band(t, percent) {
+  if (percent >= 95) return t.error ?? t.blocked;
+  if (percent >= 80) return t.orange_3 ?? t.blocked;
+  if (percent >= 60) return t.warning ?? t.blocked;
+  return null;
+}
+
+const EVERY = 5 * 60 * 1000; // Claude's endpoint rate-limits callers that poll faster
+
+function until(ms) {
+  const m = Math.round((ms - Date.now()) / 60000);
+  if (m < 1) return "now";
+  if (m < 60) return `${m}m`;
+  const h = Math.round(m / 60);
+  return h < 48 ? `${h}h` : `${Math.round(h / 24)}d`;
+}
+
+export default class Usage extends View {
+  init(_props, cx) {
+    this.sources = null;
+    this.error = null;
+    this.loading = false;
+    this.folded = new Set(JSON.parse(localStorage.getItem("usage.folded") ?? "[]"));
+    this.refresh(cx);
+    cx.timer.every(EVERY, (cx) => this.refresh(cx));
+  }
+
+  async refresh(cx) {
+    if (this.loading) return;
+    this.loading = true;
+    cx.notify();
+    try {
+      const r = await exec("python3", ["-I", `${appHome()}/mods/harenome-layout-usage/usage.py`]);
+      this.sources = JSON.parse(r.stdout);
+      this.error = null;
+    } catch {
+      this.error = "usage.py failed";
+    } finally {
+      this.loading = false;
+      cx.notify();
+    }
+  }
+
+  row(t, { label, percent, resets, cost }) {
+    const el = h_flex().h(20).gap(8).items_center().text_size(11.5);
+    if (cost !== undefined) return el.child(div().w(64).flex_none().text_color(t.dim).child(label)).child(div().text_color(t.muted).child(`$${cost.toFixed(2)}`));
+    const hot = band(t, percent);
+    return el.child(div().w(64).flex_none().text_color(t.dim).truncate().child(label))
+      .child(div().flex_1().h(4).rounded(2).bg(t.border)
+        .child(div().h_full().rounded(2).w(`${Math.min(100, percent)}%`).bg(hot ?? t.accent)))
+      .child(div().w(30).flex_none().text_color(hot ?? t.muted).child(`${Math.round(percent)}%`))
+      .child(div().w(26).flex_none().text_color(t.dim).child(resets ? until(resets) : ""));
+  }
+
+  fold(name, cx) {
+    this.folded.has(name) ? this.folded.delete(name) : this.folded.add(name);
+    localStorage.setItem("usage.folded", JSON.stringify([...this.folded]));
+    cx.notify();
+  }
+
+  // A harness's heading folds its rows; folded, it says the highest share used (or the cost).
+  source(t, s) {
+    const folded = this.folded.has(s.name);
+    const rows = s.rows ?? [];
+    const top = rows.reduce((m, r) => (r.percent > (m?.percent ?? -1) ? r : m), null);
+    const summary = s.error ?? (top ? `${Math.round(top.percent)}%` : rows[0]?.cost !== undefined ? `$${rows[0].cost.toFixed(2)}` : "");
+    return v_flex().gap(1).px(8).py(3)
+      .child(h_flex().id(`usage-${s.name}`).h(20).gap(4).items_center().text_size(12.5).cursor_pointer()
+        .on_click((_e, cx) => this.fold(s.name, cx))
+        .child(s.name)
+        .child(svg(`mods/workspace-chrome/chevron-${folded ? "right" : "down"}.svg`).size(12).text_color(t.dim))
+        .child(div().flex_1())
+        .when(Boolean(s.error) || folded, (el) => el.child(div().text_size(11).text_color((!s.error && top && band(t, top.percent)) || t.dim).child(summary))))
+      .when(!folded, (el) => el.children(rows.map((r) => this.row(t, r))));
+  }
+
+  render() {
+    const t = theme();
+    return v_flex().size_full().min_h(0).bg(t.chrome).text_color(t.foreground).border_t(1).border_color(t.border)
+      .child(h_flex().h(31).flex_none().pl(16).pr(10).items_center().justify_between()
+        .child(sectionTitle(t, "Usage"))
+        .child(div().id("usage-refresh").size(22).flex().items_center().justify_center().rounded(5).text_color(t.dim)
+          .hover((s) => s.bg(t.raised).text_color(t.foreground)).tooltip("Refresh")
+          .on_click((_e, cx) => this.refresh(cx))
+          .child(this.loading ? svg("mods/workspace-chrome/spinner.svg").size(13).spin(900) : svg("mods/harenome-layout-usage/refresh.svg").size(13))))
+      .child(v_flex().id("usage-list").flex_1().min_h(0).px(8).pb(8).overflow_y_scrollbar()
+        .when(Boolean(this.error), (el) => el.child(div().px(8).text_size(11.5).text_color(t.dim).child(this.error)))
+        .children((this.sources ?? []).map((s) => this.source(t, s))));
+  }
+}

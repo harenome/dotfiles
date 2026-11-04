@@ -1,0 +1,54 @@
+// Full-width status line: the space's machine and branch, and on the right the agents box,
+// which opens the list of every agent upward. Colours follow the title bar's.
+
+import { View, div, svg, image } from "gpui-kit";
+import { h_flex } from "gpui-base";
+import { spaces, agents, theme, openOverlay, shared } from "herdr";
+
+const LIST_WIDTH = 300;
+const LIST_SHARE = 0.8; // at most, of the window's height, as the title bar's lists
+// The list's own height: padding, the "Agents" heading, 28px rows 2px apart.
+// shortcut: mirrors harenome-layout-space-tabs' sizes, update both together.
+const listHeight = (n) => 12 + 22 + 30 * n;
+
+export default class Status extends View {
+  init() {
+    this.pressedAt = 0;
+    this.bar = null; // where the bar sits: its top in the window, and its size
+    this.box = null;
+  }
+
+  // A press outside closes the list before its release gets here, so that press mustn't reopen it.
+  toggleList() {
+    if (Math.abs((shared("titlebar.list-closed") ?? 0) - this.pressedAt) < 100 || !this.bar || !this.box) return;
+    const height = Math.min(listHeight(agents().length), Math.round(LIST_SHARE * (this.bar.top + this.bar.height)));
+    const x = Math.max(0, Math.min(this.box.x + this.box.width - LIST_WIDTH, this.bar.width - LIST_WIDTH - 8));
+    openOverlay({ mod: "harenome-layout-space-tabs", kind: "popup", frame: "none", width: LIST_WIDTH, height, at: { x, y: this.bar.top - height - 4 }, props: { space: null, up: true } });
+  }
+
+  agentsBox(t, list) {
+    return h_flex().id("agents-box").h(22).px(8).gap(6).flex_none().items_center().rounded(6).cursor_pointer()
+      .hover((el) => el.bg(t.hover))
+      .on_mouse_move((e) => { this.box = { x: e.position.x - e.local_position.x, width: e.bounds.width }; })
+      .on_mouse_down("left", () => { this.pressedAt = Date.now(); })
+      .on_click(() => this.toggleList())
+      .children(list.map(({ program, status }) => (program.tint ? svg(program.icon).size(13).flex_none().text_color(t.muted) : image(program.icon).size(13).flex_none())
+        .when(status === "idle", (el) => el.opacity(0.4))
+        // Working agents breathe; the loop runs natively, only while shown.
+        .when(status === "working", (el) => el.loop("opacity", { from: 0.6, to: 1, period: 2800 }))));
+  }
+
+  render() {
+    const t = theme();
+    const bg = t.window_bg ?? t.canvas;
+    const space = spaces().find(s => s.active);
+    const running = agents().filter((a) => a.program?.icon);
+    const label = (icon, text) => h_flex().gap(6).items_center().child(svg(`mods/workspace-chrome/${icon}.svg`).size(13)).child(text);
+    return h_flex().size_full().px(14).gap(16).items_center().bg(bg).border_t(1).border_color(t.border).text_size(11.8).text_color(t.muted)
+      .on_mouse_move((e) => { this.bar = { top: e.position.y - e.local_position.y, width: e.bounds.width, height: e.bounds.height }; })
+      .child(label(space?.machine ? "server" : "monitor", space?.machine ?? "This computer"))
+      .when(Boolean(space?.branch), el => el.child(label("branch", space.branch)))
+      .child(div().flex_1())
+      .when(running.length > 0, (el) => el.child(this.agentsBox(t, running)));
+  }
+}

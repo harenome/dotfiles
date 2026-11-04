@@ -1,5 +1,5 @@
 // A space's tabs and agents, opened from its chevron in the title bar. Without a space prop,
-// every agent, opened from the title bar's agents box.
+// every agent, opened from the status line's agents box (props.up: it opens upward).
 // shortcut: no scrolling, add it if a space ever has more tabs than the window is tall.
 
 import { View, div, image, svg } from "gpui-kit";
@@ -98,9 +98,10 @@ export default class SpaceTabs extends View {
     const space = spaces().find((s) => s.id === id);
     if (id && !space) return div();
     const own = agents().filter((a) => !space || a.space === space.id);
-    return v_flex().id("space-tabs").track_focus(this.handle).w_full().p(6).gap(2).bg(t.popover)
-      // Fade and drop in; the title bar opens this with frame "none" so the frame moves too.
-      .relative().top(this.shown ? 0 : -6).transition("top", MOTION).opacity(this.shown ? 1 : 0).transition("opacity", MOTION)
+    const up = Boolean(props()?.up);
+    const list = v_flex().id("space-tabs").track_focus(this.handle).w_full().p(6).gap(2).bg(t.popover)
+      // Fade and slide in from its opener; opened with frame "none" so the frame moves too.
+      .relative().top(this.shown ? 0 : up ? 6 : -6).transition("top", MOTION).opacity(this.shown ? 1 : 0).transition("opacity", MOTION)
       .rounded(10).shadow_lg().text_color(t.foreground).text_size(12.5)
       .on_key_down((e) => { if (e.key === "escape") close(); })
       .on_mouse_down_out(() => { setShared("titlebar.listed", null); setShared("titlebar.list-closed", Date.now()); })
@@ -113,5 +114,7 @@ export default class SpaceTabs extends View {
           .on_click(() => { close(); run("tab.new", { space: space.id }); })
           .child(svg("mods/workspace-chrome/plus.svg").size(13))
           .child("New tab")));
+    // Upward, the list sits on the bottom of its area, next to the status line.
+    return up ? v_flex().size_full().justify_end().child(list) : list;
   }
 }

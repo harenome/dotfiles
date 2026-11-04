@@ -4,17 +4,25 @@
 
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { agents, openOverlay, run, setShared, shared, spaces, theme } from "herdr";
+import { agents, layout, openOverlay, run, setShared, shared, spaces, theme } from "herdr";
 
 const MIN_LIST_WIDTH = 260;
 const BAR_HEIGHT = 46;
-const ALL_AGENTS = "agents";
 
 const stop = (_e, cx) => cx.stop_propagation();
 
+function find(node, id) {
+  if (node?.id === id) return node;
+  for (const child of node?.children ?? []) {
+    const found = find(child, id);
+    if (found) return found;
+  }
+  return null;
+}
+
 // The theme's colours plus the bar's own. Like a GNOME window with a sidebar, the bar takes the
 // window colour when the theme names one (the Adwaita ones do), else chrome. Lifted items (active
-// space, agents box) fall back to `selected` when `raised` would barely show on the bar.
+// space) fall back to `selected` when `raised` would barely show on the bar.
 const rgb = (hex) => [1, 3, 5].map((i) => parseInt(hex.slice(i, i + 2), 16));
 const close = (a, b) => rgb(a).reduce((sum, v, i) => sum + Math.abs(v - rgb(b)[i]), 0) < 24;
 
@@ -43,7 +51,7 @@ export default class Titlebar extends View {
     if (!anchor) return;
     const width = Math.max(anchor.width, MIN_LIST_WIDTH);
     const x = Math.max(0, Math.min(anchor.x, this.barWidth - width - 8));
-    openOverlay({ mod: "harenome-layout-space-tabs", kind: "popup", frame: "none", width, height: 0.8, at: { x, y: BAR_HEIGHT }, props: { space: key === ALL_AGENTS ? null : key } });
+    openOverlay({ mod: "harenome-layout-space-tabs", kind: "popup", frame: "none", width, height: 0.8, at: { x, y: BAR_HEIGHT }, props: { space: key } });
   }
 
   button(t, id, icon, action) {
@@ -51,6 +59,18 @@ export default class Titlebar extends View {
       .hover((s) => s.bg(t.hover).text_color(t.foreground))
       .on_mouse_down("left", stop).on_mouse_down("right", stop).on_click(action)
       .child(svg(icon).size(14));
+  }
+
+  // Opens the layout's right-hand panel on this child of `panel-body`; again, closes it.
+  // shortcut: one panel state for all spaces (the shipped tab bar remembers it per space).
+  panelButton(t, id, label, icon) {
+    const panel = find(layout(), "panel");
+    const on = Boolean(panel) && !panel.hidden && find(layout(), "panel-body")?.active === id;
+    return this.button(t, `panel-${id}`, icon, () => {
+      if (on) return run("layout.hide", { id: "panel" });
+      run("layout.select", { stack: "panel-body", child: id });
+      run("layout.show", { id: "panel" });
+    }).tooltip(label).when(on, (el) => el.bg(t.lift).text_color(t.foreground));
   }
 
   count(t, icon, n) {
@@ -90,21 +110,9 @@ export default class Titlebar extends View {
       .when(s.active, (el) => el.child(div().id(`close-${s.id}`).absolute().right(8).h_full().flex().items_center().text_color(t.dim).on_mouse_down("left", stop).on_click((_e, cx) => { cx.stop_propagation(); run("space.close", { id: s.id }); }).child(svg("mods/pane/close.svg").size(12))));
   }
 
-  agentsBox(t, list) {
-    return h_flex().id("agents-box").h(29).px(8).gap(6).flex_none().items_center().rounded(7).bg(t.lift).cursor_pointer()
-      .hover((el) => el.bg(t.hover))
-      .on_mouse_move((e) => { this.anchors[ALL_AGENTS] = { x: e.position.x - e.local_position.x, width: e.bounds.width }; })
-      .on_mouse_down("left", (_e, cx) => { cx.stop_propagation(); this.pressedAt = Date.now(); })
-      .on_mouse_down("right", stop)
-      .on_click(() => this.toggleList(ALL_AGENTS))
-      .children(list.map(({ program, status }) => (program.tint ? svg(program.icon).size(14).flex_none().text_color(t.muted) : image(program.icon).size(14).flex_none())
-        .when(status === "idle", (el) => el.opacity(0.4))));
-  }
-
   render() {
     const t = colors();
     const list = spaces();
-    const running = agents().filter((a) => a.program?.icon);
     return h_flex().size_full().min_w(0).px(10).gap(6).items_center().bg(t.bar).border_b(1).border_color(t.bar_line)
       .on_mouse_up("left", () => { this.pressed = null; })
       .on_mouse_move((e) => { this.barWidth = e.bounds.width; })
@@ -114,7 +122,9 @@ export default class Titlebar extends View {
       .child(this.button(t, "new", "mods/workspace-chrome/plus.svg", () => openOverlay({ mod: "new-menu", kind: "popup", width: 250, height: 512 })))
       .child(h_flex().id("titlebar-spaces").flex_1().min_w(0).h_full().items_center().gap(3).overflow_x_scrollbar()
         .children(list.map((s, i) => this.space(t, list, s, i))))
-      .when(running.length > 0, (el) => el.child(this.agentsBox(t, running)))
+      .when(Boolean(find(layout(), "panel")), (el) => el
+        .child(this.panelButton(t, "files", "Files", "mods/files/file.svg"))
+        .child(this.panelButton(t, "changes", "Changes", "mods/changes/changes.svg")))
       .child(this.button(t, "settings", "mods/workspace-chrome/settings.svg", () => run("app.settings")))
       .child(this.button(t, "close-window", "mods/pane/close.svg", () => run("window.close")));
   }
