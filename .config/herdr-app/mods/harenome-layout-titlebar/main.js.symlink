@@ -4,10 +4,34 @@
 
 import { View, div, svg, image } from "gpui-kit";
 import { h_flex } from "gpui-base";
-import { agents, layout, openOverlay, run, setShared, shared, spaces, theme } from "herdr";
+import { agents, closeOverlay, layout, openOverlay, run, setShared, shared, spaces, theme } from "herdr";
 
 const MIN_LIST_WIDTH = 260;
 const BAR_HEIGHT = 46;
+
+// Space pills shrink in steps when the bar runs short: full (chevron, name, counts, close),
+// compact (icon, name, status), icon (icon, status). The active one stays full longest; names
+// truncate within a step. NEED: the least width each step takes; when even icons don't fit,
+// arrows page through the pills.
+const FULL = 0, COMPACT = 1, ICON = 2;
+const NEED = [170, 72, 40];
+const ACTIVE_COMPACT = 110;
+const GAP = 3;
+const ARROW = 26;
+const STEPS = [[FULL, FULL], [FULL, COMPACT], [FULL, ICON], [COMPACT, ICON], [ICON, ICON]]; // [active, others]
+
+// shortcut: estimated from the name's length, not measured; a long name in a wide font may clip.
+const fullWidth = (s, agentCount) => Math.min(320, 72 + s.name.length * 7.5 + (agentCount > 0 ? 30 : 0) + (s.tabs.length > 1 ? 30 : 0) + (s.status && s.status !== "idle" ? 19 : 0));
+
+// The step for the active pill and for the others, or paged when nothing fits.
+function plan(width, list, counts) {
+  const active = list.find((s) => s.active);
+  const others = list.length - (active ? 1 : 0);
+  const need = (a, o) => (!active ? 0 : a === FULL ? Math.max(NEED[FULL], fullWidth(active, counts[active.id])) : a === COMPACT ? ACTIVE_COMPACT : NEED[ICON])
+    + NEED[o] * others + GAP * (list.length - 1);
+  const step = !width ? STEPS[0] : STEPS.find(([a, o]) => need(a, o) <= width);
+  return step ? { active: step[0], others: step[1], paged: false } : { active: COMPACT, others: ICON, paged: true };
+}
 
 const stop = (_e, cx) => cx.stop_propagation();
 
@@ -38,6 +62,12 @@ export default class Titlebar extends View {
     this.pressedAt = 0;
     this.barWidth = 0;
     this.anchors = {};
+    this.spacesWidth = 0;
+    this.start = 0; // first pill shown when paged
+    this.lastActive = -1;
+    this.hovering = null; // the pill under the pointer
+    this.card = null; // the open card's overlay id
+    setShared("titlebar.carded", null);
     setShared("titlebar.listed", null);
   }
 
@@ -77,14 +107,24 @@ export default class Titlebar extends View {
     return h_flex().flex_none().gap(3).items_center().text_size(11.5).text_color(t.dim).child(svg(icon).size(12)).child(String(n));
   }
 
-  space(t, list, s, i) {
-    const agentCount = agents().filter((a) => a.space === s.id).length;
-    return h_flex().id(`space-${s.id}`).relative().h(29).px(26).gap(7).rounded(7).items_center().justify_center().flex_1().min_w(120).text_size(12.8)
+  space(t, list, s, i, p, agentCount) {
+    const level = s.active ? p.active : p.others;
+    const full = level === FULL;
+    // Shrunk (or a long name): the full pill's details show in a card under it while the pointer rests.
+    const card = !full || s.name.length > 20;
+    return h_flex().id(`space-${s.id}`).relative().h(29).gap(full ? 7 : 5).rounded(7).items_center().justify_center().text_size(12.8)
+      .px(full ? 26 : 10)
+      .when(level === COMPACT, (el) => el.flex_1().min_w(0))
+      .when(level === ICON, (el) => el.flex_none())
+      .when(full && p.others === FULL, (el) => el.flex_1().min_w(120))
+      .when(full && p.others !== FULL, (el) => el.flex_none().max_w(320))
+      .when(card, (el) => el.on_hover((hovered, cx) => this.hover(s.id, hovered, cx)))
       .bg(s.active ? t.lift : t.bar).text_color(s.active ? t.foreground : t.muted)
       .hover((el) => el.bg(t.hover))
       .on_mouse_move((e) => { this.anchors[s.id] = { x: e.position.x - e.local_position.x, width: e.bounds.width }; })
       .on_mouse_down("left", (e, cx) => {
         cx.stop_propagation();
+        this.closeCard();
         this.pressedAt = Date.now();
         this.pressed = e.click_count === 2 ? null : i;
         if (e.click_count === 2) run("space.rename", { id: s.id });
@@ -97,17 +137,78 @@ export default class Titlebar extends View {
         else if (from !== null && list[from].machine === s.machine) run("space.move", { id: list[from].id, index: i + 1 });
       })
       .on_mouse_down("right", (_e, cx) => { cx.stop_propagation(); openOverlay({ mod: "menu", kind: "popup", width: 200, height: 260, props: { tab: "space", target: { id: s.id } } }); })
-      .child(div().id(`list-${s.id}`).absolute().left(8).h_full().flex().items_center().text_color(t.dim).hover((el) => el.text_color(t.foreground))
+      .when(full, (el) => el.child(div().id(`list-${s.id}`).absolute().left(8).h_full().flex().items_center().text_color(t.dim).hover((el) => el.text_color(t.foreground))
         .on_mouse_down("left", (_e, cx) => { cx.stop_propagation(); this.pressedAt = Date.now(); })
         .on_click((_e, cx) => { cx.stop_propagation(); this.toggleList(s.id); })
-        .child(svg(`mods/workspace-chrome/chevron-${shared("titlebar.listed") === s.id ? "down" : "right"}.svg`).size(13)))
+        .child(svg(`mods/workspace-chrome/chevron-${shared("titlebar.listed") === s.id ? "down" : "right"}.svg`).size(13))))
       .child(svg(`mods/workspace-chrome/${s.machine ? "server" : "monitor"}.svg`).size(13).flex_none().text_color(t.dim))
-      .child(div().min_w(0).truncate().child(s.name))
-      .when(agentCount > 0, (el) => el.child(this.count(t, "icons/agent.svg", agentCount)))
-      .when(s.tabs.length > 1, (el) => el.child(this.count(t, "mods/workspace-chrome/layers.svg", s.tabs.length)))
+      .when(level !== ICON, (el) => el.child(div().min_w(0).truncate().child(s.name)))
+      .when(full && agentCount > 0, (el) => el.child(this.count(t, "icons/agent.svg", agentCount)))
+      .when(full && s.tabs.length > 1, (el) => el.child(this.count(t, "mods/workspace-chrome/layers.svg", s.tabs.length)))
       .when(s.status === "working", (el) => el.child(svg("mods/workspace-chrome/spinner.svg").size(12).flex_none().text_color(t.working).spin(900)))
       .when(s.status === "blocked" || s.status === "done", (el) => el.child(div().size(6).rounded(3).bg(t[s.status])))
-      .when(s.active, (el) => el.child(div().id(`close-${s.id}`).absolute().right(8).h_full().flex().items_center().text_color(t.dim).on_mouse_down("left", stop).on_click((_e, cx) => { cx.stop_propagation(); run("space.close", { id: s.id }); }).child(svg("mods/pane/close.svg").size(12))));
+      .when(full && s.active, (el) => el.child(div().id(`close-${s.id}`).absolute().right(8).h_full().flex().items_center().text_color(t.dim).on_mouse_down("left", stop).on_click((_e, cx) => { cx.stop_propagation(); run("space.close", { id: s.id }); }).child(svg("mods/pane/close.svg").size(12))));
+  }
+
+  // A pill's card opens after the pointer rests on it for half a second, and closes when it leaves
+  // or presses. A window overlay: a mod's own surfaces can't draw outside the title bar's block.
+  hover(id, hovered, cx) {
+    if (!hovered) {
+      if (this.hovering === id) this.hovering = null;
+      if (shared("titlebar.carded") === id) this.closeCard();
+      return;
+    }
+    this.hovering = id;
+    cx.timer.after(500, () => { if (this.hovering === id && this.pressed === null) this.openCard(id); });
+  }
+
+  openCard(id) {
+    const anchor = this.anchors[id];
+    if (!anchor) return;
+    this.closeCard();
+    setShared("titlebar.carded", id);
+    this.card = openOverlay({ mod: "harenome-layout-space-card", kind: "window", frame: "none", at: { x: Math.max(0, Math.min(anchor.x, this.barWidth - 360)), y: BAR_HEIGHT }, props: { space: id } });
+  }
+
+  // Closes the card unless the pointer is still over its pill.
+  keepCard(x) {
+    const anchor = this.anchors[shared("titlebar.carded")];
+    if (anchor && (x < anchor.x || x > anchor.x + anchor.width)) this.closeCard();
+  }
+
+  closeCard() {
+    setShared("titlebar.carded", null);
+    if (this.card) closeOverlay(this.card);
+    this.card = null;
+  }
+
+  arrow(t, id, icon, enabled, step) {
+    return this.button(t, id, icon, (_e, cx) => { if (enabled) { this.start += step; cx.notify(); } }).when(!enabled, (el) => el.opacity(0.3));
+  }
+
+  // The pills to show: all, or when paged a window of them that follows the active space.
+  spaceStrip(t, list) {
+    const counts = Object.fromEntries(list.map((s) => [s.id, agents().filter((a) => a.space === s.id).length]));
+    const p = plan(this.spacesWidth, list, counts);
+    let shown = list.map((s, i) => [s, i]);
+    if (p.paged) {
+      const room = this.spacesWidth - 2 * (ARROW + GAP);
+      const k = Math.max(1, 1 + Math.floor((room - ACTIVE_COMPACT) / (NEED[ICON] + GAP)));
+      const ai = list.findIndex((s) => s.active);
+      if (ai !== this.lastActive) {
+        this.lastActive = ai;
+        if (ai >= 0 && ai < this.start) this.start = ai;
+        else if (ai >= this.start + k) this.start = ai - k + 1;
+      }
+      this.start = Math.max(0, Math.min(this.start, list.length - k));
+      shown = shown.slice(this.start, this.start + k);
+    }
+    const pills = shown.map(([s, i]) => this.space(t, list, s, i, p, counts[s.id]));
+    return h_flex().id("titlebar-spaces").flex_1().min_w(0).h_full().items_center().gap(GAP).overflow_x_hidden()
+      .on_size_change((size, cx) => { if (Math.abs(size.width - this.spacesWidth) >= 1) { this.spacesWidth = size.width; cx.notify(); } })
+      .when(p.paged, (el) => el.child(this.arrow(t, "spaces-left", "mods/workspace-chrome/chevron-left.svg", this.start > 0, -1)))
+      .children(pills)
+      .when(p.paged, (el) => el.child(div().flex_1()).child(this.arrow(t, "spaces-right", "mods/workspace-chrome/chevron-right.svg", this.start + pills.length < list.length, 1)));
   }
 
   render() {
@@ -115,13 +216,14 @@ export default class Titlebar extends View {
     const list = spaces();
     return h_flex().size_full().min_w(0).px(10).gap(6).items_center().bg(t.bar).border_b(1).border_color(t.bar_line)
       .on_mouse_up("left", () => { this.pressed = null; })
-      .on_mouse_move((e) => { this.barWidth = e.bounds.width; })
+      .on_mouse_move((e) => { this.barWidth = e.bounds.width; this.keepCard(e.position.x); })
+      // A pill's own exit can be missed (pointer gone fast, pill shrunk under it): the bar checks too.
+      .on_hover((hovered) => { if (!hovered) { this.hovering = null; this.closeCard(); } })
       .on_scroll_wheel((e) => { if (Math.abs(e.delta.y) >= 1) run(e.delta.y > 0 ? "space.prev" : "space.next"); })
       .child(image("frame/welcome/herdr.png").size(20).rounded(5).flex_none())
       .child(this.button(t, "sidebar", "mods/workspace-chrome/sidebar.svg", () => run("layout.toggle", { id: "sidebar" })))
       .child(this.button(t, "new", "mods/workspace-chrome/plus.svg", () => openOverlay({ mod: "new-menu", kind: "popup", width: 250, height: 512 })))
-      .child(h_flex().id("titlebar-spaces").flex_1().min_w(0).h_full().items_center().gap(3).overflow_x_scrollbar()
-        .children(list.map((s, i) => this.space(t, list, s, i))))
+      .child(this.spaceStrip(t, list))
       .when(Boolean(find(layout(), "panel")), (el) => el
         .child(this.panelButton(t, "files", "Files", "mods/files/file.svg"))
         .child(this.panelButton(t, "changes", "Changes", "mods/changes/changes.svg")))

@@ -1,0 +1,33 @@
+// A space's details with icons, shown under its pill in the title bar while the pointer rests on
+// a shrunk pill. The title bar opens and closes it; it also closes itself once it isn't the card
+// the title bar wants (shared "titlebar.carded"), so a missed pointer exit can't leave it behind.
+
+import { View, div, svg } from "gpui-kit";
+import { h_flex, v_flex } from "gpui-base";
+import { agents, closeOverlay, props, shared, spaces, theme } from "herdr";
+
+export default class SpaceCard extends View {
+  init(_props, cx) {
+    cx.timer.every(300, () => { if (shared("titlebar.carded") !== props()?.space) closeOverlay(props().overlay); });
+    cx.timer.after(10000, () => closeOverlay(props().overlay)); // last resort if every exit was missed
+  }
+
+  render() {
+    const t = theme();
+    const s = spaces().find((x) => x.id === props()?.space);
+    if (!s) return div();
+    const agentCount = agents().filter((a) => a.space === s.id).length;
+    const machineIcon = `mods/workspace-chrome/${s.machine ? "server" : "monitor"}.svg`;
+    const line = (icon, text) => h_flex().gap(6).items_center().text_color(t.muted).child(svg(icon).size(13).text_color(t.dim)).child(text);
+    return v_flex().p(10).gap(6).min_w(180).max_w(360).rounded(8).bg(t.popover).border_1().border_color(t.border).shadow_md().text_size(12.5)
+      .child(h_flex().gap(6).items_center().text_color(t.foreground)
+        .child(svg(machineIcon).size(13).text_color(t.dim))
+        .child(div().min_w(0).truncate().child(s.name))
+        .when(s.status === "working", (el) => el.child(svg("mods/workspace-chrome/spinner.svg").size(12).flex_none().text_color(t.working).spin(900)))
+        .when(s.status === "blocked" || s.status === "done", (el) => el.child(div().size(6).flex_none().rounded(3).bg(t[s.status]))))
+      .child(h_flex().gap(14).items_center()
+        .child(line(machineIcon, s.machine ?? "This computer"))
+        .when(agentCount > 0, (el) => el.child(line("icons/agent.svg", `${agentCount} agent${agentCount > 1 ? "s" : ""}`)))
+        .child(line("mods/workspace-chrome/layers.svg", `${s.tabs.length} tab${s.tabs.length > 1 ? "s" : ""}`)));
+  }
+}
